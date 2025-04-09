@@ -1,0 +1,12 @@
+// 2dMaker.cpp : Questo file contiene la funzione 'main', in cui inizia e termina l'esecuzione del programma.
+//
+
+#include "Application/Window.h"
+
+int main()
+{
+
+	D2Maker::Window::Initialize();
+	D2Maker::Window::RunWindow();
+
+}

@@ -1,0 +1,11 @@
+//#include "../Engine/common/ConfigDeclaration.h"
+
+//DEFINEVIRTUALWIDTH = 1600;
+//DEFINEVIRTUALHEIGHT = 900;
+//DEFINEDEFAULTWIDTH = 1280;
+//DEFINEDEFAULTHEIGHT = 720;
+//DEFINECAPTION = "2DMaker";
+
+
+
+
