@@ -18,10 +18,10 @@
     <ClCompile Include="Engine\main.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Application\Window.cpp">
+    <ClCompile Include="Engine\common\Deltatime.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\common\Deltatime.cpp">
+    <ClCompile Include="Engine\StaticDef.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>
@@ -153,8 +153,13 @@
     <None Include="Lib\glfw\docs\html\vulkan_guide.html" />
     <None Include="Lib\glfw\docs\html\window_8md.html" />
     <None Include="Lib\glfw\docs\html\window_guide.html" />
-    <None Include="Resources\Shaders\Vertex.glsl" />
-    <None Include="Resources\Shaders\Fragment.glsl" />
+    <None Include="Engine\Resources\Shaders\Vertexdep.glsl" />
+    <None Include="Engine\Resources\Shaders\Fragmentdep.glsl" />
+    <None Include="Engine\Resources\Shaders\Vertex.glsl" />
+    <None Include="Engine\Resources\Shaders\Fragment.glsl" />
+    <None Include="Engine\Graphics\Vertex.glsl" />
+    <None Include="Engine\Graphics\Fragment.glsl" />
+    <None Include="Engine\Resources\Shaders\Shader.shader" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Lib\glfw\lib-vc2022\glfw3.lib" />

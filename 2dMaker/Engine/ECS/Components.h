@@ -28,7 +28,7 @@ namespace D2Maker
 
 	};
 	
-	struct RigidBody
+	struct RigidBody :  public Component
 	{
 		float mass;
 		float bounciness;
@@ -40,20 +40,13 @@ namespace D2Maker
 
 	};
 
-	struct Collider
+	struct Collider : public Component
 	{
 		Rectangle hitbox;
-		float &x;
-		float &y;
-		float &width;
-		float &height;
-		Collider(float& x, float& y, float& width, float& height) : x(x) , y(y) , width(width),height(height) ,
-			hitbox(width, height, x, y)
-		{
-		}
+		Collider() : hitbox(0,0,0,0){}
 	};
 
-	struct Velocity
+	struct Velocity : public Component
 	{
 		float dx;
 		float dy;

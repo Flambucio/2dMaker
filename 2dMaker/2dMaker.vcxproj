@@ -129,9 +129,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Application\Window.cpp" />
     <ClCompile Include="Engine\common\Deltatime.cpp" />
     <ClCompile Include="Engine\main.cpp" />
+    <ClCompile Include="Engine\StaticDef.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config\Config.cpp" />
@@ -154,6 +154,9 @@
     <ClInclude Include="Lib\glfw\include\GLFW\glfw3native.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Engine\Graphics\Fragment.glsl" />
+    <None Include="Engine\Graphics\Vertex.glsl" />
+    <None Include="Engine\Resources\Shaders\Shader.shader" />
     <None Include="Lib\GLEW\doc\advanced.html" />
     <None Include="Lib\GLEW\doc\basic.html" />
     <None Include="Lib\GLEW\doc\build.html" />
@@ -225,8 +228,10 @@
     <None Include="Lib\glfw\docs\html\vulkan_guide.html" />
     <None Include="Lib\glfw\docs\html\window_8md.html" />
     <None Include="Lib\glfw\docs\html\window_guide.html" />
-    <None Include="Resources\Shaders\Fragment.glsl" />
-    <None Include="Resources\Shaders\Vertex.glsl" />
+    <None Include="Engine\Resources\Shaders\Fragment.glsl" />
+    <None Include="Engine\Resources\Shaders\Fragmentdep.glsl" />
+    <None Include="Engine\Resources\Shaders\Vertex.glsl" />
+    <None Include="Engine\Resources\Shaders\Vertexdep.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Lib\GLEW\lib\Release\x64\glew32s.lib" />

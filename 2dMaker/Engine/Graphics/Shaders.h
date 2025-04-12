@@ -2,43 +2,87 @@
 
 #include "../common/Core.h"
 
-namespace D2Maker 
+namespace D2Maker
 {
+
+    struct ShaderSources
+    {
+        std::string Vertex;
+        std::string Fragment;
+
+    };
 
 
     class Shaders
     {
-        GLuint compileShader(GLenum type, const char* source)
-        {
-            GLuint shader = glCreateShader(type);
-            glShaderSource(shader, 1, &source, nullptr);
-            glCompileShader(shader);
+    private:
 
-            GLint success;
-            glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-            if (!success)
+        int compileShader(GLuint type, const std::string& source)
+        {
+            GLuint id = glCreateShader(type);
+            const char* src = source.c_str();
+            glShaderSource(id, 1, &src, nullptr);
+            glCompileShader(id);
+
+            int result;
+            glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+            if (result == GL_FALSE)
             {
-                GLint logLength;
-                glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
-                std::vector<char> errorLog(logLength);
-                glGetShaderInfoLog(shader, logLength, nullptr, errorLog.data());
-                ERROR("ERROR::SHADER::COMPILATION_FAILED\n" + std::string(errorLog.data()));
+                int length;
+                glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+                char* message = (char*)alloca(length * sizeof(char));
+                glGetShaderInfoLog(id, length, &length, message);
+                ERROR(message);
+                glDeleteShader(id);
+                return 0;
             }
 
-            return shader;
+            return id;
         }
 
-        std::string ReadShaderFile(const std::string& path)
+        static std::string ReadShaderFile(const std::string& path)
         {
             std::ifstream file(path);
             if (!file.is_open())
             {
-                ERROR("SHADER FILE NOT FOUNT %s", path.c_str());
-                return"";
+                ERROR("SHADER FILE NOT FOUND %s", path.c_str());
+                return "";
             }
             std::stringstream buffer;
             buffer << file.rdbuf();
             return buffer.str();
+        }
+        static ShaderSources ParseShader(const std::string& path)
+        {
+            enum class ShaderType
+            {
+                NONE = -1, VERTEX = 0, FRAGMENT = 1
+            };
+            ShaderType type=ShaderType::NONE;
+
+            std::ifstream stream(path);
+            std::string line;
+            std::stringstream ss[2];
+            while (getline(stream, line))
+            {
+                if (line.find("#shader") != std::string::npos)
+                {
+                    if (line.find("vertex") != std::string::npos)
+                    {
+                        type = ShaderType::VERTEX;
+                    }
+                    else if (line.find("fragment") != std::string::npos)
+                    {
+                        type = ShaderType::FRAGMENT;
+                    }
+                }
+                else
+                {
+                    ss[(int)type] << line << '\n';
+                }
+            }
+
+            return { ss[0].str(),ss[1].str() };
 
 
         }
@@ -46,26 +90,31 @@ namespace D2Maker
     public:
         GLuint CreateShaderProgram()
         {
-            const std::string vertexShaderPath = ".. / .. / Resources / Shaders / Vertex.glsl";
-            const std::string fragmentShaderPath = "../../Resources/Shaders/Fragment.glsl";
+            ShaderSources source = ParseShader("Engine/Resources/Shaders/Shader.shader");
 
-            const std::string vertexShaderSource = ReadShaderFile(vertexShaderPath);
-            const std::string fragmentShaderSource = ReadShaderFile(fragmentShaderPath);
 
-            GLuint vertexShader = compileShader(GL_VERTEX_SHADER, vertexShaderPath.c_str());
-            GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderPath.c_str());
+            GLuint vsID = compileShader(GL_VERTEX_SHADER, source.Vertex);
+            GLuint fsID = compileShader(GL_FRAGMENT_SHADER, source.Fragment);
 
-            GLuint shaderProgram = CreateShaderProgram();
-            glAttachShader(shaderProgram, vertexShader);
-            glAttachShader(shaderProgram, fragmentShader);
-            glLinkProgram(shaderProgram);
+            TRACE("VERTEX");
+            TRACE(source.Vertex);
+            TRACE("END VERTEX");
+            TRACE("--------------------------------------------------------------\n");
+            TRACE("FRAGMENT");
+            TRACE(source.Fragment);
+            TRACE("END FRAGMENT");
+            TRACE("--------------------------------------------------------------\n");
 
-            glDeleteShader(vertexShader);
-            glDeleteShader(fragmentShader);
+            GLuint program = glCreateProgram();
+            glAttachShader(program, vsID);
+            glAttachShader(program, fsID);
+            glLinkProgram(program);
+            glValidateProgram(program);
 
-            return shaderProgram;
+            glDeleteShader(vsID);
+            glDeleteShader(fsID);
+
+            return program;
         }
     };
-
-
 }
