@@ -26,9 +26,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Config\Config.cpp">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Application\Window.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
@@ -59,7 +56,7 @@
     <ClInclude Include="Engine\common\Deltatime.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Graphics\Shaders.h">
+    <ClInclude Include="Engine\Graphics\GL\Shaders.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Graphics\TextureRenderer.h">
@@ -78,6 +75,18 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\SystemManager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\GL\VertexBuffer.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\GL\IndexBuffer.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\GL\VertexArray.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\GL\VertexBufferLayout.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>
@@ -157,8 +166,6 @@
     <None Include="Engine\Resources\Shaders\Fragmentdep.glsl" />
     <None Include="Engine\Resources\Shaders\Vertex.glsl" />
     <None Include="Engine\Resources\Shaders\Fragment.glsl" />
-    <None Include="Engine\Graphics\Vertex.glsl" />
-    <None Include="Engine\Graphics\Fragment.glsl" />
     <None Include="Engine\Resources\Shaders\Shader.shader" />
   </ItemGroup>
   <ItemGroup>

@@ -134,7 +134,6 @@
     <ClCompile Include="Engine\StaticDef.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Config\Config.cpp" />
     <ClInclude Include="Engine\Application\Window.h" />
     <ClInclude Include="Engine\common\Core.h" />
     <ClInclude Include="Engine\common\Deltatime.h" />
@@ -143,7 +142,11 @@
     <ClInclude Include="Engine\ECS\Components.h" />
     <ClInclude Include="Engine\ECS\Entity.h" />
     <ClInclude Include="Engine\ECS\SystemManager.h" />
-    <ClInclude Include="Engine\Graphics\Shaders.h" />
+    <ClInclude Include="Engine\Graphics\GL\IndexBuffer.h" />
+    <ClInclude Include="Engine\Graphics\GL\VertexArray.h" />
+    <ClInclude Include="Engine\Graphics\GL\VertexBuffer.h" />
+    <ClInclude Include="Engine\Graphics\GL\VertexBufferLayout.h" />
+    <ClInclude Include="Engine\Graphics\GL\Shaders.h" />
     <ClInclude Include="Engine\Graphics\TextureObj.h" />
     <ClInclude Include="Engine\Graphics\TextureRenderer.h" />
     <ClInclude Include="Lib\GLEW\include\GL\eglew.h" />
@@ -154,8 +157,6 @@
     <ClInclude Include="Lib\glfw\include\GLFW\glfw3native.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Graphics\Fragment.glsl" />
-    <None Include="Engine\Graphics\Vertex.glsl" />
     <None Include="Engine\Resources\Shaders\Shader.shader" />
     <None Include="Lib\GLEW\doc\advanced.html" />
     <None Include="Lib\GLEW\doc\basic.html" />

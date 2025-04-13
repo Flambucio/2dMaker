@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../common/Core.h"
+#include "../../common/Core.h"
 
 namespace D2Maker
 {
@@ -15,9 +15,23 @@ namespace D2Maker
 
     class Shaders
     {
+    public:
+        Shaders(const std::string& filepath=SHADER_PATH) : filepath(filepath), rendererID(0)
+        {
+            rendererID = CreateShaderProgram();
+        }
+        ~Shaders()
+        {
+            glDeleteProgram(rendererID);
+        }
     private:
+        std::string filepath;
+        unsigned int rendererID;
+        std::unordered_map<std::string, unsigned int> uniformLocationCache;
 
-        int compileShader(GLuint type, const std::string& source)
+
+
+        int CompileShader(GLuint type, const std::string& source)
         {
             GLuint id = glCreateShader(type);
             const char* src = source.c_str();
@@ -58,7 +72,7 @@ namespace D2Maker
             {
                 NONE = -1, VERTEX = 0, FRAGMENT = 1
             };
-            ShaderType type=ShaderType::NONE;
+            ShaderType type = ShaderType::NONE;
 
             std::ifstream stream(path);
             std::string line;
@@ -93,8 +107,8 @@ namespace D2Maker
             ShaderSources source = ParseShader("Engine/Resources/Shaders/Shader.shader");
 
 
-            GLuint vsID = compileShader(GL_VERTEX_SHADER, source.Vertex);
-            GLuint fsID = compileShader(GL_FRAGMENT_SHADER, source.Fragment);
+            GLuint vsID = CompileShader(GL_VERTEX_SHADER, source.Vertex);
+            GLuint fsID = CompileShader(GL_FRAGMENT_SHADER, source.Fragment);
 
             TRACE("VERTEX");
             TRACE(source.Vertex);
@@ -116,5 +130,45 @@ namespace D2Maker
 
             return program;
         }
+
+
+        void Bind()
+        {
+            glUseProgram(rendererID);
+        }
+
+        void Unbind()
+        {
+            glUseProgram(0);
+        }
+
+        void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3)
+        {
+
+            glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
+        }
+
+        unsigned int GetUniformLocation(const std::string& name)
+        {
+            if (uniformLocationCache.find(name) != uniformLocationCache.end())
+            {
+                return uniformLocationCache[name];
+            }
+            unsigned int location = glGetUniformLocation(rendererID, name.c_str());
+            if (location == -1)
+            {
+                WARN("UNIFORM:");
+                WARN(name.c_str());
+                WARN("NOT FOUND")
+
+            }
+
+            uniformLocationCache[name] = location;
+            
+            return location;
+
+        }
+
     };
+ 
 }

@@ -1,5 +1,5 @@
 #include "Application/Window.h"
-#include "Graphics/Shaders.h"
+#include "Graphics/GL/Shaders.h"
 
 GLFWwindow* D2Maker::Window::window = nullptr;
 

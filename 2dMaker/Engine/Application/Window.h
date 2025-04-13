@@ -1,7 +1,9 @@
 #pragma once
 #include "../common/Core.h"
 #include "../ECS/Entity.h"
-#include "../Graphics/Shaders.h"
+#include "../Graphics/GL/Shaders.h"
+#include "../Graphics/GL/IndexBuffer.h"
+#include "../Graphics/GL/VertexArray.h"
 namespace D2Maker 
 {
 
@@ -52,34 +54,64 @@ namespace D2Maker
 
         static void RunWindow()
         {
-            unsigned int buffer;
-            glGenBuffers(1, &buffer);
-            glBindBuffer(GL_ARRAY_BUFFER, buffer);
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
-            glEnableVertexAttribArray(0);
-            float vertices[] = {
-                -0.5f,-0.5f,
-                 0.0f, 0.5f,
-                 0.5f,-0.5f
+            //GRAPHICS
+            float positions[] = {
+                    -0.5f,-0.5f,
+                     0.5f,-0.5f,
+                     0.5f, 0.5f,
+                    -0.5f, 0.5f,
             };
-            glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), vertices, GL_STATIC_DRAW);
+
+            unsigned int indices[] = {
+                0,1,2,
+                2,3,0
+            };
+
+            GLuint vao;
+
+
+            unsigned int buffer;
+            VertexArray va;
+            VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+            VertexBufferLayout layout;
+            layout.Push<float>(2);
+            va.AddBuffer(vb, layout);
+           
+
+            IndexBuffer ib(indices, 6);
+
             Shaders shaderprogram;
-            GLuint shader=shaderprogram.CreateShaderProgram();
-            glUseProgram(shader);
+            shaderprogram.Bind();
+
+            //ECS
             EntityManager em;
             Entity entity1 = em.createEntity();
             Entity entity2 = em.createEntity();
             em.addComponent<Transform>(entity1, 1, 1, 100, 100, 0);//trace
             em.addComponent<Collider>(entity2);//warning
             em.addComponent<Collider>(entity1);//trace
+            float r = 0.0f;
+            float increment = 0.05f; 
             while (!glfwWindowShouldClose(window))
             {
                 glClear(GL_COLOR_BUFFER_BIT);
 
-                glDrawArrays(GL_TRIANGLES,0,3);
-                
+                va.Bind();
+                ib.Bind();
                 
 
+                shaderprogram.SetUniform4f("u_Color",r, 0.3f, 0.8f, 1.0f);
+                glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+                if (r > 1.0f)
+                {
+                    increment = -0.05f;
+                }
+                else if (r < -1.0f)
+                {
+                    increment = 0.05f;
+                }
+                
+                r += increment;
 
                 glfwSwapBuffers(window);
                 glfwPollEvents();

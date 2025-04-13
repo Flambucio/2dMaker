@@ -11,7 +11,7 @@ namespace D2Maker
 		}
 	};
 
-	template<typename Texture>
+	template<typename Texture>//temp
 	class TextureRenderer
 	{
 	private:

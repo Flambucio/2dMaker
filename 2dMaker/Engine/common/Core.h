@@ -32,4 +32,4 @@
 
 #define ASPECT_RATIO = (double)VIRTUAL_WIDTH/(double)VIRTUAL_HEIGHT;
 #define INVERSE_ASPECT_RATIO = 1.0/(double)ASPECT_RATIO
-#pragma once
+#define SHADER_PATH "Engine/Resources/Shaders/Shader.shader"
