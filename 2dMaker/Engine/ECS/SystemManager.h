@@ -5,7 +5,10 @@ namespace D2Maker
 	class System
 	{
 	public:
-		virtual void Update();
+		virtual void Update()
+		{
+
+		}
 	};
 	class SystemManager
 	{

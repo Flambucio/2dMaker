@@ -1,6 +1,7 @@
 #pragma once
 #include "../common/Core.h"
 #include "../common/GeneralStructs.h"
+#include "../Graphics/TextureLoader.h"
 namespace D2Maker
 {
 
@@ -55,5 +56,24 @@ namespace D2Maker
 			this->dx = dx;
 			this->dy = dy;
 		}
+	};
+
+	//texture component da creare
+	struct TextureComponent : public Component
+	{
+		int orderInLayer;
+		std::string name;
+		bool exists;
+		TextureComponent(const std::string& name,int orderInLayer) : orderInLayer(orderInLayer) , name(name)
+		{ 
+			if (TextureLoader::Exists(name))
+			{
+				this->exists = true;
+				return;
+			}
+			this->exists = false;
+			WARN("Texture name not found!");
+		}
+
 	};
 }

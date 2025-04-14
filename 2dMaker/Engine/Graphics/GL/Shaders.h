@@ -27,7 +27,7 @@ namespace D2Maker
     private:
         std::string filepath;
         unsigned int rendererID;
-        std::unordered_map<std::string, unsigned int> uniformLocationCache;
+        std::unordered_map<std::string, int> uniformLocationCache;
 
 
 
@@ -132,12 +132,12 @@ namespace D2Maker
         }
 
 
-        void Bind()
+        void Bind() const
         {
             glUseProgram(rendererID);
         }
 
-        void Unbind()
+        void Unbind() const
         {
             glUseProgram(0);
         }
@@ -148,13 +148,23 @@ namespace D2Maker
             glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
         }
 
-        unsigned int GetUniformLocation(const std::string& name)
+        void SetUniform1f(const std::string& name, float value)
+        {
+            glUniform1f(GetUniformLocation(name), value);
+        }
+
+        void SetUniform1i(const std::string& name, int value)
+        {
+            glUniform1i(GetUniformLocation(name), value);
+        }
+
+        int GetUniformLocation(const std::string& name)
         {
             if (uniformLocationCache.find(name) != uniformLocationCache.end())
             {
                 return uniformLocationCache[name];
             }
-            unsigned int location = glGetUniformLocation(rendererID, name.c_str());
+            int location = glGetUniformLocation(rendererID, name.c_str());
             if (location == -1)
             {
                 WARN("UNIFORM:");

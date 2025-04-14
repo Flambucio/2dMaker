@@ -20,6 +20,7 @@
 #include "Deltatime.h"
 
 
+#include "../../Lib/stbimage/stb_image.h"
 
 #define GLEW_STATIC
 #include "../../Lib/GLEW/include/GL/glew.h"

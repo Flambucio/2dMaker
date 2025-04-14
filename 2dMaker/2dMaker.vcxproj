@@ -132,6 +132,7 @@
     <ClCompile Include="Engine\common\Deltatime.cpp" />
     <ClCompile Include="Engine\main.cpp" />
     <ClCompile Include="Engine\StaticDef.cpp" />
+    <ClCompile Include="Lib\stbimage\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Application\Window.h" />
@@ -147,14 +148,17 @@
     <ClInclude Include="Engine\Graphics\GL\VertexBuffer.h" />
     <ClInclude Include="Engine\Graphics\GL\VertexBufferLayout.h" />
     <ClInclude Include="Engine\Graphics\GL\Shaders.h" />
-    <ClInclude Include="Engine\Graphics\TextureObj.h" />
+    <ClInclude Include="Engine\Graphics\Renderer.h" />
+    <ClInclude Include="Engine\Graphics\TextureLoader.h" />
     <ClInclude Include="Engine\Graphics\TextureRenderer.h" />
+    <ClInclude Include="Engine\Graphics\Texture.h" />
     <ClInclude Include="Lib\GLEW\include\GL\eglew.h" />
     <ClInclude Include="Lib\GLEW\include\GL\glew.h" />
     <ClInclude Include="Lib\GLEW\include\GL\glxew.h" />
     <ClInclude Include="Lib\GLEW\include\GL\wglew.h" />
     <ClInclude Include="Lib\glfw\include\GLFW\glfw3.h" />
     <ClInclude Include="Lib\glfw\include\GLFW\glfw3native.h" />
+    <ClInclude Include="Lib\stbimage\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\Shader.shader" />
@@ -237,6 +241,9 @@
   <ItemGroup>
     <Library Include="Lib\GLEW\lib\Release\x64\glew32s.lib" />
     <Library Include="Lib\glfw\lib-vc2022\glfw3.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Engine\Resources\TestAssets\image.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

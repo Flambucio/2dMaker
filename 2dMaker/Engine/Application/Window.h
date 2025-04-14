@@ -1,9 +1,7 @@
 #pragma once
 #include "../common/Core.h"
 #include "../ECS/Entity.h"
-#include "../Graphics/GL/Shaders.h"
-#include "../Graphics/GL/IndexBuffer.h"
-#include "../Graphics/GL/VertexArray.h"
+#include "../Graphics/Texture.h"
 namespace D2Maker 
 {
 
@@ -21,17 +19,18 @@ namespace D2Maker
                 return;
             }
 
-            window = glfwCreateWindow(1280, 720, "game", NULL, NULL);
-            if (!window)
-            {
-                ERROR("failed to create window");
-                
-                glfwTerminate();
-                return;
-            }
+
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            window = glfwCreateWindow(1000, 700, "game", NULL, NULL);
+            if (!window)
+            {
+                ERROR("failed to create window");
+
+                glfwTerminate();
+                return;
+            }
             glfwMakeContextCurrent(window);
             GLenum err = glewInit();
             if (err!=GLEW_OK)
@@ -47,34 +46,30 @@ namespace D2Maker
 
 
 
-        static GLuint CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
-        {
-
-        }
-
         static void RunWindow()
         {
             //GRAPHICS
             float positions[] = {
-                    -0.5f,-0.5f,
-                     0.5f,-0.5f,
-                     0.5f, 0.5f,
-                    -0.5f, 0.5f,
+                    -0.5f,-0.5f,0.0f,0.0f,
+                     0.5f,-0.5f, 1.0f,0.0f,
+                     0.5f, 0.5f, 1.0f,1.0f,
+                    -0.5f, 0.5f, 0.0f,1.0f
             };
 
             unsigned int indices[] = {
                 0,1,2,
                 2,3,0
             };
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            
 
             GLuint vao;
-
-
-            unsigned int buffer;
             VertexArray va;
-            VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+            VertexBuffer vb(positions, 4 * 4 * sizeof(float));
             VertexBufferLayout layout;
             layout.Push<float>(2);
+            layout.Push <float>(2);
             va.AddBuffer(vb, layout);
            
 
@@ -83,6 +78,10 @@ namespace D2Maker
             Shaders shaderprogram;
             shaderprogram.Bind();
 
+            Renderer renderer;
+            Texture texture("Engine/Resources/TestAssets/image.png",0);
+            texture.Bind();
+            shaderprogram.SetUniform1i("u_Texture", 0);
             //ECS
             EntityManager em;
             Entity entity1 = em.createEntity();
@@ -94,24 +93,8 @@ namespace D2Maker
             float increment = 0.05f; 
             while (!glfwWindowShouldClose(window))
             {
-                glClear(GL_COLOR_BUFFER_BIT);
-
-                va.Bind();
-                ib.Bind();
-                
-
-                shaderprogram.SetUniform4f("u_Color",r, 0.3f, 0.8f, 1.0f);
-                glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-                if (r > 1.0f)
-                {
-                    increment = -0.05f;
-                }
-                else if (r < -1.0f)
-                {
-                    increment = 0.05f;
-                }
-                
-                r += increment;
+                renderer.Clear();
+                renderer.Draw(va, ib, shaderprogram);
 
                 glfwSwapBuffers(window);
                 glfwPollEvents();

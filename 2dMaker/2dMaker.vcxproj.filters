@@ -24,6 +24,9 @@
     <ClCompile Include="Engine\StaticDef.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="Lib\stbimage\stb_image.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Application\Window.h">
@@ -62,9 +65,6 @@
     <ClInclude Include="Engine\Graphics\TextureRenderer.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Graphics\TextureObj.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\ECS\Entity.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
@@ -87,6 +87,18 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Graphics\GL\VertexBufferLayout.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Renderer.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\stbimage\stb_image.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Texture.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\TextureLoader.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>
@@ -171,5 +183,10 @@
   <ItemGroup>
     <Library Include="Lib\glfw\lib-vc2022\glfw3.lib" />
     <Library Include="Lib\GLEW\lib\Release\x64\glew32s.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Engine\Resources\TestAssets\image.png">
+      <Filter>File di risorse</Filter>
+    </Image>
   </ItemGroup>
 </Project>

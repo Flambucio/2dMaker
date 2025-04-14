@@ -62,7 +62,7 @@ namespace D2Maker
 					WARN("not added because of missing transform component");
 					return;
 				}	
-				if (isComponent<T, RigidBody>() && (!hasComponent<RigidBody>(entity) || !hasComponent<Collider>(entity)))
+				if (isComponent<T, RigidBody>() && (!hasComponent<Velocity>(entity) || !hasComponent<Collider>(entity)))
 				{
 					WARN("RigidBody not added because of missing Velocity/Collider component/s");
 					return;
