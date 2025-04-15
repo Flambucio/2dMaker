@@ -7,6 +7,7 @@ namespace D2Maker
 	class Texture
 	{
 	private:
+	public:
 		unsigned int rendererID;
 		std::string filepath;
 		unsigned char* localBuffer;
@@ -47,6 +48,8 @@ namespace D2Maker
 		{
 			glActiveTexture(GL_TEXTURE0 + slot);
 			glBindTexture(GL_TEXTURE_2D, rendererID);
+			TRACE("RendererID:");
+			TRACE(rendererID);
 		}
 		void Unbind() const
 		{

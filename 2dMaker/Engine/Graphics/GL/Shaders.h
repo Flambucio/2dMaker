@@ -104,7 +104,7 @@ namespace D2Maker
     public:
         GLuint CreateShaderProgram()
         {
-            ShaderSources source = ParseShader("Engine/Resources/Shaders/Shader.shader");
+            ShaderSources source = ParseShader(this->filepath);
 
 
             GLuint vsID = CompileShader(GL_VERTEX_SHADER, source.Vertex);

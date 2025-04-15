@@ -5,7 +5,6 @@
 
 int main()
 {
-
 	D2Maker::Window::Initialize();
 	D2Maker::Window::RunWindow();
 

@@ -1,7 +1,5 @@
 #pragma once
-#include "../common/Core.h"
-#include "../ECS/Entity.h"
-#include "../Graphics/Texture.h"
+#include "../ECS/Systems/RenderingSystem.h"
 namespace D2Maker 
 {
 
@@ -49,6 +47,7 @@ namespace D2Maker
         static void RunWindow()
         {
             //GRAPHICS
+            TextureLoader::LoadTexture("erbucio", "Resources/TestAssets/image.png", 0);
             float positions[] = {
                     -0.5f,-0.5f,0.0f,0.0f,
                      0.5f,-0.5f, 1.0f,0.0f,
@@ -79,23 +78,40 @@ namespace D2Maker
             shaderprogram.Bind();
 
             Renderer renderer;
+            
+            TextureLoader::BindTexture("erbucio");
             Texture texture("Engine/Resources/TestAssets/image.png",0);
-            texture.Bind();
             shaderprogram.SetUniform1i("u_Texture", 0);
+            
             //ECS
+            
+            RenderSystem system;
             EntityManager em;
             Entity entity1 = em.createEntity();
             Entity entity2 = em.createEntity();
-            em.addComponent<Transform>(entity1, 1, 1, 100, 100, 0);//trace
+            em.addComponent<Transform>(entity1, 100, 100, 100, 100, 0);//trace
             em.addComponent<Collider>(entity2);//warning
             em.addComponent<Collider>(entity1);//trace
+            em.addComponent<TextureComponent>(entity1,"erbucio",0);
+            TextureComponent* texcomp = em.getComponent<TextureComponent>(entity1);
+            TRACE("TEXCOMP:");
+            TRACE(texcomp->exists);
+            TRACE(texcomp->name);
+            texture.Bind();
+            TextureLoader::BindTexture("erbucio");
+            
             float r = 0.0f;
             float increment = 0.05f; 
             while (!glfwWindowShouldClose(window))
             {
+                glClearColor(0.2f, 0.8f, 0.6f, 1.0f);
                 renderer.Clear();
+                //TextureLoader::BindTexture("erbucio");
+                TextureLoader::BindTexture("erbucio");
+                shaderprogram.SetUniform1i("u_Texture", 0);
+                
                 renderer.Draw(va, ib, shaderprogram);
-
+                //system.Update(em);
                 glfwSwapBuffers(window);
                 glfwPollEvents();
             }

@@ -58,7 +58,7 @@ namespace D2Maker
 		}
 	};
 
-	//texture component da creare
+	
 	struct TextureComponent : public Component
 	{
 		int orderInLayer;

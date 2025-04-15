@@ -61,7 +61,15 @@ namespace D2Maker
 			WARN("Texture nonexistent");
 		}
 
-
+		static void BindTexture(const std::string&name)
+		{
+			if (Exists(name))
+			{
+				textures[name]->Bind();
+				TRACE("TEXTURE BINDING INSIDE FUNCTION");
+				TRACE(textures[name]->rendererID);
+			}
+		}
 		
 
 

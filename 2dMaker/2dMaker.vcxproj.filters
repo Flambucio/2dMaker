@@ -101,6 +101,12 @@
     <ClInclude Include="Engine\Graphics\TextureLoader.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\ECS\Systems\Sysbase.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ECS\Systems\RenderingSystem.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Lib\GLEW\doc\advanced.html" />
