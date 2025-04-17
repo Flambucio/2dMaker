@@ -14,100 +14,101 @@ namespace D2Maker
 		}
 	};
 
-	class RenderSystem : public System
-	{
-	private:
-		Shaders shaderProgram;
-		IndexBuffer ibo;
-		VertexBufferLayout layout;
-		Renderer renderer;
-		unsigned int indices[16];
-		std::priority_queue < 
-			std::pair<Entity, int>, 
-			std::vector<std::pair<Entity, int>>, 
-			OrderInLayerComp> queue;
-	public:
-		RenderSystem() : indices{0,1,2,2,3,0}, ibo(indices, 6)
-		{
-			layout.Push<float>(2);
-			layout.Push<float>(2);
-			shaderProgram.Bind();
-		}
+    class RenderSystem : public System
+    {
+    private:
+        GLFWwindow* window;
+        Shaders shaderProgram;
+        //IndexBuffer ibo;
+        Renderer renderer;
+        VertexBufferLayout layout;
+        unsigned int indices[6] = { 0, 1, 2, 2, 3, 0 };
 
-		void Update(EntityManager& em)
-		{
-			PushToQueue(em);
-			RenderQueue(em);
-		}
-	private:
-		void PushToQueue(EntityManager& em)
-		{
-			for (auto entity : em.aliveEntities)
-			{
+        std::priority_queue<
+            std::pair<Entity, int>,
+            std::vector<std::pair<Entity, int>>,
+            OrderInLayerComp> queue;
 
-				TextureComponent* texcomponent = em.getComponent<TextureComponent>(entity);
-				if (!texcomponent)
-				{
-					continue;
-				}
-				if (!texcomponent->exists)
-				{
-					continue;
-				}
-				queue.push({ entity, texcomponent->orderInLayer });
+    public:
+        RenderSystem(GLFWwindow*window) //:ibo(indices, 6)       
+        {
+            this->window=window;
+            layout.Push<float>(2);
+            layout.Push<float>(2);
+            shaderProgram.Bind();
+        }
 
-				
+        void Update(EntityManager& em)
+        {
+            PushToQueue(em);
+            RenderQueue(em);
+        }
 
-			}
+    private:
+        void PushToQueue(EntityManager& em)
+        {
+            for (auto entity : em.aliveEntities)
+            {
+                TextureComponent* texcomponent = em.getComponent<TextureComponent>(entity);
+                if (!texcomponent || !texcomponent->exists) continue;
 
-		}
+                queue.push({ entity, texcomponent->orderInLayer });
 
-		std::array<float,4> ConvertToNdc(Transform* transform)
-		{
-			std::array<float, 4> convertedValues;
-			convertedValues[0] = ((2 * transform->x) / VIRTUAL_WIDTH) - 1;
-			convertedValues[1] = 1-((2 * transform->y) / VIRTUAL_HEIGHT);
-			convertedValues[2] = ((2 * transform->width) / VIRTUAL_WIDTH);
-			convertedValues[3] = -((2 * transform->height) / VIRTUAL_HEIGHT);
-			return convertedValues;
+                //TRACE("Pushed entity with texture: " +texcomponent->name);
+            }
+        }
 
-		}
+        std::array<float, 4> ConvertToNdc(Transform* transform)
+        {
+            return {
+                ((2 * transform->x) / VIRTUAL_WIDTH) - 1,
+                1 - ((2 * transform->y) / VIRTUAL_HEIGHT),
+                ((2 * transform->width) / VIRTUAL_WIDTH),
+                -((2 * transform->height) / VIRTUAL_HEIGHT)
+            };
+        }
 
-		std::array <float, 16> GetVertices(Transform* transform)
-		{
-			std::array<float,4>values = ConvertToNdc(transform);
-			std::array<float,16> positions = {
-			values[0],			values[1],			 0.0f,0.0f,
-			values[0]+values[2],values[1],			 1.0f,0.0f,
-			values[0],			values[1]+values[3], 1.0f,1.0f,
-			values[0]+values[2],values[1]+values[3], 0.0f,1.0f
-			};
+        std::array<float, 16> GetVertices(Transform* transform)
+        {
+            std::array<float, 4> v = ConvertToNdc(transform);
+            return {
+                v[0],         v[1],         0.0f, 0.0f,
+                v[0] + v[2],  v[1],         1.0f, 0.0f,
+                v[0] + v[2],  v[1] + v[3],  1.0f, 1.0f,
+                v[0],         v[1] + v[3],  0.0f, 1.0f
+            };
+        }
 
-			return positions;
-		}
+        void RenderQueue(EntityManager& em)
+        {
+            //renderer.Clear();
+            //shaderProgram.Bind();
+            
+            renderer.Clear();
+            shaderProgram.Bind();
+            while (!queue.empty())
+            {
+                Entity entity = queue.top().first;
+                queue.pop();
+                unsigned int indices[] = { 0,1,2,2,3,0 };
+           
 
+                IndexBuffer ibo(indices, 6);
+                //Renderer renderer;
+                //Entity entity = 0;
+                TextureComponent* texcomponent = em.getComponent<TextureComponent>(entity);
+                Transform* transformcomponent = em.getComponent<Transform>(entity);
+                std::array<float, 16> vert = GetVertices(transformcomponent);
+                VertexArray vao;
+                vao.Bind();
+                VertexBuffer vbo(vert.data(), 4 * 4 * sizeof(float));
+                vao.AddBuffer(vbo, layout);
 
-		void RenderQueue(EntityManager& em)
-		{
-			renderer.Clear();
-			while (queue.size() > 0)
-			{
-				shaderProgram.SetUniform1i("u_Texture", 0);
-				Entity entity = queue.top().first;
-				queue.pop();
-				TextureComponent* texcomponent = em.getComponent<TextureComponent>(entity);
-				TextureLoader::BindTexture(texcomponent->name);
-				Transform* transformcomponent = em.getComponent<Transform>(entity);
-				std::array<float, 16> vertices = GetVertices(transformcomponent);
-				VertexArray vao;
-				VertexBuffer vbo{ vertices.data(),4 * 4 * sizeof(float) };
-				vao.AddBuffer(vbo, layout);
-				renderer.Draw(vao, ibo, shaderProgram);
-
-			}
-		}
-
-
-	};
+                TextureLoader::BindTexture(texcomponent->name);
+                renderer.Draw(vao, ibo, shaderProgram);
+                
+            }
+        }
+    };
 
 }

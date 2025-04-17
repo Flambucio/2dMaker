@@ -4,24 +4,22 @@ namespace D2Maker
 {
 
 
-	static class TextureLoader
+	class TextureLoader
 	{
 	private:
 		static std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
-	public:
 
+	public:
 		static bool Exists(const std::string& name)
 		{
 			return textures.find(name) != textures.end();
 		}
 
-		
-
-		static void LoadTexture(const std::string& name, const std::string& path,int orderInLayer)
+		static void LoadTexture(const std::string& name, const std::string& path, int orderInLayer)
 		{
 			if (Exists(name))
 			{
-				WARN("Texture name already present")
+				WARN("Texture name already present");
 				return;
 			}
 			textures[name] = std::make_unique<Texture>(path, orderInLayer);
@@ -29,52 +27,79 @@ namespace D2Maker
 
 		static void RemoveTexture(const std::string& name)
 		{
-			if (Exists(name))
+			if (!Exists(name))
 			{
-				textures.erase(name);
+				WARN("Texture already deleted/Texture not added");
 				return;
 			}
-			WARN("Texture already deleted/Texture not added");
+			textures.erase(name);
 		}
 
-		static void ModifyOrderInLayer(const std::string& name,int newOrderInLayer)
+		static void ModifyOrderInLayer(const std::string& name, int newOrderInLayer)
 		{
-			if (Exists(name))
+			if (!Exists(name))
 			{
-				std::string path = textures[name]->GetPath();
-				RemoveTexture(name);
-				LoadTexture(name, path, newOrderInLayer);
+				WARN("Texture nonexistent");
 				return;
 			}
-			WARN("Texture nonexistent");
+
+			std::string path = textures[name]->GetPath();
+			RemoveTexture(name);
+			LoadTexture(name, path, newOrderInLayer);
 		}
 
-		static void RenameTexture(const std::string& name,const std::string& newName)
+		static void RenameTexture(const std::string& oldName, const std::string& newName)
 		{
-			if (Exists(name))
+			if (!Exists(oldName))
 			{
-				int orderInLayer = textures[name]->GetOrderInLayer();
-				std::string path = textures[name]->GetPath();
-				RemoveTexture(name);
-				LoadTexture(newName, path, orderInLayer);
+				WARN("Texture nonexistent");
+				return;
 			}
-			WARN("Texture nonexistent");
+
+			int orderInLayer = textures[oldName]->GetOrderInLayer();
+			std::string path = textures[oldName]->GetPath();
+			RemoveTexture(oldName);
+			LoadTexture(newName, path, orderInLayer);
 		}
 
-		static void BindTexture(const std::string&name)
+		static Texture* GetTexture(const std::string& name)
 		{
-			if (Exists(name))
+			auto it = textures.find(name);
+			if (it != textures.end())
+				return it->second.get();
+			return nullptr;
+		}
+
+		static void BindTexture(const std::string& name)
+		{
+			Texture* tex = GetTexture(name);
+			if (tex)
 			{
-				textures[name]->Bind();
-				TRACE("TEXTURE BINDING INSIDE FUNCTION");
-				TRACE(textures[name]->rendererID);
+				tex->Bind();
+			}
+			else
+			{
+				WARN("Attempted to bind nonexistent texture");
 			}
 		}
-		
 
+		static std::unordered_map<std::string, std::unique_ptr<Texture>>& GetMap()
+		{
+			return textures;
+		}
 
-		
+		// Debug/Test method
+		static void TestFunction()
+		{
+			LoadTexture("erbucio", "Engine/Resources/TestAssets/image.png", 0);
+			BindTexture("erbucio");
+		}
 	};
+		
+
+
+		
+	
 
 
 

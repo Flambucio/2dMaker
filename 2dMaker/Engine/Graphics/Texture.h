@@ -20,7 +20,7 @@ namespace D2Maker
 			bpp(0), orderInLayer(orderInLayer)
 		{
 
-			stbi_set_flip_vertically_on_load(1);
+			stbi_set_flip_vertically_on_load(false);
 			localBuffer = stbi_load(filepath.c_str(), &width, &height, &bpp, 4);
 
 			glGenTextures(1, &rendererID);
@@ -48,8 +48,6 @@ namespace D2Maker
 		{
 			glActiveTexture(GL_TEXTURE0 + slot);
 			glBindTexture(GL_TEXTURE_2D, rendererID);
-			TRACE("RendererID:");
-			TRACE(rendererID);
 		}
 		void Unbind() const
 		{

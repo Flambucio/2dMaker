@@ -7,7 +7,15 @@ namespace D2Maker
     static class Window
     {
         static GLFWwindow* window;
+    
+    private:
+        static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+        {
+            glViewport(0, 0, width, height);
+        }
     public:
+
+
         static void Initialize()
         {
             if (!glfwInit())
@@ -47,7 +55,7 @@ namespace D2Maker
         static void RunWindow()
         {
             //GRAPHICS
-            TextureLoader::LoadTexture("erbucio", "Resources/TestAssets/image.png", 0);
+            TextureLoader::LoadTexture("erbucio", "Engine/Resources/TestAssets/image.png", 0);
             float positions[] = {
                     -0.5f,-0.5f,0.0f,0.0f,
                      0.5f,-0.5f, 1.0f,0.0f,
@@ -61,6 +69,9 @@ namespace D2Maker
             };
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_LESS);
+            glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
             
 
             GLuint vao;
@@ -76,53 +87,48 @@ namespace D2Maker
 
             Shaders shaderprogram;
             shaderprogram.Bind();
-
-            Renderer renderer;
-            
-            TextureLoader::BindTexture("erbucio");
-            Texture texture("Engine/Resources/TestAssets/image.png",0);
             shaderprogram.SetUniform1i("u_Texture", 0);
             
-            //ECS
             
-            RenderSystem system;
+            
+            //ECS
+            Renderer renderer;
+            RenderSystem system{ window };
             EntityManager em;
             Entity entity1 = em.createEntity();
             Entity entity2 = em.createEntity();
-            em.addComponent<Transform>(entity1, 100, 100, 100, 100, 0);//trace
+            em.addComponent<Transform>(entity1, 200, 200, 600, 500, 0);//trace
             em.addComponent<Collider>(entity2);//warning
             em.addComponent<Collider>(entity1);//trace
             em.addComponent<TextureComponent>(entity1,"erbucio",0);
-            TextureComponent* texcomp = em.getComponent<TextureComponent>(entity1);
-            TRACE("TEXCOMP:");
-            TRACE(texcomp->exists);
-            TRACE(texcomp->name);
-            texture.Bind();
+            em.addComponent<Transform>(entity2, 0, 0, 1600, 900,0);
+            em.addComponent<TextureComponent>(entity2, "erbucio", 1);
+
+            
             TextureLoader::BindTexture("erbucio");
+            
+            
             
             float r = 0.0f;
             float increment = 0.05f; 
             while (!glfwWindowShouldClose(window))
             {
-                glClearColor(0.2f, 0.8f, 0.6f, 1.0f);
-                renderer.Clear();
-                //TextureLoader::BindTexture("erbucio");
-                TextureLoader::BindTexture("erbucio");
-                shaderprogram.SetUniform1i("u_Texture", 0);
-                
-                renderer.Draw(va, ib, shaderprogram);
-                //system.Update(em);
+                glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+                //renderer.Draw(va, ib, shaderprogram);
+                system.Update(em);
+                //system.TestRendering(entity1, em, window);
                 glfwSwapBuffers(window);
                 glfwPollEvents();
             }
         }
-
 
         static void Destruct()
         {
             glfwTerminate();
             
         }
+
+        
 
     };
 
