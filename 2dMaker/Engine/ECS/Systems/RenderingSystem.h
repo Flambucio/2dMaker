@@ -6,9 +6,10 @@
 
 namespace D2Maker
 {
+    template<typename T>
 	struct OrderInLayerComp
 	{
-		bool operator()(const std::pair<Entity, int>& a, const std::pair<Entity, int>& b)
+        bool operator()(const std::pair<T, int>& a, const std::pair<T, int>& b) const
 		{
 			return a.second < b.second;
 		}
@@ -27,7 +28,7 @@ namespace D2Maker
         std::priority_queue<
             std::pair<Entity, int>,
             std::vector<std::pair<Entity, int>>,
-            OrderInLayerComp> queue;
+            OrderInLayerComp<Entity>> queue;
 
     public:
         RenderSystem(GLFWwindow*window) //:ibo(indices, 6)       
@@ -50,7 +51,7 @@ namespace D2Maker
             for (auto entity : em.aliveEntities)
             {
                 TextureComponent* texcomponent = em.getComponent<TextureComponent>(entity);
-                if (!texcomponent || !texcomponent->exists) continue;
+                if (!texcomponent || !texcomponent->exists) { continue; }
 
                 queue.push({ entity, texcomponent->orderInLayer });
 

@@ -8,7 +8,7 @@ namespace D2Maker
 	{
 	public:
 
-		virtual void Update()
+		virtual void Update(EntityManager& em)
 		{
 
 		}

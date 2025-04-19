@@ -107,6 +107,9 @@
     <ClInclude Include="Engine\ECS\Systems\RenderingSystem.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\ECS\Systems\Physics.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Lib\GLEW\doc\advanced.html" />

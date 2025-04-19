@@ -145,6 +145,7 @@
     <ClInclude Include="Engine\ECS\SystemManager.h" />
     <ClInclude Include="Engine\ECS\Systems\RenderingSystem.h" />
     <ClInclude Include="Engine\ECS\Systems\Sysbase.h" />
+    <ClInclude Include="Engine\ECS\Systems\Physics.h" />
     <ClInclude Include="Engine\Graphics\GL\IndexBuffer.h" />
     <ClInclude Include="Engine\Graphics\GL\VertexArray.h" />
     <ClInclude Include="Engine\Graphics\GL\VertexBuffer.h" />

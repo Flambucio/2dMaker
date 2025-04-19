@@ -20,10 +20,10 @@ namespace D2Maker
 		float rotationDegrees;
 		Transform(float x, float y, float width, float height, float rotationDegrees)
 		{
-			this->x = x;
-			this->y = y;
-			this->width = width;
-			this->height = height;
+			this->x				  = x;
+			this->y				  = y;
+			this->width			  = width;
+			this->height		  = height;
 			this->rotationDegrees = rotationDegrees;
 		}
 
@@ -33,28 +33,35 @@ namespace D2Maker
 	{
 		float mass;
 		float bounciness;
-		RigidBody(float mass, float bounciness)
+		float max_dy;
+		float dy_accumulator;
+		RigidBody(float mass, float bounciness,float max_dy)
 		{
-			this->mass = mass;
-			this->bounciness = bounciness;
+			this->mass			 = mass;
+			this->bounciness	 = bounciness;
+			this->max_dy	     = max_dy;
+			this->dy_accumulator = 0;
 		}
 
 	};
 
 	struct Collider : public Component
 	{
-		Rectangle hitbox;
-		Collider() : hitbox(0,0,0,0){}
+		Collider() = default;
 	};
 
 	struct Velocity : public Component
 	{
 		float dx;
 		float dy;
+		float default_dx;
+		float default_dy;
 		Velocity(float dx,float dy)
 		{
-			this->dx = dx;
-			this->dy = dy;
+			this->default_dx = dx;
+			this->default_dy = dy;
+			this->dx		 = this->default_dx;
+			this->dy		 = this->default_dy;
 		}
 	};
 

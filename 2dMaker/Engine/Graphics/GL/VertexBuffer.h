@@ -13,7 +13,7 @@ namespace D2Maker
 		{
 			glGenBuffers(1, &rendererID);
 			glBindBuffer(GL_ARRAY_BUFFER, rendererID);
-			glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
 		}
 		~VertexBuffer()
 		{
