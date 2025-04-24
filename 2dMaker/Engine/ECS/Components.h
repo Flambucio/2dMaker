@@ -8,11 +8,13 @@ namespace D2Maker
 
 	struct Component
 	{
+	public:
 		virtual ~Component() = default;
 	};
 
 	struct Transform : public Component
 	{
+	public:
 		float x;
 		float y;
 		float width;
@@ -31,43 +33,51 @@ namespace D2Maker
 	
 	struct RigidBody :  public Component
 	{
+	public:
 		float mass;
 		float bounciness;
-		float max_dy;
-		float dy_accumulator;
-		RigidBody(float mass, float bounciness,float max_dy)
+		float maxDy;
+		float dyAccumulator;
+		RigidBody(float mass, float bounciness,float maxDy)
 		{
 			this->mass			 = mass;
 			this->bounciness	 = bounciness;
-			this->max_dy	     = max_dy;
-			this->dy_accumulator = 0;
+			this->maxDy	     = maxDy;
+			this->dyAccumulator = 0;
 		}
 
 	};
 
 	struct Collider : public Component
 	{
+	public:
 		Collider() = default;
 	};
 
 	struct Velocity : public Component
 	{
+	public:
 		float dx;
 		float dy;
-		float default_dx;
-		float default_dy;
-		Velocity(float dx,float dy)
+		float dtheta;
+		float defaultDx;
+		float defaultDy;
+		float defaultDtheta;
+		Velocity(float dx,float dy,float dtheta)
 		{
-			this->default_dx = dx;
-			this->default_dy = dy;
-			this->dx		 = this->default_dx;
-			this->dy		 = this->default_dy;
+			this->defaultDx		= dx;
+			this->defaultDy		= dy;
+			this->defaultDtheta = dtheta;
+			this->dx		    = this->defaultDx;
+			this->dy		    = this->defaultDy;
+			this->dtheta		= this->defaultDtheta;
 		}
 	};
 
 	
 	struct TextureComponent : public Component
 	{
+	public:
 		int orderInLayer;
 		std::string name;
 		bool exists;
@@ -82,5 +92,25 @@ namespace D2Maker
 			WARN("Texture name not found!");
 		}
 
+	};
+
+	struct Script : public Component
+	{
+	public:
+		std::string filepath;
+		Script(std::string filepath)
+		{
+			this->filepath = filepath;
+		}
+	};
+
+	struct Name : public Component
+	{
+	public:
+		std::string name;
+		Name(std::string name)
+		{
+			this->name = name;
+		}
 	};
 }

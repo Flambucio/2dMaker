@@ -14,6 +14,7 @@
 #include <typeindex>
 #include <typeinfo>
 #include <unordered_set>
+#include <filesystem>
 
 
 #include "Log.h"

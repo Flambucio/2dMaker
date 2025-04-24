@@ -107,7 +107,28 @@
     <ClInclude Include="Engine\ECS\Systems\RenderingSystem.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\ECS\Systems\Physics.h">
+    <ClInclude Include="Engine\ECS\Systems\Physics\Physics.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ECS\Systems\Scripting\Parser.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ECS\Systems\Scripting\ScriptSystem.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Events\Keys.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Events\EventManager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ECS\Systems\Scripting\Tokens.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ECS\Systems\Scripting\Interpreter.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ECS\Systems\Physics\ColliderFunctions.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>

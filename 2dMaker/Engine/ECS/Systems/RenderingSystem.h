@@ -20,7 +20,6 @@ namespace D2Maker
     private:
         GLFWwindow* window;
         Shaders shaderProgram;
-        //IndexBuffer ibo;
         Renderer renderer;
         VertexBufferLayout layout;
         unsigned int indices[6] = { 0, 1, 2, 2, 3, 0 };
@@ -59,32 +58,48 @@ namespace D2Maker
             }
         }
 
-        std::array<float, 4> ConvertToNdc(Transform* transform)
+        std::array<float, 16> GetVertices(Transform* t)
         {
-            return {
-                ((2 * transform->x) / VIRTUAL_WIDTH) - 1,
-                1 - ((2 * transform->y) / VIRTUAL_HEIGHT),
-                ((2 * transform->width) / VIRTUAL_WIDTH),
-                -((2 * transform->height) / VIRTUAL_HEIGHT)
-            };
-        }
+            float angle = t->rotationDegrees * (3.14159265f / 180.0f);
+            float s = sin(angle);
+            float c = cos(angle);
 
-        std::array<float, 16> GetVertices(Transform* transform)
-        {
-            std::array<float, 4> v = ConvertToNdc(transform);
-            return {
-                v[0],         v[1],         0.0f, 0.0f,
-                v[0] + v[2],  v[1],         1.0f, 0.0f,
-                v[0] + v[2],  v[1] + v[3],  1.0f, 1.0f,
-                v[0],         v[1] + v[3],  0.0f, 1.0f
+            float cx = t->x + t->width / 2.0f;
+            float cy = t->y + t->height / 2.0f;
+
+            std::array<std::pair<float, float>, 4> corners = {
+                std::make_pair(t->x,           t->y),
+                std::make_pair(t->x + t->width, t->y),
+                std::make_pair(t->x + t->width, t->y + t->height),
+                std::make_pair(t->x,           t->y + t->height)
             };
+
+            std::array<float, 16> result;
+
+            for (int i = 0; i < 4; i++)
+            {
+                float x = corners[i].first;
+                float y = corners[i].second;
+                float dx = x - cx;
+                float dy = y - cy;
+                float xRot = dx * c - dy * s + cx;
+                float yRot = dx * s + dy * c + cy;
+                float ndcX = ((2 * xRot) / VIRTUAL_WIDTH) - 1;
+                float ndcY = 1 - ((2 * yRot) / VIRTUAL_HEIGHT);
+
+                
+                result[i * 4 + 0] = ndcX;
+                result[i * 4 + 1] = ndcY;
+                result[i * 4 + 2] = (i == 1 || i == 2) ? 1.0f : 0.0f; 
+                result[i * 4 + 3] = (i >= 2) ? 1.0f : 0.0f;           
+
+            }
+
+            return result;
         }
 
         void RenderQueue(EntityManager& em)
         {
-            //renderer.Clear();
-            //shaderProgram.Bind();
-            
             renderer.Clear();
             shaderProgram.Bind();
             while (!queue.empty())
@@ -95,8 +110,6 @@ namespace D2Maker
            
 
                 IndexBuffer ibo(indices, 6);
-                //Renderer renderer;
-                //Entity entity = 0;
                 TextureComponent* texcomponent = em.getComponent<TextureComponent>(entity);
                 Transform* transformcomponent = em.getComponent<Transform>(entity);
                 std::array<float, 16> vert = GetVertices(transformcomponent);

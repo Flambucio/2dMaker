@@ -68,6 +68,35 @@ namespace D2Maker
 					return;
 				}
 			}
+			if (isComponent<T, Script>())
+			{
+				TRACE("scripttype");
+				if constexpr (sizeof...(Args) > 0)
+				{
+					auto tup = std::forward_as_tuple(args...);
+					using FirstArgType = std::tuple_element_t<0, decltype(tup)>;
+
+					if constexpr (std::is_convertible_v<FirstArgType, std::string>)
+					{
+						const std::string& filepath = std::get<0>(tup);
+						if (!(std::filesystem::exists(filepath) && std::filesystem::is_regular_file(filepath)))
+						{
+							WARN("FILE: " + filepath + " does not exist");
+							return;
+						}
+					}
+					else
+					{
+						WARN("Script component requires filepath as first argument");
+						return;
+					}
+				}
+				else
+				{
+					WARN("Script component requires filepath as first argument");
+					return;
+				}
+			}
 			entities[entity][std::type_index(typeid(T))] = std::make_unique<T>(std::forward<Args>(args)...);
 			TRACE("added component:");
 			TRACE(typeid(T).name());

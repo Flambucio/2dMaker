@@ -10,7 +10,7 @@ namespace D2Maker
 
 		virtual void Update(EntityManager& em)
 		{
-
+			
 		}
 	};
 

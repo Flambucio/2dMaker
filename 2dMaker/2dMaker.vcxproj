@@ -104,6 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,9 +144,16 @@
     <ClInclude Include="Engine\ECS\Components.h" />
     <ClInclude Include="Engine\ECS\Entity.h" />
     <ClInclude Include="Engine\ECS\SystemManager.h" />
+    <ClInclude Include="Engine\ECS\Systems\Physics\ColliderFunctions.h" />
     <ClInclude Include="Engine\ECS\Systems\RenderingSystem.h" />
+    <ClInclude Include="Engine\ECS\Systems\Scripting\Interpreter.h" />
+    <ClInclude Include="Engine\ECS\Systems\Scripting\Parser.h" />
+    <ClInclude Include="Engine\ECS\Systems\Scripting\ScriptSystem.h" />
+    <ClInclude Include="Engine\ECS\Systems\Scripting\Tokens.h" />
     <ClInclude Include="Engine\ECS\Systems\Sysbase.h" />
-    <ClInclude Include="Engine\ECS\Systems\Physics.h" />
+    <ClInclude Include="Engine\ECS\Systems\Physics\Physics.h" />
+    <ClInclude Include="Engine\Events\EventManager.h" />
+    <ClInclude Include="Engine\Events\Keys.h" />
     <ClInclude Include="Engine\Graphics\GL\IndexBuffer.h" />
     <ClInclude Include="Engine\Graphics\GL\VertexArray.h" />
     <ClInclude Include="Engine\Graphics\GL\VertexBuffer.h" />

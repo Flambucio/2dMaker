@@ -95,12 +95,5 @@ namespace D2Maker
 			BindTexture("erbucio");
 		}
 	};
-		
-
-
-		
-	
-
-
 
 }
