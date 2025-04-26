@@ -23,6 +23,7 @@ namespace D2Maker
         {
             std::vector<std::vector<std::string>> parsedStr;
             std::string token;
+            parsedStr.push_back({});
 
             for (char c : content)
             {
@@ -40,6 +41,11 @@ namespace D2Maker
 
                     }
                     token.clear();
+                    parsedStr.push_back({});
+                }
+                else if (c == '\n')
+                {
+                    continue;
                 }
                 else
                 {

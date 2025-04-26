@@ -86,8 +86,9 @@ namespace D2Maker
             em.addComponent<Transform>(entity1, 200, 200, 600, 500, 0);//trace
             em.addComponent<Collider>(entity1);//trace
             em.addComponent<TextureComponent>(entity1,"erbucio",0);
-            em.addComponent<Velocity>(entity1, 50, 0,10);
-            em.addComponent<RigidBody>(entity1, 10, 1.5, 10000);
+            em.addComponent<Velocity>(entity1, 0, 0,0);
+            //em.addComponent<RigidBody>(entity1, 10, 1.5, 10000);
+            em.addComponent<Script>(entity1, "Projects/Script.txt");
             //2
             em.addComponent<Transform>(entity2, 0, 0, 1600, 900,0);
             em.addComponent<TextureComponent>(entity2, "erbucio", -1);
@@ -99,7 +100,6 @@ namespace D2Maker
             em.addComponent<Transform>(entity4, 0, 850, 1600, 100,0);
             em.addComponent<Collider>(entity4);
             em.addComponent<TextureComponent>(entity4, "erbucio", 0);
-
 
             
             TextureLoader::BindTexture("erbucio");

@@ -12,8 +12,6 @@ namespace D2Maker
 		void Update(EntityManager& em)
 		{
 			SetToVector(em);
-			RigidBodyUpdate(em);
-
 			CollideAll(em);
 			
 		}
@@ -21,26 +19,6 @@ namespace D2Maker
 
 		std::vector<Entity> staticEntities;
 		std::vector<Entity> dynamicEntities;
-
-		void RigidBodyUpdate(EntityManager& em)
-		{
-			for (Entity entity : dynamicEntities)
-			{
-				if (em.hasComponent<RigidBody>(entity))
-				{
-					RigidBody* rigidbody = em.getComponent<RigidBody>(entity);
-					Velocity* velocity = em.getComponent<Velocity>(entity);
-					velocity->dy += rigidbody->mass + rigidbody->dyAccumulator;
-					if (velocity->dy > rigidbody->maxDy)
-					{
-						velocity->dy = rigidbody->maxDy;
-					}
-					rigidbody->dyAccumulator = velocity->dy;
-				}
-			}
-
-
-		}
 
 		void CollideAll(EntityManager& em)
 		{

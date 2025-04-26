@@ -34,25 +34,37 @@ namespace D2Maker
 
 	static class Interpreter
 	{
-
+	public:
 		static void InterpretTokens(std::vector<std::vector<std::string>> tokens,Entity entity,EntityManager&em)
 		{
+			//TRACE("outside for");
+			//PRINT_2D_ARRAY_STR(tokens);
+			
+
 			for (int i = 0;i < tokens.size();i++)
 			{
+				TRACE("Processing line: " + std::to_string(i + 1));
+				PRINT_ARRAY_STR(tokens[i]);
 				if (tokens[i].size() > 0)
 				{
+					
+					//TRACE("executing line: " + std::to_string(i + 1));
 					if (tokens[i][0] == "KEYPRESS" || tokens[i][0] == "COLLIDE")
 					{
+						TRACE("executing line: " + std::to_string(i + 1));
 						ExecuteConditional(tokens[i],entity,em);
+						
 					}
 					else
 					{
+						TRACE("executing line: " + std::to_string(i + 1));
 						InterpretInstruction(tokens[i], 0,entity,em);
 					}
+					
 				}
 			}
 		}
-
+	private:
 		static void InterpretInstruction(std::vector<std::string> instruction, int startIndex,Entity entity,EntityManager&em)
 		{
 			const std::unordered_set<std::string>  tokens = { "X","Y","MOVE","SET","RELATIVE","THETA"};
@@ -68,6 +80,7 @@ namespace D2Maker
 						if (instruction[i] == "SET")
 						{
 							action = Action::SET;
+							TRACE("set");
 						}
 						else
 						{
@@ -151,8 +164,11 @@ namespace D2Maker
 
 
 			}
-			if (action != Action::NONE && coord != Coord::NONE && value!=0.0f)
+			TRACE("value=" + std::to_string(value));
+			if (action != Action::NONE && coord != Coord::NONE && value!=0.0f || 
+				(action==Action::SET && coord!=Coord::NONE))
 			{
+				
 				ExecuteInstruction(action, coord, value, entity, em);
 			}
 			
@@ -207,8 +223,9 @@ namespace D2Maker
 					}
 				}
 			}
-			else if(action ==Action::SET || action == Action::SET_RELATIVE)
+			else if(action==Action::SET || action == Action::SET_RELATIVE)
 			{
+				TRACE("setting");
 				if (!em.hasComponent<Transform>(entity))
 				{
 					return;
@@ -252,6 +269,8 @@ namespace D2Maker
 
 		static void ExecuteConditional(std::vector<std::string> instruction,Entity entity, EntityManager&em)
 		{
+			TRACE("executing conditional");
+			PRINT_ARRAY_STR(instruction);
 			if (instruction.size() < 2)
 			{
 				return;
@@ -264,6 +283,7 @@ namespace D2Maker
 					Keys key = it->second;
 					if (EventManager::IsKeyPressed(key))
 					{
+						TRACE("KEY PRESSED:" + instruction[1]);
 						InterpretInstruction(instruction, 2, entity, em);
 					}
 					

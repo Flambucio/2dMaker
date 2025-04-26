@@ -2,6 +2,8 @@
 #include "Entity.h"
 #include "Systems/RenderingSystem.h"
 #include "Systems/Physics/Physics.h"`
+#include "Systems/Scripting/ScriptSystem.h"
+#include "Systems/Physics/RigidBody.h"
 namespace D2Maker
 {
 	class SystemManager
@@ -11,9 +13,10 @@ namespace D2Maker
 	public:
 		SystemManager(GLFWwindow* window)
 		{
+			systems.push_back(std::make_unique<RigidBodySystem>());
+			systems.push_back(std::make_unique<ScriptSystem>());
 			systems.push_back(std::make_unique<Physics>());
 			systems.push_back(std::make_unique<RenderSystem>(window));
-			
 		}
 		template<typename T>
 		void RegisterSystem()

@@ -1,11 +1,11 @@
 #pragma once
 #include "Interpreter.h"
-#include "Parser.h"
 
 namespace D2Maker
 {
 	class ScriptSystem : public System
 	{
+	public:
 		void Update(EntityManager& em)
 		{
 			for (Entity entity : em.aliveEntities)
@@ -14,6 +14,9 @@ namespace D2Maker
 				{
 					continue;
 				}
+
+				Script * script = em.getComponent<Script>(entity);
+				Interpreter::InterpretTokens(script->parsedStr, entity, em);
 				
 					
 

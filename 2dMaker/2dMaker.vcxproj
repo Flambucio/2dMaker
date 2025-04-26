@@ -134,9 +134,12 @@
     <ClCompile Include="Engine\main.cpp" />
     <ClCompile Include="Engine\StaticDef.cpp" />
     <ClCompile Include="Lib\stbimage\stb_image.cpp" />
+    <ClCompile Include="Lib\stbvorbis\stb_vorbis.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Application\Window.h" />
+    <ClInclude Include="Engine\Audio\Audio.h" />
+    <ClInclude Include="Engine\Audio\AudioLoader.h" />
     <ClInclude Include="Engine\common\Core.h" />
     <ClInclude Include="Engine\common\Deltatime.h" />
     <ClInclude Include="Engine\common\GeneralStructs.h" />
@@ -145,10 +148,13 @@
     <ClInclude Include="Engine\ECS\Entity.h" />
     <ClInclude Include="Engine\ECS\SystemManager.h" />
     <ClInclude Include="Engine\ECS\Systems\Physics\ColliderFunctions.h" />
+    <ClInclude Include="Engine\ECS\Systems\Physics\RigidBody.h" />
     <ClInclude Include="Engine\ECS\Systems\RenderingSystem.h" />
     <ClInclude Include="Engine\ECS\Systems\Scripting\Interpreter.h" />
     <ClInclude Include="Engine\ECS\Systems\Scripting\Parser.h" />
-    <ClInclude Include="Engine\ECS\Systems\Scripting\ScriptSystem.h" />
+    <ClInclude Include="Engine\ECS\Systems\Scripting\ScriptSystem.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
     <ClInclude Include="Engine\ECS\Systems\Scripting\Tokens.h" />
     <ClInclude Include="Engine\ECS\Systems\Sysbase.h" />
     <ClInclude Include="Engine\ECS\Systems\Physics\Physics.h" />

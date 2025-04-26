@@ -68,10 +68,10 @@ namespace D2Maker
             float cy = t->y + t->height / 2.0f;
 
             std::array<std::pair<float, float>, 4> corners = {
-                std::make_pair(t->x,           t->y),
+                std::make_pair(t->x,            t->y),
                 std::make_pair(t->x + t->width, t->y),
                 std::make_pair(t->x + t->width, t->y + t->height),
-                std::make_pair(t->x,           t->y + t->height)
+                std::make_pair(t->x,            t->y + t->height)
             };
 
             std::array<float, 16> result;

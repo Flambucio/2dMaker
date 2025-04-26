@@ -2,6 +2,7 @@
 #include "../common/Core.h"
 #include "../common/GeneralStructs.h"
 #include "../Graphics/TextureLoader.h"
+#include "Systems/Scripting/Parser.h"
 namespace D2Maker
 {
 
@@ -98,9 +99,13 @@ namespace D2Maker
 	{
 	public:
 		std::string filepath;
+		std::vector<std::vector<std::string>> parsedStr;
 		Script(std::string filepath)
 		{
 			this->filepath = filepath;
+			Parser::ParseString(filepath, parsedStr);
+			PRINT_2D_ARRAY_STR(parsedStr);
+			
 		}
 	};
 
