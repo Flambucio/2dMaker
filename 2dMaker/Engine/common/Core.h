@@ -22,10 +22,14 @@
 
 
 #include "../../Lib/stbimage/stb_image.h"
+#include "../../Lib/stbvorbis/stb_vorbis.h"
 
 #define GLEW_STATIC
 #include "../../Lib/GLEW/include/GL/glew.h"
 #include "../../Lib/glfw/include/GLFW/glfw3.h"
+
+#include "../../Lib/openAL/include/AL/al.h"
+#include "../../Lib/openAL/include/AL/alc.h"
 
 
 

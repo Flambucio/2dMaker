@@ -27,7 +27,7 @@
     <ClCompile Include="Lib\stbimage\stb_image.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\stbvorbis\stb_vorbis.c">
+    <ClCompile Include="Lib\stbvorbis\stb_vorbis.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>
@@ -143,6 +143,30 @@
     <ClInclude Include="Engine\Audio\Audio.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="Lib\openAL\include\AL\al.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\openAL\include\AL\alc.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\openAL\include\AL\alext.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\openAL\include\AL\efx.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\openAL\include\AL\efx-creative.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\openAL\include\AL\efx-presets.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\stbvorbis\stb_vorbis.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ECS\Systems\AudioSystem.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Lib\GLEW\doc\advanced.html" />
@@ -221,10 +245,32 @@
     <None Include="Engine\Resources\Shaders\Vertex.glsl" />
     <None Include="Engine\Resources\Shaders\Fragment.glsl" />
     <None Include="Engine\Resources\Shaders\Shader.shader" />
+    <None Include="Lib\openAL\hrtf_defs\CIAIR.def">
+      <Filter>File di origine</Filter>
+    </None>
+    <None Include="Lib\openAL\hrtf_defs\IRC_1005.def">
+      <Filter>File di origine</Filter>
+    </None>
+    <None Include="Lib\openAL\hrtf_defs\MIT_KEMAR.def">
+      <Filter>File di origine</Filter>
+    </None>
+    <None Include="Lib\openAL\hrtf_defs\MIT_KEMAR_sofa.def">
+      <Filter>File di origine</Filter>
+    </None>
+    <None Include="Lib\openAL\hrtf_defs\SCUT_KEMAR.def">
+      <Filter>File di origine</Filter>
+    </None>
+    <None Include="Lib\openAL\libs\Win32\OpenAL32.def">
+      <Filter>File di origine</Filter>
+    </None>
+    <None Include="Lib\openAL\libs\Win64\OpenAL32.def">
+      <Filter>File di origine</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Lib\glfw\lib-vc2022\glfw3.lib" />
     <Library Include="Lib\GLEW\lib\Release\x64\glew32s.lib" />
+    <Library Include="Lib\openAL\libs\Win32\OpenAL32.lib" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Resources\TestAssets\image.png">

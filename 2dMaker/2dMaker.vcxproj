@@ -109,8 +109,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Union\2dMaker\2dMaker\Lib\GLEW\lib\Release\x64;C:\Union\2dMaker\2dMaker\Lib\glfw\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32s.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Union\2dMaker\2dMaker\Lib\GLEW\lib\Release\x64;C:\Union\2dMaker\2dMaker\Lib\glfw\lib-vc2022;C:\Union\2dMaker\2dMaker\Lib\openAL\libs\Win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glfw3.lib;glew32s.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -121,12 +121,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glfw3.lib;glew32s.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Union\2dMaker\2dMaker\Lib\GLEW\lib\Release\x64;C:\Union\2dMaker\2dMaker\Lib\glfw\lib-vc2022;C:\Union\2dMaker\2dMaker\Lib\openAL\libs\Win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -134,7 +137,7 @@
     <ClCompile Include="Engine\main.cpp" />
     <ClCompile Include="Engine\StaticDef.cpp" />
     <ClCompile Include="Lib\stbimage\stb_image.cpp" />
-    <ClCompile Include="Lib\stbvorbis\stb_vorbis.c" />
+    <ClCompile Include="Lib\stbvorbis\stb_vorbis.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Application\Window.h" />
@@ -147,6 +150,7 @@
     <ClInclude Include="Engine\ECS\Components.h" />
     <ClInclude Include="Engine\ECS\Entity.h" />
     <ClInclude Include="Engine\ECS\SystemManager.h" />
+    <ClInclude Include="Engine\ECS\Systems\AudioSystem.h" />
     <ClInclude Include="Engine\ECS\Systems\Physics\ColliderFunctions.h" />
     <ClInclude Include="Engine\ECS\Systems\Physics\RigidBody.h" />
     <ClInclude Include="Engine\ECS\Systems\RenderingSystem.h" />
@@ -175,7 +179,14 @@
     <ClInclude Include="Lib\GLEW\include\GL\wglew.h" />
     <ClInclude Include="Lib\glfw\include\GLFW\glfw3.h" />
     <ClInclude Include="Lib\glfw\include\GLFW\glfw3native.h" />
+    <ClInclude Include="Lib\openAL\include\AL\al.h" />
+    <ClInclude Include="Lib\openAL\include\AL\alc.h" />
+    <ClInclude Include="Lib\openAL\include\AL\alext.h" />
+    <ClInclude Include="Lib\openAL\include\AL\efx-creative.h" />
+    <ClInclude Include="Lib\openAL\include\AL\efx-presets.h" />
+    <ClInclude Include="Lib\openAL\include\AL\efx.h" />
     <ClInclude Include="Lib\stbimage\stb_image.h" />
+    <ClInclude Include="Lib\stbvorbis\stb_vorbis.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\Shader.shader" />
@@ -254,10 +265,18 @@
     <None Include="Engine\Resources\Shaders\Fragmentdep.glsl" />
     <None Include="Engine\Resources\Shaders\Vertex.glsl" />
     <None Include="Engine\Resources\Shaders\Vertexdep.glsl" />
+    <None Include="Lib\openAL\hrtf_defs\CIAIR.def" />
+    <None Include="Lib\openAL\hrtf_defs\IRC_1005.def" />
+    <None Include="Lib\openAL\hrtf_defs\MIT_KEMAR.def" />
+    <None Include="Lib\openAL\hrtf_defs\MIT_KEMAR_sofa.def" />
+    <None Include="Lib\openAL\hrtf_defs\SCUT_KEMAR.def" />
+    <None Include="Lib\openAL\libs\Win32\OpenAL32.def" />
+    <None Include="Lib\openAL\libs\Win64\OpenAL32.def" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Lib\GLEW\lib\Release\x64\glew32s.lib" />
     <Library Include="Lib\glfw\lib-vc2022\glfw3.lib" />
+    <Library Include="Lib\openAL\libs\Win32\OpenAL32.lib" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Resources\TestAssets\image.png" />

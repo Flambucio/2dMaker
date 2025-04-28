@@ -31,6 +31,13 @@ namespace D2Maker
 		COLLIDE=1
 	};
 
+	enum class InstructionType
+	{
+		NONE = -1,
+		PHYSICS=0,
+		AUDIO=1,
+	};
+
 
 	static class Interpreter
 	{
@@ -43,21 +50,21 @@ namespace D2Maker
 
 			for (int i = 0;i < tokens.size();i++)
 			{
-				TRACE("Processing line: " + std::to_string(i + 1));
-				PRINT_ARRAY_STR(tokens[i]);
+				//TRACE("Processing line: " + std::to_string(i + 1));
+				//PRINT_ARRAY_STR(tokens[i]);
 				if (tokens[i].size() > 0)
 				{
 					
 					//TRACE("executing line: " + std::to_string(i + 1));
 					if (tokens[i][0] == "KEYPRESS" || tokens[i][0] == "COLLIDE")
 					{
-						TRACE("executing line: " + std::to_string(i + 1));
+						//TRACE("executing line: " + std::to_string(i + 1));
 						ExecuteConditional(tokens[i],entity,em);
 						
 					}
 					else
 					{
-						TRACE("executing line: " + std::to_string(i + 1));
+						//TRACE("executing line: " + std::to_string(i + 1));
 						InterpretInstruction(tokens[i], 0,entity,em);
 					}
 					
@@ -67,74 +74,86 @@ namespace D2Maker
 	private:
 		static void InterpretInstruction(std::vector<std::string> instruction, int startIndex,Entity entity,EntityManager&em)
 		{
-			const std::unordered_set<std::string>  tokens = { "X","Y","MOVE","SET","RELATIVE","THETA"};
-			Action action = Action::NONE;
-			Coord coord = Coord::NONE;
-			float value = 0.0f;
-			for (int i = startIndex;i < instruction.size();i++)
-			{
-				if (instruction[i] == "MOVE" || instruction[i] == "SET")
-				{
-					if (action == Action::NONE)
-					{
-						if (instruction[i] == "SET")
-						{
-							action = Action::SET;
-							TRACE("set");
-						}
-						else
-						{
-							action = Action::MOVE;
-						}
+			const std::unordered_set<std::string>  tokens = { "X","Y","MOVE","SET","RELATIVE","THETA","PLAY"};
 
-					}
-					else
-					{
-						return;
-					}
-				}
-				else if (i - 1 >= startIndex && ((instruction[i] == "X") || (instruction[i] == "Y") || (instruction[i]=="THETA")))
+			if (instruction.size()-startIndex < 2)
+			{
+				return;
+			}
+			if (instruction[0 + startIndex] == "SET" || instruction[0 + startIndex] == "MOVE")
+			{
+				Action action = Action::NONE;
+				Coord coord = Coord::NONE;
+				float value = 0.0f;
+				for (int i = startIndex;i < instruction.size();i++)
 				{
-					if (instruction[i - 1] == "MOVE" || instruction[i - 1] == "SET")
+					if (instruction[i] == "MOVE" || instruction[i] == "SET")
 					{
-						if (instruction[i] == "X")
+						if (action == Action::NONE)
 						{
-							coord = Coord::X;
-						}
-						else if (instruction[i] == "THETA")
-						{
-							coord = Coord::THETA;
-						}
-						else
-						{
-							coord = Coord::Y;
-						}
-					}
-					else
-					{
-						return;
-					}
-				}
-				else if (instruction[i] == "RELATIVE")
-				{
-					if (i - 3 >= startIndex)
-					{
-						if (tokens.find(instruction[i - 1]) == tokens.end() && instruction[i-3]=="SET")
-						{
-							if (action == Action::SET)
+							if (instruction[i] == "SET")
 							{
-								action = Action::SET_RELATIVE;
+								action = Action::SET;
+								//TRACE("set");
 							}
 							else
 							{
-								return;
+								action = Action::MOVE;
+							}
+
+						}
+						else
+						{
+							return;
+						}
+					}
+					else if (i - 1 >= startIndex && ((instruction[i] == "X") || (instruction[i] == "Y") || (instruction[i] == "THETA")))
+					{
+						if (instruction[i - 1] == "MOVE" || instruction[i - 1] == "SET")
+						{
+							if (instruction[i] == "X")
+							{
+								coord = Coord::X;
+							}
+							else if (instruction[i] == "THETA")
+							{
+								coord = Coord::THETA;
+							}
+							else
+							{
+								coord = Coord::Y;
 							}
 						}
-						else if(tokens.find(instruction[i - 1]) == tokens.end() && instruction[i - 3] == "MOVE")
+						else
 						{
-							if (action == Action::MOVE)
+							return;
+						}
+					}
+					else if (instruction[i] == "RELATIVE")
+					{
+						if (i - 3 >= startIndex)
+						{
+							if (tokens.find(instruction[i - 1]) == tokens.end() && instruction[i - 3] == "SET")
 							{
-								action = Action::MOVE_RELATIVE;
+								if (action == Action::SET)
+								{
+									action = Action::SET_RELATIVE;
+								}
+								else
+								{
+									return;
+								}
+							}
+							else if (tokens.find(instruction[i - 1]) == tokens.end() && instruction[i - 3] == "MOVE")
+							{
+								if (action == Action::MOVE)
+								{
+									action = Action::MOVE_RELATIVE;
+								}
+								else
+								{
+									return;
+								}
 							}
 							else
 							{
@@ -148,36 +167,50 @@ namespace D2Maker
 					}
 					else
 					{
-						return;
+						std::istringstream iss(instruction[i]);
+						iss >> std::noskipws >> value;
+
+						if (!(iss.eof() && !iss.fail()))
+						{
+							return;
+						}
 					}
+
+
 				}
-				else
+				//TRACE("value=" + std::to_string(value));
+				if (action != Action::NONE && coord != Coord::NONE && value != 0.0f ||
+					(action == Action::SET && coord != Coord::NONE))
 				{
-					std::istringstream iss(instruction[i]);
-					iss >> std::noskipws >> value;
 
-					if (!(iss.eof() && !iss.fail()))
-					{
-						return;
-					}
+					ExecutePhysicsInstruction(action, coord, value, entity, em);
 				}
-
-
 			}
-			TRACE("value=" + std::to_string(value));
-			if (action != Action::NONE && coord != Coord::NONE && value!=0.0f || 
-				(action==Action::SET && coord!=Coord::NONE))
+			else if (instruction[0 + startIndex] == "PLAY")
 			{
+				if (instruction.size() - startIndex != 2)
+				{
+					return;
+				}
+				ExecuteAudioInstruction(instruction[1 + startIndex]);
 				
-				ExecuteInstruction(action, coord, value, entity, em);
 			}
+			
 			
 
 
 		}
 
+		static void ExecuteAudioInstruction(const std::string& name)
+		{
+			if (AudioLoader::Exists(name))
+			{
+				AudioLoader::PlayAudio(name);
+			}
+		}
 
-		static void ExecuteInstruction(Action action,Coord coord,float value,Entity entity,EntityManager&em)
+
+		static void ExecutePhysicsInstruction(Action action,Coord coord,float value,Entity entity,EntityManager&em)
 		{
 			if (action == Action::MOVE || action == Action::MOVE_RELATIVE)
 			{
@@ -225,7 +258,7 @@ namespace D2Maker
 			}
 			else if(action==Action::SET || action == Action::SET_RELATIVE)
 			{
-				TRACE("setting");
+				//TRACE("setting");
 				if (!em.hasComponent<Transform>(entity))
 				{
 					return;
@@ -269,8 +302,8 @@ namespace D2Maker
 
 		static void ExecuteConditional(std::vector<std::string> instruction,Entity entity, EntityManager&em)
 		{
-			TRACE("executing conditional");
-			PRINT_ARRAY_STR(instruction);
+			//TRACE("executing conditional");
+			//PRINT_ARRAY_STR(instruction);
 			if (instruction.size() < 2)
 			{
 				return;
@@ -283,7 +316,7 @@ namespace D2Maker
 					Keys key = it->second;
 					if (EventManager::IsKeyPressed(key))
 					{
-						TRACE("KEY PRESSED:" + instruction[1]);
+						//TRACE("KEY PRESSED:" + instruction[1]);
 						InterpretInstruction(instruction, 2, entity, em);
 					}
 					

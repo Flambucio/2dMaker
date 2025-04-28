@@ -3,6 +3,7 @@
 #include "../common/GeneralStructs.h"
 #include "../Graphics/TextureLoader.h"
 #include "Systems/Scripting/Parser.h"
+#include "../Audio/AudioLoader.h"
 namespace D2Maker
 {
 
@@ -43,8 +44,8 @@ namespace D2Maker
 		{
 			this->mass			 = mass;
 			this->bounciness	 = bounciness;
-			this->maxDy	     = maxDy;
-			this->dyAccumulator = 0;
+			this->maxDy			 = maxDy;
+			this->dyAccumulator  = 0;
 		}
 
 	};
@@ -84,7 +85,7 @@ namespace D2Maker
 		bool exists;
 		TextureComponent(const std::string& name,int orderInLayer) : orderInLayer(orderInLayer) , name(name)
 		{ 
-			if (TextureLoader::Exists(name))
+			if (TextureLoader::Exists(this->name))
 			{
 				this->exists = true;
 				return;
@@ -116,6 +117,23 @@ namespace D2Maker
 		Name(std::string name)
 		{
 			this->name = name;
+		}
+	};
+
+	struct AudioComponent : public Component
+	{
+		std::string name;
+		bool exists;
+		AudioComponent(const std::string& name)
+		{
+			this->name = name;
+			if (AudioLoader::Exists(this->name))
+			{
+				this->exists = true;
+				return;
+			}
+			this->exists = false;
+			
 		}
 	};
 }

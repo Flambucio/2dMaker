@@ -107,7 +107,6 @@ namespace D2Maker
                 Entity entity = queue.top().first;
                 queue.pop();
                 unsigned int indices[] = { 0,1,2,2,3,0 };
-           
 
                 IndexBuffer ibo(indices, 6);
                 TextureComponent* texcomponent = em.getComponent<TextureComponent>(entity);

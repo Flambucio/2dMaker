@@ -19,6 +19,7 @@ namespace D2Maker
 
         static void Initialize()
         {
+            //OPENGL
             if (!glfwInit())
             {
                 //throw error
@@ -47,6 +48,25 @@ namespace D2Maker
                 glfwTerminate();
                 return;
             }
+            //OPENAL
+            ALCdevice* device = alcOpenDevice(nullptr);
+            if (!device)
+            {
+                ERROR("failed to open OpenAL device");
+                return;
+            }
+            ALCcontext* context = alcCreateContext(device, nullptr);
+            if (!context || alcMakeContextCurrent(context)==ALC_FALSE)
+            {
+                ERROR("failed to create or set OpenAL context");
+                return;
+            }
+
+            TRACE("USING DEVICE=");
+            TRACE(alcGetString(device, ALC_DEVICE_SPECIFIER))
+            
+
+
 
         }
         
@@ -62,11 +82,18 @@ namespace D2Maker
                 EventManager::ReleaseKey(static_cast<Keys>(key));
             }
         }
+        static bool FileExists(const std::string& path)
+        {
+            std::ifstream file(path);
+            return file.good();
+        }
 
         static void RunWindow()
         {
             //GRAPHICS
             TextureLoader::LoadTexture("erbucio", "Engine/Resources/TestAssets/image.png", 0);
+            AudioLoader::LoadAudio("erbuciaccio", "Engine/Resources/TestAssets/numayey.ogg");
+            AudioLoader::LoadAudio("disco", "Engine/Resources/TestAssets/disco.ogg");
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glEnable(GL_DEPTH_TEST);
@@ -74,14 +101,12 @@ namespace D2Maker
             glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
             glfwSetKeyCallback(window, KeyCallback);
             SystemManager sm{ window };
-            //ECS
-            Renderer renderer;
-          
             EntityManager em;
             Entity entity1 = em.createEntity();
             Entity entity2 = em.createEntity();
             Entity entiti3 = em.createEntity();
             Entity entity4 = em.createEntity();
+            Entity entity5 = em.createEntity();
             //1
             em.addComponent<Transform>(entity1, 200, 200, 600, 500, 0);//trace
             em.addComponent<Collider>(entity1);//trace
@@ -100,6 +125,9 @@ namespace D2Maker
             em.addComponent<Transform>(entity4, 0, 850, 1600, 100,0);
             em.addComponent<Collider>(entity4);
             em.addComponent<TextureComponent>(entity4, "erbucio", 0);
+            //5
+            em.addComponent<Script>(entity5, "Projects/Script2.txt");
+
 
             
             TextureLoader::BindTexture("erbucio");

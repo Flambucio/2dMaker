@@ -2,6 +2,7 @@
 #include "Graphics/TextureLoader.h"
 #include "Events/EventManager.h"
 #include "ECS/Systems/Scripting/Tokens.h"
+#include "Audio/AudioLoader.h"
 
 namespace D2Maker
 {
@@ -28,35 +29,36 @@ namespace D2Maker
     {"RIGHT_ALT", D2Maker::Keys::RIGHT_ALT},
     {"TAB", D2Maker::Keys::TAB},
     {"CAPS", D2Maker::Keys::CAPS},
-    {"Q", D2Maker::Keys::Q},
-    {"W", D2Maker::Keys::W},
-    {"E", D2Maker::Keys::E},
-    {"R", D2Maker::Keys::R},
-    {"T", D2Maker::Keys::T},
-    {"Y", D2Maker::Keys::Y},
-    {"U", D2Maker::Keys::U},
-    {"I", D2Maker::Keys::I},
-    {"O", D2Maker::Keys::O},
-    {"P", D2Maker::Keys::P},
-    {"A", D2Maker::Keys::A},
-    {"S", D2Maker::Keys::S},
-    {"D", D2Maker::Keys::D},
-    {"F", D2Maker::Keys::F},
-    {"G", D2Maker::Keys::G},
-    {"H", D2Maker::Keys::H},
-    {"J", D2Maker::Keys::J},
-    {"K", D2Maker::Keys::K},
-    {"L", D2Maker::Keys::L},
-    {"Z", D2Maker::Keys::Z},
-    {"X", D2Maker::Keys::X},
-    {"C", D2Maker::Keys::C},
-    {"V", D2Maker::Keys::V},
-    {"B", D2Maker::Keys::B},
-    {"N", D2Maker::Keys::N},
-    {"M", D2Maker::Keys::M},
+    {"Q", D2Maker::Keys::Q_K},
+    {"W", D2Maker::Keys::W_K},
+    {"E", D2Maker::Keys::E_K},
+    {"R", D2Maker::Keys::R_K},
+    {"T", D2Maker::Keys::T_K},
+    {"Y", D2Maker::Keys::Y_K},
+    {"U", D2Maker::Keys::U_K},
+    {"I", D2Maker::Keys::I_K},
+    {"O", D2Maker::Keys::O_K},
+    {"P", D2Maker::Keys::P_K},
+    {"A", D2Maker::Keys::A_K},
+    {"S", D2Maker::Keys::S_K},
+    {"D", D2Maker::Keys::D_K},
+    {"F", D2Maker::Keys::F_K},
+    {"G", D2Maker::Keys::G_K},
+    {"H", D2Maker::Keys::H_K},
+    {"J", D2Maker::Keys::J_K},
+    {"K", D2Maker::Keys::K_K},
+    {"L", D2Maker::Keys::L_K},
+    {"Z", D2Maker::Keys::Z_K},
+    {"X", D2Maker::Keys::X_K},
+    {"C", D2Maker::Keys::C_K},
+    {"V", D2Maker::Keys::V_K},
+    {"B", D2Maker::Keys::B_K},
+    {"N", D2Maker::Keys::N_K},
+    {"M", D2Maker::Keys::M_K},
     {"LEFT_MOUSE", D2Maker::Keys::LEFT},
     {"RIGHT_MOUSE", D2Maker::Keys::RIGHT},
     };
+    std::unordered_map<std::string, std::unique_ptr<Audio>> AudioLoader::audios = {};
 }
 
 
