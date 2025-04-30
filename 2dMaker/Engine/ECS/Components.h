@@ -136,4 +136,9 @@ namespace D2Maker
 			
 		}
 	};
+
+	struct Timer : public Component
+	{
+		float accumulator = 0;
+	};
 }

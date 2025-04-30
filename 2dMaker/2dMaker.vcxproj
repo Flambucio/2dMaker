@@ -140,6 +140,8 @@
     <ClCompile Include="Lib\stbvorbis\stb_vorbis.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Application\Scene.h" />
+    <ClInclude Include="Engine\Application\SceneManager.h" />
     <ClInclude Include="Engine\Application\Window.h" />
     <ClInclude Include="Engine\Audio\Audio.h" />
     <ClInclude Include="Engine\Audio\AudioLoader.h" />

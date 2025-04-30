@@ -7,6 +7,8 @@
 namespace D2Maker
 {
 	GLFWwindow* Window::window = nullptr;
+    int Window::m_Width = DEFAULT_WIN_W;
+    int Window::m_Height=DEFAULT_WIN_H;
 	std::unordered_map<std::string, std::unique_ptr<Texture>> TextureLoader::textures;
 	std::unordered_set<Keys> EventManager::pressedKeys;
     const std::unordered_map<std::string, D2Maker::Keys> Tokens::keyMap = {

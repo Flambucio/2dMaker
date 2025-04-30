@@ -62,6 +62,10 @@ namespace D2Maker
 						ExecuteConditional(tokens[i],entity,em);
 						
 					}
+					else if (tokens[i][0] == "TIMER")
+					{
+						ExecuteTimedInstruction(tokens[i], entity, em);
+					}
 					else
 					{
 						//TRACE("executing line: " + std::to_string(i + 1));
@@ -74,8 +78,7 @@ namespace D2Maker
 	private:
 		static void InterpretInstruction(std::vector<std::string> instruction, int startIndex,Entity entity,EntityManager&em)
 		{
-			const std::unordered_set<std::string>  tokens = { "X","Y","MOVE","SET","RELATIVE","THETA","PLAY"};
-
+			const std::unordered_set<std::string>  tokens = { "X","Y","MOVE","SET","RELATIVE","THETA","PLAY","TIMER"};
 			if (instruction.size()-startIndex < 2)
 			{
 				return;
@@ -167,10 +170,7 @@ namespace D2Maker
 					}
 					else
 					{
-						std::istringstream iss(instruction[i]);
-						iss >> std::noskipws >> value;
-
-						if (!(iss.eof() && !iss.fail()))
+						if (!ConvertStringToNumber(instruction[i], value))
 						{
 							return;
 						}
@@ -342,6 +342,45 @@ namespace D2Maker
 					return;
 				}
 			}
+		}
+		static void ExecuteTimedInstruction(std::vector<std::string> instruction, Entity entity, EntityManager& em)
+		{
+			float value;
+			if (instruction.size() < 2)
+			{
+				return;
+			}
+			if (!em.hasComponent<Timer>(entity))
+			{
+				return;
+			}
+			if (!ConvertStringToNumber(instruction[1], value))
+			{
+				return;
+			}
+			Timer* timer = em.getComponent<Timer>(entity);
+			timer->accumulator += DeltaTime::Get();
+			if (timer->accumulator >= value)
+			{
+				timer->accumulator -= value;
+				InterpretInstruction(instruction, 2, entity, em);
+			}
+
+
+			
+		}
+
+		static bool ConvertStringToNumber(const std::string& string, float& value)
+		{
+			std::istringstream iss(string);
+			iss >> std::noskipws >> value;
+
+			if (!(iss.eof() && !iss.fail()))
+			{
+				return false;
+			}
+
+			return true;
 		}
 	};
 }

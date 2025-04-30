@@ -8,6 +8,9 @@ namespace D2Maker
     static class Window
     {
         static GLFWwindow* window;
+        static int m_Width;
+        static int m_Height;
+
     
     private:
         static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -31,7 +34,7 @@ namespace D2Maker
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-            window = glfwCreateWindow(1000, 700, "game", NULL, NULL);
+            window = glfwCreateWindow(DEFAULT_WIN_W, DEFAULT_WIN_H, CAPTION, NULL, NULL);
             if (!window)
             {
                 ERROR("failed to create window");
@@ -40,6 +43,7 @@ namespace D2Maker
                 return;
             }
             glfwMakeContextCurrent(window);
+            glfwSetWindowAspectRatio(window, 16, 9);
             GLenum err = glewInit();
             if (err!=GLEW_OK)
             {
@@ -113,6 +117,7 @@ namespace D2Maker
             em.addComponent<TextureComponent>(entity1,"erbucio",0);
             em.addComponent<Velocity>(entity1, 0, 0,0);
             //em.addComponent<RigidBody>(entity1, 10, 1.5, 10000);
+            em.addComponent<Timer>(entity1);
             em.addComponent<Script>(entity1, "Projects/Script.txt");
             //2
             em.addComponent<Transform>(entity2, 0, 0, 1600, 900,0);

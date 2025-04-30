@@ -31,11 +31,13 @@
 #include "../../Lib/openAL/include/AL/al.h"
 #include "../../Lib/openAL/include/AL/alc.h"
 
-
+#define CAPTION "game"
+#define DEFAULT_WIN_H  720
+#define DEFAULT_WIN_W 1280
 
 #define VIRTUAL_WIDTH 1600
-#define VIRTUAL_HEIGHT 900
+#define VIRTUAL_HEIGHT  900
 
-#define ASPECT_RATIO = (double)VIRTUAL_WIDTH/(double)VIRTUAL_HEIGHT;
-#define INVERSE_ASPECT_RATIO = 1.0/(double)ASPECT_RATIO
+#define ASPECT_RATIO = 16.0/9.0
+#define INVERSE_ASPECT_RATIO = 9.0/16.0
 #define SHADER_PATH "Engine/Resources/Shaders/Shader.shader"
