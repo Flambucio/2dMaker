@@ -6,12 +6,14 @@
 #include "Systems/Physics/RigidBody.h"
 #include "Systems/Render/CameraSystem.h"
 #include "Systems/Render/Animation.h"
+#include "Systems/AudioSystem.h"
 namespace D2Maker
 {
 	class SystemManager
 	{
 	private:
 		std::vector<std::unique_ptr<System>> systems;
+		AudioSystem as;
 	public:
 		SystemManager(GLFWwindow* window)
 		{
@@ -29,6 +31,10 @@ namespace D2Maker
 			{
 				system->Update(em);
 			}
+		}
+		AudioSystem& GetAudioSystem()
+		{
+			return as;
 		}
 	};
 }
