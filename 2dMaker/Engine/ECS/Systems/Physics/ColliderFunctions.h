@@ -14,6 +14,13 @@ namespace D2Maker
 				rec1.y + rec1.height > rec2.y;
 		}
 
+		static bool InViewport(Transform* transform)
+		{
+			Rectangle rec(transform->x, transform->y, transform->width, transform->height);
+			Rectangle view(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+			return CheckCollision(rec, view);
+		}
+
 		static bool CheckCollisionWithName(Entity entityIn,EntityManager &em,std::string nameIn)
 		{
 			float dt = DeltaTime::Get();

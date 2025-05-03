@@ -228,6 +228,7 @@ namespace D2Maker
 					else
 					{
 						vel->dx += value;
+						TRACE(vel->dx);
 					}
 					
 				}

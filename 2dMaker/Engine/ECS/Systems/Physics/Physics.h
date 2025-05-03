@@ -47,6 +47,7 @@ namespace D2Maker
 					if (ColliderFunctions::CheckCollision(futureX, staticRec)) {
 						ColliderFunctions::AdjustXStatic(transform, staticRec, velocity->dx);
 						collidedX = true;
+						velocity->dx = 0;
 					}
 
 					if (ColliderFunctions::CheckCollision(futureY, staticRec)) {
@@ -59,6 +60,7 @@ namespace D2Maker
 
 							rb->dyAccumulator = -rb->dyAccumulator * rb->bounciness;
 						}
+						velocity->dy = 0;
 					}
 				}
 
@@ -122,7 +124,7 @@ namespace D2Maker
 			dynamicEntities.clear();
 			for (Entity entity : em.aliveEntities)
 			{
-				
+				if (em.isVirtualEntity(entity)) { continue; }
 				if (em.hasComponent<Velocity>(entity))
 				{
 					dynamicEntities.push_back(entity);

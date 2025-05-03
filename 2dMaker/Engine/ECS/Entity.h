@@ -10,6 +10,7 @@ namespace D2Maker
 		AUDIO = 0,
 		TEXTURE = 1,
 		SCRIPT = 2 ,
+		ANIMATION=3
 	};
 	enum class EntityType
 	{
@@ -26,8 +27,10 @@ namespace D2Maker
 		std::unordered_set<Entity> runtimeEntities;
 		std::unordered_set<Entity> virtualEntities;
 		Entity nextID = 0;
+		
 	public:
 		std::unordered_set<Entity> aliveEntities;
+		Entity cameraEntity = 0;
 		Entity createEntity(EntityType type=EntityType::NORMAL)
 		{
 			Entity id;
@@ -88,8 +91,8 @@ namespace D2Maker
 		template<typename T,typename...Args>
 		void addComponent(Entity entity, Args&&... args)
 		{
-			TRACE("ADDING TO : ");
-			TRACE(entity);
+			//TRACE("ADDING TO : ");
+			//TRACE(entity);
 			if (hasComponent<T>(entity))
 			{
 				WARN("Component already added");
@@ -124,12 +127,30 @@ namespace D2Maker
 					return;
 				}
 			}
+			else if (std::is_same_v<T, Animation>)
+			{
+				if (!AllTexturesExist(std::forward<Args>(args)...))
+				{
+					return;
+				}
+			}
+			else if constexpr (std::is_same_v<T, Camera>)
+			{
+				if (CheckCameraComponentExistence() || isVirtualEntity(entity))
+				{
+					return;
+				}
+				cameraEntity = entity;
+			}
+			
 			
 			
 			entities[entity][std::type_index(typeid(T))] = std::make_unique<T>(std::forward<Args>(args)...);
-			TRACE("added component:");
-			TRACE(typeid(T).name());
+			//TRACE("added component:");
+			//TRACE(typeid(T).name());
 		}
+
+		
 
 		template<typename T>
 		void RemoveComponent(Entity entity)
@@ -151,10 +172,22 @@ namespace D2Maker
 					return;
 				}
 				componentMap.erase(compIt);
-				TRACE("Removed component:");
-				TRACE(typeid(T).name());
+				//TRACE("Removed component:");
+				//TRACE(typeid(T).name());
 			}
 
+		}
+
+		bool CheckCameraComponentExistence()
+		{
+			for (Entity entity : aliveEntities)
+			{
+				if (hasComponent<Camera>(entity))
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		template<typename...Args>
@@ -191,26 +224,55 @@ namespace D2Maker
 						}
 						break;
 					}
-					
-					
-					
-
 				}
 				else
 				{
-					WARN("Audio requires a name as first argument");
+					WARN("Unsupported argument type for file component");
 					return false;
 				}
 			}
 			else
 			{
-				WARN("Audio component requires at least one argument (name)");
+				WARN("Component requires at least one argument");
 				return false;
 			}
 
 			return true;
 		}
 
+		template<typename... Args>
+		bool AllTexturesExist(Args&&...args)
+		{
+			if constexpr (sizeof...(Args) > 0)
+			{
+				auto tup = std::forward_as_tuple(args...);
+				using FirstArgType = std::tuple_element_t<0, decltype(tup)>;
+				using CleanedType = std::decay_t<FirstArgType>;
+
+				if constexpr (std::is_same_v<CleanedType, std::vector<std::string>>)
+				{
+					const auto& names = std::get<0>(tup);
+					for (const std::string& name : names)
+					{
+						if (!CheckFileComponentValidity(FileComponentLoader::TEXTURE, name))
+						{
+							return false;
+						}
+					}
+					return true;
+				}
+				else
+				{
+					WARN("Invalid arguments - expected vector<string>");
+					return false;
+				}
+			}
+			else
+			{
+				WARN("Missing arguments - animation check");
+				return false;
+			}
+		}
 		template<typename T>
 		bool HasDependences(Entity entity)
 		{
@@ -222,6 +284,10 @@ namespace D2Maker
 			{
 				return hasComponent<Transform>(entity) && hasComponent<Velocity>(entity) && hasComponent<Collider>(entity);
 			}
+			if constexpr (std::is_same_v<T, Camera>)
+			{
+				return hasComponent<Transform>(entity);
+			}
 			return true;
 		}
 
@@ -231,12 +297,15 @@ namespace D2Maker
 			if constexpr (std::is_same_v<T, Transform>) 
 			{
 				return !(hasComponent<Velocity>(entity) || hasComponent<RigidBody>(entity) || 
-					hasComponent<Collider>(entity) || hasComponent<TextureComponent>(entity));
+					hasComponent<Collider>(entity) || hasComponent<TextureComponent>(entity) ||
+					hasComponent<Camera>(entity));
 			}
 			else if constexpr (std::is_same_v<T, Velocity> || std::is_same_v<T, Collider>)
 			{
 				return !hasComponent<RigidBody>(entity);
 			}
+
+			return true;
 		}
 
 		

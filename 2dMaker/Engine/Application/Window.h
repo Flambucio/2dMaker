@@ -96,6 +96,7 @@ namespace D2Maker
         {
             //GRAPHICS
             TextureLoader::LoadTexture("erbucio", "Engine/Resources/TestAssets/image.png", 0);
+            TextureLoader::LoadTexture("a", "Engine/Resources/TestAssets/gin.png", 0);
             AudioLoader::LoadAudio("erbuciaccio", "Engine/Resources/TestAssets/numayey.ogg");
             AudioLoader::LoadAudio("disco", "Engine/Resources/TestAssets/disco.ogg");
             glEnable(GL_BLEND);
@@ -111,14 +112,19 @@ namespace D2Maker
             Entity entiti3 = em.createEntity();
             Entity entity4 = em.createEntity();
             Entity entity5 = em.createEntity();
+            int e1_width = 200;
+            int e1_height = 200;
             //1
-            em.addComponent<Transform>(entity1, 200, 200, 600, 500, 0);//trace
+            em.addComponent<Transform>(entity1, e1_width, e1_height, 600, 500, 0);//trace
             em.addComponent<Collider>(entity1);//trace
-            em.addComponent<TextureComponent>(entity1,"erbucio",0);
+            //em.addComponent<TextureComponent>(entity1,"erbucio",0);
             em.addComponent<Velocity>(entity1, 0, 0,0);
-            //em.addComponent<RigidBody>(entity1, 10, 1.5, 10000);
+            //em.addComponent<Camera>(entity1,true,false,CENTER_X-e1_width,CENTER_Y-e1_height/2);
+         
             em.addComponent<Timer>(entity1);
             em.addComponent<Script>(entity1, "Projects/Script.txt");
+            std::vector<std::string> names = { "erbucio","a"};
+            em.addComponent<Animation>(entity1, names,2,0);
             //2
             em.addComponent<Transform>(entity2, 0, 0, 1600, 900,0);
             em.addComponent<TextureComponent>(entity2, "erbucio", -1);

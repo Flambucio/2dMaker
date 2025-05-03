@@ -10,6 +10,9 @@ void DeltaTime::Update()
     auto now = std::chrono::high_resolution_clock::now();
     deltaTime = std::chrono::duration<double>(now - lastTime).count();
     lastTime = now;
+
+    if (deltaTime < 0.001f) deltaTime = 0.001f;
+    if (deltaTime > 0.033f) deltaTime = 0.033f;
 }
 
 double DeltaTime::Get()

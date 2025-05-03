@@ -15,7 +15,7 @@ namespace D2Maker
 			entities.clear();
 			for (Entity entity : em.aliveEntities)
 			{
-
+				if (em.isVirtualEntity(entity)) { continue; }
 				if (em.hasComponent<RigidBody>(entity))
 				{
 					entities.push_back(entity);

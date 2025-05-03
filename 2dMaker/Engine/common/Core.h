@@ -38,6 +38,9 @@
 #define VIRTUAL_WIDTH 1600
 #define VIRTUAL_HEIGHT  900
 
+#define CENTER_X 800
+#define CENTER_Y 450
+
 #define ASPECT_RATIO = 16.0/9.0
 #define INVERSE_ASPECT_RATIO = 9.0/16.0
 #define SHADER_PATH "Engine/Resources/Shaders/Shader.shader"

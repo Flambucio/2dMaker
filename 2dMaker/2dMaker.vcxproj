@@ -155,7 +155,9 @@
     <ClInclude Include="Engine\ECS\Systems\AudioSystem.h" />
     <ClInclude Include="Engine\ECS\Systems\Physics\ColliderFunctions.h" />
     <ClInclude Include="Engine\ECS\Systems\Physics\RigidBody.h" />
-    <ClInclude Include="Engine\ECS\Systems\RenderingSystem.h" />
+    <ClInclude Include="Engine\ECS\Systems\Render\Animation.h" />
+    <ClInclude Include="Engine\ECS\Systems\Render\CameraSystem.h" />
+    <ClInclude Include="Engine\ECS\Systems\Render\RenderingSystem.h" />
     <ClInclude Include="Engine\ECS\Systems\Scripting\Interpreter.h" />
     <ClInclude Include="Engine\ECS\Systems\Scripting\Parser.h" />
     <ClInclude Include="Engine\ECS\Systems\Scripting\ScriptSystem.h">
@@ -281,6 +283,7 @@
     <Library Include="Lib\openAL\libs\Win32\OpenAL32.lib" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Engine\Resources\TestAssets\gin.png" />
     <Image Include="Engine\Resources\TestAssets\image.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

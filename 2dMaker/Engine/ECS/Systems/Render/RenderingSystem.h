@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../../Graphics/Texture.h"
-#include "../../Graphics/Renderer.h"
-#include "Sysbase.h"
+#include "../../../Graphics/Texture.h"
+#include "../../../Graphics/Renderer.h"
+#include "../Physics/ColliderFunctions.h"
+#include "../Sysbase.h"
 
 namespace D2Maker
 {
@@ -105,12 +106,14 @@ namespace D2Maker
             while (!queue.empty())
             {
                 Entity entity = queue.top().first;
+                
                 queue.pop();
-                unsigned int indices[] = { 0,1,2,2,3,0 };
-
-                IndexBuffer ibo(indices, 6);
-                TextureComponent* texcomponent = em.getComponent<TextureComponent>(entity);
+                if (em.isVirtualEntity(entity)) { continue; }
                 Transform* transformcomponent = em.getComponent<Transform>(entity);
+                if (!ColliderFunctions::InViewport(transformcomponent)) { continue; }
+                IndexBuffer ibo(indices, 6);
+
+                TextureComponent* texcomponent = em.getComponent<TextureComponent>(entity);
                 std::array<float, 16> vert = GetVertices(transformcomponent);
                 VertexArray vao;
                 vao.Bind();

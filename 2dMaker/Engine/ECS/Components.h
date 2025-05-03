@@ -122,6 +122,7 @@ namespace D2Maker
 
 	struct AudioComponent : public Component
 	{
+	public:
 		std::string name;
 		bool exists;
 		AudioComponent(const std::string& name)
@@ -139,6 +140,40 @@ namespace D2Maker
 
 	struct Timer : public Component
 	{
+	public:
 		float accumulator = 0;
+	};
+
+	struct Camera : public Component
+	{
+	public:
+		bool enableX;
+		bool enableY;
+		int x;
+		int y;
+		Camera(bool enableX, bool enableY,int x,int y)
+		{
+			this->enableX = enableX;
+			this->enableY = enableY;
+			enableX ? this->x = x : this->x = 0;
+			enableY ? this->y = y : this->y = 0;//enable x and y only if the boolean is statisfied
+			
+		}
+	};
+
+	struct Animation : public Component
+	{
+		std::vector<std::string> texNames;
+		float timing;
+		float accumulator=0;
+		float index=0;
+		int orderInLayer;
+		int currentTextureIndex = -1;
+		Animation(std::vector<std::string> names,float timing,int orderInLayer)
+		{
+			this->texNames	   = names;
+			this->timing	   = timing;
+			this->orderInLayer = orderInLayer;
+		}
 	};
 }

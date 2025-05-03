@@ -9,6 +9,7 @@ namespace D2Maker
 		{
 			for (Entity entity : em.aliveEntities)
 			{
+				if (em.isVirtualEntity(entity)) { continue; }
 				if (em.hasComponent<AudioComponent>(entity))
 				{
 					AudioComponent* audio = em.getComponent<AudioComponent>(entity);
