@@ -24,15 +24,19 @@ namespace D2Maker
 	private:
 		std::unordered_map<Entity, std::unordered_map<std::type_index, std::unique_ptr<Component>>> entities;
 		std::queue<int, std::deque<int>> availableIDs;
+		
 		std::unordered_set<Entity> runtimeEntities;
 		std::unordered_set<Entity> virtualEntities;
 		Entity nextID = 0;
 		
 	public:
+		static const std::unordered_set<std::string> componentsTypesStr;
 		std::unordered_set<Entity> aliveEntities;
+		std::unordered_map<std::string, Entity> entityNames;
 		Entity cameraEntity = 0;
-		Entity createEntity(EntityType type=EntityType::NORMAL)
+		Entity createEntity(std::string name, EntityType type = EntityType::NORMAL)
 		{
+			
 			Entity id;
 			if (!availableIDs.empty())
 			{
@@ -53,12 +57,22 @@ namespace D2Maker
 			{
 				runtimeEntities.insert(id);
 			}
+			entityNames[name] = id;
 			return id;
 		}
 
 		void destroyEntity(Entity entityID)
 		{
+			for (auto it = entityNames.begin(); it != entityNames.end(); ++it)
+			{
+				if (it->second == entityID)
+				{
+					entityNames.erase(it);
+					break;
+				}
+			}
 			entities.erase(entityID);
+			
 			if (isRuntimeEntity(entityID))
 			{
 				runtimeEntities.erase(entityID);
@@ -69,6 +83,23 @@ namespace D2Maker
 			}
 			availableIDs.push(entityID);
 			aliveEntities.erase(entityID);
+		}
+
+		void destroyEntity(std::string name)
+		{
+			auto it = entityNames.find(name);
+			if (it == entityNames.end()) return;
+			Entity entity = it->second;
+			entities.erase(entity);
+			entityNames.erase(name);
+			if (isRuntimeEntity(entity))
+			{
+				runtimeEntities.erase(entity);
+			}
+			else if (isVirtualEntity(entity))
+			{
+				virtualEntities.erase(entity);
+			}
 		}
 
 		bool isAlive(Entity entityID) const
@@ -288,6 +319,10 @@ namespace D2Maker
 			{
 				return hasComponent<Transform>(entity);
 			}
+			if constexpr (std::is_same_v<T, Follow>)
+			{
+				return hasComponent<Velocity>(entity);
+			}
 			return true;
 		}
 
@@ -303,6 +338,10 @@ namespace D2Maker
 			else if constexpr (std::is_same_v<T, Velocity> || std::is_same_v<T, Collider>)
 			{
 				return !hasComponent<RigidBody>(entity);
+			}
+			else if constexpr (std::is_same_v<T, Follow>)
+			{
+				return !hasComponent<Velocity>(entity);
 			}
 
 			return true;

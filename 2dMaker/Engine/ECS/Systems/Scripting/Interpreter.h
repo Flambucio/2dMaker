@@ -1,3 +1,4 @@
+#pragma once
 #include "../Sysbase.h"
 #include "../../../Events/EventManager.h"
 #include "Tokens.h"
@@ -39,8 +40,10 @@ namespace D2Maker
 	};
 
 
-	static class Interpreter
+	class Interpreter
 	{
+	private:
+		static std::function<void(const std::string&)> sceneChangeCallback;
 	public:
 		static void InterpretTokens(std::vector<std::vector<std::string>> tokens,Entity entity,EntityManager&em)
 		{
@@ -228,7 +231,7 @@ namespace D2Maker
 					else
 					{
 						vel->dx += value;
-						TRACE(vel->dx);
+						//TRACE(vel->dx);
 					}
 					
 				}
@@ -329,19 +332,12 @@ namespace D2Maker
 			}
 			else if (instruction[0]=="COLLIDE")
 			{
-				auto it = Tokens::keyMap.find(instruction[1]);
-				if (it != Tokens::keyMap.end())
+				if (ColliderFunctions::CheckCollisionWithName(entity, em, instruction[1]))
 				{
-					if (ColliderFunctions::CheckCollisionWithName(entity, em, instruction[1]))
-					{
-						InterpretInstruction(instruction, 2, entity, em);
-					}
+					InterpretInstruction(instruction, 2, entity, em);
+				}
 
-				}
-				else
-				{
-					return;
-				}
+				
 			}
 		}
 		static void ExecuteTimedInstruction(std::vector<std::string> instruction, Entity entity, EntityManager& em)

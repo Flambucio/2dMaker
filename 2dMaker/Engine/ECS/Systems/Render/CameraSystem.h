@@ -16,6 +16,7 @@ namespace D2Maker
 					return;
 				}
 			}
+			if (em.isVirtualEntity(em.cameraEntity)) { return; }
 
 			Transform* cameraT = em.getComponent<Transform>(em.cameraEntity);
 			Camera* cameraC = em.getComponent<Camera>(em.cameraEntity);

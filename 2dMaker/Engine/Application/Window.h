@@ -1,6 +1,5 @@
 #pragma once
-#include "../ECS/SystemManager.h"
-#include "../Events/EventManager.h"
+#include "../Filesystem/Filesystem.h"
 namespace D2Maker 
 {
 
@@ -107,11 +106,12 @@ namespace D2Maker
             glfwSetKeyCallback(window, KeyCallback);
             SystemManager sm{ window };
             EntityManager em;
-            Entity entity1 = em.createEntity();
-            Entity entity2 = em.createEntity();
-            Entity entiti3 = em.createEntity();
-            Entity entity4 = em.createEntity();
-            Entity entity5 = em.createEntity();
+            Entity entity1 = em.createEntity("e1");
+            Entity entity2 = em.createEntity("e2");
+            Entity entiti3 = em.createEntity("e3");
+            Entity entity4 = em.createEntity("e4");
+            Entity entity5 = em.createEntity("e5");
+            Entity entity6 = em.createEntity("e6");
             int e1_width = 200;
             int e1_height = 200;
             //1
@@ -139,15 +139,17 @@ namespace D2Maker
             //5
             em.addComponent<Script>(entity5, "Projects/Script2.txt");
 
+            em.addComponent<Transform>(entity6, 1000, 700, 100, 100, 0);
+            em.addComponent<Velocity>(entity6, 0, 0,0);
+            em.addComponent<Collider>(entity6);
+            em.addComponent<TextureComponent>(entity6, "a", 2);
+            em.addComponent<Follow>(entity6, 10, "e1");
+            
 
-            
             TextureLoader::BindTexture("erbucio");
-            
 
             float accumulator = 0;
             int countfps = 0;
-            
-            
             float r = 0.0f;
             float increment = 0.05f; 
             while (!glfwWindowShouldClose(window))

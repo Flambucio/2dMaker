@@ -1,8 +1,5 @@
 #include "Application/Window.h"
-#include "Graphics/TextureLoader.h"
-#include "Events/EventManager.h"
-#include "ECS/Systems/Scripting/Tokens.h"
-#include "Audio/AudioLoader.h"
+#include "Filesystem/Filesystem.h"
 
 namespace D2Maker
 {
@@ -61,6 +58,28 @@ namespace D2Maker
     {"RIGHT_MOUSE", D2Maker::Keys::RIGHT},
     };
     std::unordered_map<std::string, std::unique_ptr<Audio>> AudioLoader::audios = {};
+    std::function<void(const std::string&)> Interpreter::sceneChangeCallback = [](const std::string& name) {
+        SceneManager::SelectScene(name);};
+    std::unordered_map<std::string, std::unique_ptr<Scene>> SceneManager::scenes;
+    std::string SceneManager::currentScene = "";
+    GLFWwindow* SceneManager::window = nullptr;
+    std::string FileSys::currentProject = "";
+    const std::unordered_set<std::string> EntityManager::componentsTypesStr = {
+        "TRANSFORM",
+        "COLLIDER",
+        "VELOCITY",
+        "TIMER",
+        "NAME",
+        "AUDIO",
+        "SCRIPT",
+        "TEXTURE",
+        "ANIMATION",
+        "RIGIDBODY",
+        "CAMERA",
+        "FOLLOW"
+
+    };
+    std::unordered_set<std::string> FileSys::projectNames = {};
 }
 
 

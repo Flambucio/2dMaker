@@ -15,6 +15,7 @@
 #include <typeinfo>
 #include <unordered_set>
 #include <filesystem>
+#include <cmath>
 
 
 #include "Log.h"

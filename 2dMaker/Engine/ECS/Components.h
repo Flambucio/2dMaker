@@ -176,4 +176,15 @@ namespace D2Maker
 			this->orderInLayer = orderInLayer;
 		}
 	};
+
+	struct Follow : public Component
+	{
+		int velocity;
+		std::string entityToFollow;
+		Follow(int velocity,std::string entityToFollow)
+		{
+			this->velocity=velocity;
+			this->entityToFollow = entityToFollow;
+		}
+	};
 }

@@ -84,6 +84,7 @@ namespace D2Maker
 
 		static void AdjustXDynamic(Transform* transform1, Transform* transform2, float dx1, float dx2)
 		{
+			
 			float delta = (abs(transform1->x - transform2->x)) / 2.0f;
 			if (dx1 > 0 && dx2 > 0)
 			{

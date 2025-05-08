@@ -1,6 +1,5 @@
 #pragma once
 #include "../ECS/SystemManager.h"
-#include "../Events/EventManager.h"
 namespace D2Maker
 {
 	class Scene
@@ -8,6 +7,8 @@ namespace D2Maker
 	public:
 		EntityManager em;
 		SystemManager sm;
+		Scene(GLFWwindow* window) : sm(window)
+		{}
 		void Update()
 		{
 			sm.UpdateSystems(em);

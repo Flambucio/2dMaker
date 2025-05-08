@@ -154,6 +154,7 @@
     <ClInclude Include="Engine\ECS\SystemManager.h" />
     <ClInclude Include="Engine\ECS\Systems\AudioSystem.h" />
     <ClInclude Include="Engine\ECS\Systems\Physics\ColliderFunctions.h" />
+    <ClInclude Include="Engine\ECS\Systems\Physics\FollowSystem.h" />
     <ClInclude Include="Engine\ECS\Systems\Physics\RigidBody.h" />
     <ClInclude Include="Engine\ECS\Systems\Render\Animation.h" />
     <ClInclude Include="Engine\ECS\Systems\Render\CameraSystem.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="Engine\ECS\Systems\Physics\Physics.h" />
     <ClInclude Include="Engine\Events\EventManager.h" />
     <ClInclude Include="Engine\Events\Keys.h" />
+    <ClInclude Include="Engine\Filesystem\Filesystem.h" />
     <ClInclude Include="Engine\Graphics\GL\IndexBuffer.h" />
     <ClInclude Include="Engine\Graphics\GL\VertexArray.h" />
     <ClInclude Include="Engine\Graphics\GL\VertexBuffer.h" />

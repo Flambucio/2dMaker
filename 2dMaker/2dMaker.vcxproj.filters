@@ -179,6 +179,12 @@
     <ClInclude Include="Engine\ECS\Systems\Render\Animation.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\ECS\Systems\Physics\FollowSystem.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Filesystem\Filesystem.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Lib\GLEW\doc\advanced.html" />

@@ -7,10 +7,15 @@ namespace D2Maker
 	class SceneManager
 	{
 	private:
-		std::string currentScene = "";
-		std::unordered_map<std::string, std::unique_ptr<Scene>> scenes;
+		static std::string currentScene;
+		static std::unordered_map<std::string, std::unique_ptr<Scene>> scenes;
+		static GLFWwindow* window;
 	public:
-		void SelectScene(const std::string& name)
+		static void InitManager(GLFWwindow * windowIn)
+		{
+			window = windowIn;
+		}
+		static void SelectScene(const std::string& name)
 		{
 			if (Exists(currentScene))
 			{
@@ -27,12 +32,12 @@ namespace D2Maker
 			
 		}
 
-		bool Exists(const std::string& name)
+		static bool Exists(const std::string& name)
 		{
 			return scenes.find(name) != scenes.end();
 		}
 
-		void AddScene(const std::string& name)
+		static void AddScene(const std::string& name)
 		{
 			if (Exists(name))
 			{
@@ -40,11 +45,11 @@ namespace D2Maker
 				return;
 			}
 
-			scenes[name] = std::make_unique<Scene>();
+			scenes[name] = std::make_unique<Scene>(window);
 
 		}
 
-		void RemoveScene(const std::string& name)
+		static void RemoveScene(const std::string& name)
 		{
 			if (!Exists(name))
 			{
@@ -56,6 +61,21 @@ namespace D2Maker
 			}
 			scenes.erase(name);
 
+		}
+
+		static void UpdateCurrentScene()
+		{
+			
+		}
+
+		static Scene* GetScene(const std::string& name)
+		{
+			if (!Exists(name))
+			{
+				return nullptr;
+			}
+				
+			return scenes[name].get();
 		}
 
 

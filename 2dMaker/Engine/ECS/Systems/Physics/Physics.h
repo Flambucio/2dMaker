@@ -44,13 +44,16 @@ namespace D2Maker
 					Rectangle futureY{ transform->x, transform->y + velocity->dy * dt, 
 						transform->width, transform->height };
 
-					if (ColliderFunctions::CheckCollision(futureX, staticRec)) {
+					if (ColliderFunctions::CheckCollision(futureX, staticRec)) 
+					{
 						ColliderFunctions::AdjustXStatic(transform, staticRec, velocity->dx);
 						collidedX = true;
 						velocity->dx = 0;
 					}
 
-					if (ColliderFunctions::CheckCollision(futureY, staticRec)) {
+					if (ColliderFunctions::CheckCollision(futureY, staticRec)) 
+					{
+
 						ColliderFunctions::AdjustYStatic(transform, staticRec, velocity->dy);
 						collidedY = true;
 
@@ -83,13 +86,23 @@ namespace D2Maker
 					Rectangle futureX{ transform->x + velocity->dx * dt, transform->y, transform->width, transform->height };
 					Rectangle futureY{ transform->x, transform->y + velocity->dy * dt, transform->width, transform->height };
 
-					if (ColliderFunctions::CheckCollision(futureX, dynamicRec)) {
-						ColliderFunctions::AdjustXDynamic(transform, tr2, velocity->dx, vel2->dx);
+					if (ColliderFunctions::CheckCollision(futureX, dynamicRec)) 
+					{
+						if (!em.hasComponent<Follow>(entity))
+						{
+							ColliderFunctions::AdjustXDynamic(transform, tr2, velocity->dx, vel2->dx);
+						}
+						
 						collidedX = true;
 					}
 
-					if (ColliderFunctions::CheckCollision(futureY, dynamicRec)) {
-						ColliderFunctions::AdjustYDynamic(transform, tr2, velocity->dy, vel2->dy);
+					if (ColliderFunctions::CheckCollision(futureY, dynamicRec)) 
+					{
+						if (!em.hasComponent<Follow>(entity)) 
+						{
+							ColliderFunctions::AdjustYDynamic(transform, tr2, velocity->dy, vel2->dy);
+						}
+						
 						collidedY = true;
 
 						if (em.hasComponent<RigidBody>(entity))
