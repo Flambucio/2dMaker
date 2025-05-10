@@ -22,6 +22,7 @@ namespace D2Maker
 			Camera* cameraC = em.getComponent<Camera>(em.cameraEntity);
 			int dx=0;
 			int dy=0;
+			if (!cameraC) return;
 			if (cameraC->enableX)
 			{
 				dx = cameraC->x - cameraT->x;

@@ -8,9 +8,10 @@ namespace D2Maker
 	{
 	private:
 		static std::string currentScene;
-		static std::unordered_map<std::string, std::unique_ptr<Scene>> scenes;
+		
 		static GLFWwindow* window;
 	public:
+		static std::unordered_map<std::string, std::unique_ptr<Scene>> scenes;
 		static void InitManager(GLFWwindow * windowIn)
 		{
 			window = windowIn;
@@ -63,9 +64,15 @@ namespace D2Maker
 
 		}
 
-		static void UpdateCurrentScene()
+		static void UpdateCurrentScene(GLFWwindow* window)
 		{
-			
+			if (currentScene != "")
+			{
+				if (window)
+				{
+					scenes[currentScene]->sm.UpdateSystems(scenes[currentScene]->em);
+				}
+			}
 		}
 
 		static Scene* GetScene(const std::string& name)

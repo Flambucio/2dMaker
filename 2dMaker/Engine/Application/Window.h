@@ -93,60 +93,73 @@ namespace D2Maker
 
         static void RunWindow()
         {
-            //GRAPHICS
             TextureLoader::LoadTexture("erbucio", "Engine/Resources/TestAssets/image.png", 0);
             TextureLoader::LoadTexture("a", "Engine/Resources/TestAssets/gin.png", 0);
             AudioLoader::LoadAudio("erbuciaccio", "Engine/Resources/TestAssets/numayey.ogg");
             AudioLoader::LoadAudio("disco", "Engine/Resources/TestAssets/disco.ogg");
+            FileSys::GetProjects();
+            
+            FileSys::SelectProject("Project1");
+            FileSys::LoadScenes();
+            TRACE("CURRENT PRJ"+FileSys::currentProject);
+            PRINT_U_SET_STR(FileSys::projectNames);
+            //SceneManager::AddScene("testscene");
+            //Scene* scene =SceneManager::GetScene("testscene");
+
+
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glEnable(GL_DEPTH_TEST);
             glDepthFunc(GL_LESS);
             glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
             glfwSetKeyCallback(window, KeyCallback);
-            SystemManager sm{ window };
+            /*SystemManager sm{window};
             EntityManager em;
-            Entity entity1 = em.createEntity("e1");
-            Entity entity2 = em.createEntity("e2");
-            Entity entiti3 = em.createEntity("e3");
-            Entity entity4 = em.createEntity("e4");
-            Entity entity5 = em.createEntity("e5");
-            Entity entity6 = em.createEntity("e6");
+            Entity entity1 = scene->em.createEntity("e1");
+            Entity entity2 = scene->em.createEntity("e2");
+            Entity entiti3 = scene->em.createEntity("e3");
+            Entity entity4 = scene->em.createEntity("e4");
+            Entity entity5 = scene->em.createEntity("e5");
+            Entity entity6 = scene->em.createEntity("e6");
             int e1_width = 200;
             int e1_height = 200;
             //1
-            em.addComponent<Transform>(entity1, e1_width, e1_height, 600, 500, 0);//trace
-            em.addComponent<Collider>(entity1);//trace
+            scene->em.addComponent<Transform>(entity1, e1_width, e1_height, 600, 500, 0);//trace
+            scene->em.addComponent<Collider>(entity1);//trace
             //em.addComponent<TextureComponent>(entity1,"erbucio",0);
-            em.addComponent<Velocity>(entity1, 0, 0,0);
+            scene->em.addComponent<Velocity>(entity1, 0, 0,0);
             //em.addComponent<Camera>(entity1,true,false,CENTER_X-e1_width,CENTER_Y-e1_height/2);
          
-            em.addComponent<Timer>(entity1);
-            em.addComponent<Script>(entity1, "Projects/Script.txt");
+            scene->em.addComponent<Timer>(entity1);
+            scene->em.addComponent<Script>(entity1, "Projects/Script.txt");
             std::vector<std::string> names = { "erbucio","a"};
-            em.addComponent<Animation>(entity1, names,2,0);
+            scene->em.addComponent<Animation>(entity1, names,2,0);
             //2
-            em.addComponent<Transform>(entity2, 0, 0, 1600, 900,0);
-            em.addComponent<TextureComponent>(entity2, "erbucio", -1);
+            scene->em.addComponent<Transform>(entity2, 0, 0, 1600, 900,0);
+            scene->em.addComponent<TextureComponent>(entity2, "erbucio", -1);
             //3
-            em.addComponent<Transform>(entiti3, 1200, 200, 600, 500, 45);
-            em.addComponent<Collider>(entiti3);
-            em.addComponent<TextureComponent>(entiti3, "erbucio", 0);
+            scene->em.addComponent<Transform>(entiti3, 1200, 200, 600, 500, 45);
+            scene->em.addComponent<Collider>(entiti3);
+            scene->em.addComponent<TextureComponent>(entiti3, "erbucio", 0);
             //4
-            em.addComponent<Transform>(entity4, 0, 850, 1600, 100,0);
-            em.addComponent<Collider>(entity4);
-            em.addComponent<TextureComponent>(entity4, "erbucio", 0);
+            scene->em.addComponent<Transform>(entity4, 0, 850, 1600, 100,0);
+            scene->em.addComponent<Collider>(entity4);
+            scene->em.addComponent<TextureComponent>(entity4, "erbucio", 0);
             //5
-            em.addComponent<Script>(entity5, "Projects/Script2.txt");
+            scene->em.addComponent<Script>(entity5, "Projects/Script2.txt");
 
-            em.addComponent<Transform>(entity6, 1000, 700, 100, 100, 0);
-            em.addComponent<Velocity>(entity6, 0, 0,0);
-            em.addComponent<Collider>(entity6);
-            em.addComponent<TextureComponent>(entity6, "a", 2);
-            em.addComponent<Follow>(entity6, 10, "e1");
+            scene->em.addComponent<Transform>(entity6, 1000, 700, 100, 100, 0);
+            scene->em.addComponent<Velocity>(entity6, 0, 0,0);
+            scene->em.addComponent<Collider>(entity6);
+            scene->em.addComponent<TextureComponent>(entity6, "a", 2);
+            scene->em.addComponent<Follow>(entity6, 10, "e1");
+            */
             
+            SceneManager::SelectScene("testscene");
+            if(SceneManager::Exists("testscene")) TRACE("EXISTS");
 
-            TextureLoader::BindTexture("erbucio");
+
+            
 
             float accumulator = 0;
             int countfps = 0;
@@ -173,15 +186,18 @@ namespace D2Maker
  
                 glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                 //renderer.Draw(va, ib, shaderprogram);
-                sm.UpdateSystems(em);
+                SceneManager::UpdateCurrentScene(window);
                 //system.TestRendering(entity1, em, window);
                 glfwSwapBuffers(window);
                 glfwPollEvents();
             }
+
+            Destruct();
         }
 
         static void Destruct()
         {
+            FileSys::Save();
             glfwTerminate();
             
         }

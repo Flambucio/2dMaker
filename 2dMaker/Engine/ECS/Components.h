@@ -179,9 +179,9 @@ namespace D2Maker
 
 	struct Follow : public Component
 	{
-		int velocity;
+		float velocity;
 		std::string entityToFollow;
-		Follow(int velocity,std::string entityToFollow)
+		Follow(float velocity,std::string entityToFollow)
 		{
 			this->velocity=velocity;
 			this->entityToFollow = entityToFollow;

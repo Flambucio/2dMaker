@@ -34,3 +34,6 @@ for(int j=0;j<x.size();j++)\
 #define PRINT_2D_ARRAY_STR(x) for(int i=0;i<x.size();i++){\
 	PRINT_ARRAY_STR(x[i]);\
 }
+
+#define PRINT_U_SET_STR(x) std::string t="";\
+for(auto y : x){t+=y+"|";}TRACE(t);

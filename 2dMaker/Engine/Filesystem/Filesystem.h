@@ -31,7 +31,7 @@ namespace D2Maker
 		}
 		static void GetProjects()
 		{
-			for (const auto& entry : fs::recursive_directory_iterator("Projects")) 
+			for (const auto& entry : fs::directory_iterator("Projects")) 
 			{
 				if (entry.is_directory())
 				{
@@ -66,23 +66,26 @@ namespace D2Maker
 		}
 		static void LoadScenes()
 		{
+			TRACE("LOAD PROJECT " + currentProject);
 			if (currentProject == "")
 			{
 				return;
 			}
 
-			if (!(fs::exists("Projects/" + currentProject) && fs::is_directory("Projects/" + currentProject)))
+			if (!(fs::exists("Projects/" + currentProject) || !fs::is_directory("Projects/" + currentProject)))
 			{
+				TRACE("early return:"+currentProject);
 				return;
 			}
 
-			for (const auto& entry : fs::recursive_directory_iterator("Projects/"+currentProject+"/Scenes"))
+			for (const auto& entry : fs::directory_iterator("Projects/" + currentProject+"/Scenes"))
 			{
 				if (entry.is_directory())
 				{
 					std::string sceneToCreateName = entry.path().filename().string();
 					std::string sceneToCreatePath = entry.path().string();
 					SceneManager::AddScene(sceneToCreateName);
+					TRACE(sceneToCreateName);
 					for (const auto& entityFile : fs::recursive_directory_iterator(entry.path()))
 					{
 						LoadEntity(sceneToCreateName, entityFile.path().string());
@@ -96,13 +99,21 @@ namespace D2Maker
 		}
 		static void LoadEntity(const std::string& sceneToCreateName, const std::string& EntityPath)
 		{
+			TRACE("IN LOAD ENTITY");
 			Scene* scene = SceneManager::GetScene(sceneToCreateName);
+			TRACE("MAYBE NULL");
 			if (!scene) return;
+			TRACE("NOT NULL");
 			std::vector<std::vector<std::string>> parsedStr;
 			Parser::ParseString(EntityPath, parsedStr);
-			Entity entity = scene->em.createEntity(parsedStr[1][0]);
+			if (parsedStr.empty() || parsedStr[0].empty()) {
+				std::cerr << "Errore nel parsing del file: " << EntityPath << "\n";
+				return;
+			}
+			TRACE("DOPO IL CHECK");
+			Entity entity = scene->em.createEntity(parsedStr[0][0]);
 
-			for (int i = 0;i < parsedStr.size();i++)
+			for (int i = 1;i < parsedStr.size();i++)
 			{
 				if (parsedStr[i][0] == "TRANSFORM")
 				{
@@ -136,7 +147,7 @@ namespace D2Maker
 				}
 				else if (parsedStr[i][0] == "AUDIO")
 				{
-					scene->em.addComponent<Audio>(entity, parsedStr[i][1]);
+					scene->em.addComponent<AudioComponent>(entity, parsedStr[i][1]);
 				}
 				else if (parsedStr[i][0] == "SCRIPT")
 				{
@@ -144,10 +155,14 @@ namespace D2Maker
 				}
 				else if (parsedStr[i][0] == "TEXTURE")
 				{
+					TRACE("TRYING TO LOAD TEXTURE");
+					TRACE("parsedSTR[i][1]" + parsedStr[i][1]);
+					TRACE("parsedSTR[i][2]" + parsedStr[i][2]);
 					scene->em.addComponent<TextureComponent>(entity,
 						parsedStr[i][1],
 						stoi(parsedStr[i][2])
 					);
+					TRACE("LOADED TEXTURE");
 				}
 				else if (parsedStr[i][0] == "ANIMATION")
 				{
@@ -183,10 +198,135 @@ namespace D2Maker
 						stoi(parsedStr[i][4])
 					);
 				}
+				else if (parsedStr[i][0] == "FOLLOW")
+				{
+					scene->em.addComponent<Follow>(entity,
+						stof(parsedStr[i][1]),
+						parsedStr[i][2]
+					);
+				}
 			}
 		}
 		static void Save()
 		{
+			if (currentProject == "")
+			{
+				return;
+			}
+			std::string currentProjectPath = "Projects/" + currentProject;
+			fs::remove_all(currentProjectPath+"/Scenes");
+			fs::create_directory(currentProjectPath + "/Scenes");
+			for (auto& scene : SceneManager::scenes)
+			{
+				std::string currentSceneDirectory = currentProjectPath + "/Scenes/" + scene.first;
+				fs::create_directories(currentSceneDirectory);
+				EntityManager& currentEM = scene.second->em;
+
+				for (std::pair<std::string,Entity> entity : currentEM.entityNames)
+				{
+					SaveEntity(currentEM, entity,currentSceneDirectory);
+				}
+				
+
+			}
+			
+
+			
+			
+
+			
+		}
+
+		static void SaveEntity(EntityManager& em,std::pair<std::string,Entity> entityPair, std::string currentSceneDirectory)
+		{
+			std::string writeStr = "";
+			writeStr += entityPair.first + ";\n";
+			Entity entity = entityPair.second;
+
+			if (em.hasComponent<Transform>(entity))
+			{
+				Transform* transform = em.getComponent<Transform>(entity);
+				writeStr += "TRANSFORM " +std::to_string(transform->x) +
+					" " + std::to_string(transform->y) +
+					" " + std::to_string(transform->width) +
+					" " + std::to_string(transform->height) +
+					" " + std::to_string(transform->rotationDegrees) + ";\n";
+
+			}
+			if (em.hasComponent<Velocity>(entity))
+			{
+				Velocity* velocity = em.getComponent<Velocity>(entity);
+				writeStr += "VELOCITY " + std::to_string(velocity->defaultDx) +
+					" " + std::to_string(velocity->defaultDy) +
+					" " + std::to_string(velocity->defaultDtheta) + ";\n";
+			}
+			if (em.hasComponent<Collider>(entity))
+			{
+				writeStr += "COLLIDER;\n";
+			}
+			if (em.hasComponent<Timer>(entity))
+			{
+				writeStr += "TIMER;\n";
+			}
+			if (em.hasComponent<Name>(entity))
+			{
+				Name* name = em.getComponent<Name>(entity);
+				writeStr += "NAME " + name->name + ";\n";
+			}
+			if (em.hasComponent<AudioComponent>(entity))
+			{
+				AudioComponent* ac = em.getComponent<AudioComponent>(entity);
+				writeStr += "AUDIO " + ac->name + ";\n";
+			}
+			if (em.hasComponent<Script>(entity))
+			{
+				Script* script = em.getComponent<Script>(entity);
+				writeStr += "SCRIPT " + script->filepath + ";\n";
+			}
+			if (em.hasComponent<TextureComponent>(entity) && !em.hasComponent<Animation>(entity))
+			{
+				
+				TextureComponent* texture = em.getComponent<TextureComponent>(entity);
+				writeStr += "TEXTURE " + texture->name + " " + std::to_string(texture->orderInLayer) + ";\n";
+			}
+			if (em.hasComponent<Animation>(entity))
+			{
+				Animation* animation = em.getComponent<Animation>(entity);
+				std::string vectorStr;
+				for (int i = 0;i < animation->texNames.size();i++)
+				{
+					vectorStr += animation->texNames[i] + " ";
+				}
+				writeStr += "ANIMATION " + vectorStr + std::to_string(animation->timing) + " " + std::to_string(animation->orderInLayer) + ";\n";
+			}
+			if (em.hasComponent<RigidBody>(entity))
+			{
+				RigidBody* rigidbody = em.getComponent<RigidBody>(entity);
+				writeStr += "RIGIDBODY " + std::to_string(rigidbody->mass) +
+					" " + std::to_string(rigidbody->bounciness) +
+					" " + std::to_string(rigidbody->maxDy) + ";\n";
+			}
+			if (em.hasComponent<Camera>(entity))
+			{
+				Camera* camera = em.getComponent<Camera>(entity);
+				std::string boolX;
+				std::string boolY;
+				camera->enableX ? boolX = "T" : boolX = "F";
+				camera->enableY ? boolY = "T" : boolY = "F";
+				writeStr += "CAMERA " + boolX + " " + boolY +
+					" " + std::to_string(camera->x) +
+					" " + std::to_string(camera->y) + ";\n";
+			}
+			if (em.hasComponent<Follow>(entity))
+			{
+				Follow* follow = em.getComponent<Follow>(entity);
+				writeStr += "FOLLOW " + std::to_string(follow->velocity) + " " + follow->entityToFollow + ";\n";
+			}
+
+			std::ofstream out(currentSceneDirectory+"/" + entityPair.first + ".txt");
+			out << writeStr;
+			out.close();
+
 
 		}
 	};
