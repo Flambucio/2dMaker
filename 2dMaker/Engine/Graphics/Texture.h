@@ -14,10 +14,9 @@ namespace D2Maker
 		int width;
 		int height;
 		int bpp;
-		int orderInLayer;
 	public:
-		Texture(const std::string& filepath, int orderInLayer) : rendererID(0), filepath(filepath), localBuffer(nullptr), width(0), height(0),
-			bpp(0), orderInLayer(orderInLayer)
+		Texture(const std::string& filepath) : rendererID(0), filepath(filepath), localBuffer(nullptr), width(0), height(0),
+			bpp(0)
 		{
 
 			stbi_set_flip_vertically_on_load(false);
@@ -67,11 +66,6 @@ namespace D2Maker
 		std::string GetPath() const
 		{
 			return filepath;
-		}
-
-		int GetOrderInLayer() const
-		{
-			return orderInLayer;
 		}
 	};
 

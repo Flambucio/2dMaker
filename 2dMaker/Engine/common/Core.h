@@ -45,3 +45,13 @@
 #define ASPECT_RATIO = 16.0/9.0
 #define INVERSE_ASPECT_RATIO = 9.0/16.0
 #define SHADER_PATH "Engine/Resources/Shaders/Shader.shader"
+
+namespace D2Maker
+{
+	inline bool is_multiple_of_360(float x)
+	{
+		if (x != (int)x) return false;
+		if (int(x) % 360 != 0) return false;
+		return true;
+	}
+}

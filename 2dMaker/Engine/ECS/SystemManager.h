@@ -13,25 +13,30 @@ namespace D2Maker
 	class SystemManager
 	{
 	private:
-		std::vector<std::unique_ptr<System>> systems;
 		AudioSystem as;
+		RigidBodySystem rbs;
+		FollowSystem fs;
+		ScriptSystem ss;
+		Physics ps;
+		CameraSystem cs;
+		AnimationSystem ans;
+		RenderSystem rs;
 	public:
-		SystemManager(GLFWwindow* window)
+		SystemManager(GLFWwindow* window) : rs(window)
 		{
-			systems.push_back(std::make_unique<RigidBodySystem>());
-			systems.push_back(std::make_unique<FollowSystem>());
-			systems.push_back(std::make_unique<ScriptSystem>());
-			systems.push_back(std::make_unique<Physics>());
-			systems.push_back(std::make_unique<CameraSystem>());
-			systems.push_back( std::make_unique<AnimationSystem>());
-			systems.push_back(std::make_unique<RenderSystem>(window));
+
 		}
 		void UpdateSystems(EntityManager& em)
 		{
-			for (const auto&system : systems)
-			{
-				system->Update(em);
-			}
+			rbs.Update(em);
+			fs.Update(em);
+			ss.Update(em);
+			ps.Update(em);
+			cs.Update(em);
+			ans.Update(em);
+			rs.Update(em);
+
+
 		}
 		AudioSystem& GetAudioSystem()
 		{

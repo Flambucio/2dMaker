@@ -22,6 +22,8 @@ namespace D2Maker
 		float width;
 		float height;
 		float rotationDegrees;
+		float defaultX;
+		float defaultY;
 		Transform(float x, float y, float width, float height, float rotationDegrees)
 		{
 			this->x				  = x;
@@ -29,6 +31,13 @@ namespace D2Maker
 			this->width			  = width;
 			this->height		  = height;
 			this->rotationDegrees = rotationDegrees;
+			this->defaultX = x;
+			this->defaultY = y;
+		}
+		void ResetPos()
+		{
+			x = defaultX;
+			y = defaultY;
 		}
 
 	};
@@ -142,6 +151,10 @@ namespace D2Maker
 	{
 	public:
 		float accumulator = 0;
+		void ResetAcc()
+		{
+			accumulator = 0;
+		}
 	};
 
 	struct Camera : public Component
@@ -174,6 +187,12 @@ namespace D2Maker
 			this->texNames	   = names;
 			this->timing	   = timing;
 			this->orderInLayer = orderInLayer;
+		}
+		void ResetIndexTimes()
+		{
+			index = 0;
+			accumulator = 0;
+			currentTextureIndex = -1;
 		}
 	};
 

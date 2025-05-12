@@ -22,8 +22,8 @@ namespace D2Maker
 			fs::create_directory("Projects/" + name + "/Scripts");
 			fs::create_directory("Projects/" + name + "/Scenes");
 			fs::create_directories ("Projects/" + name + "/Resources");
-			fs::create_directories("Projects/" + name + "/Resources/Assets");
-			fs::create_directories("Projects/" + name + "/Resources/AssetsInfo");
+			fs::create_directories("Projects/" + name + "/Resources/Textures");
+			fs::create_directories("Projects/" + name + "/Resources/Audios");
 			
 
 
@@ -66,6 +66,7 @@ namespace D2Maker
 		}
 		static void LoadScenes()
 		{
+
 			TRACE("LOAD PROJECT " + currentProject);
 			if (currentProject == "")
 			{
@@ -86,7 +87,7 @@ namespace D2Maker
 					std::string sceneToCreatePath = entry.path().string();
 					SceneManager::AddScene(sceneToCreateName);
 					TRACE(sceneToCreateName);
-					for (const auto& entityFile : fs::recursive_directory_iterator(entry.path()))
+					for (const auto& entityFile : fs::directory_iterator(entry.path()))
 					{
 						LoadEntity(sceneToCreateName, entityFile.path().string());
 					}
@@ -99,21 +100,22 @@ namespace D2Maker
 		}
 		static void LoadEntity(const std::string& sceneToCreateName, const std::string& EntityPath)
 		{
-			TRACE("IN LOAD ENTITY");
+			//TRACE("IN LOAD ENTITY");
 			Scene* scene = SceneManager::GetScene(sceneToCreateName);
-			TRACE("MAYBE NULL");
+			//TRACE("MAYBE NULL");
 			if (!scene) return;
-			TRACE("NOT NULL");
+			//TRACE("NOT NULL");
 			std::vector<std::vector<std::string>> parsedStr;
 			Parser::ParseString(EntityPath, parsedStr);
 			if (parsedStr.empty() || parsedStr[0].empty()) {
-				std::cerr << "Errore nel parsing del file: " << EntityPath << "\n";
+				ERROR("Parsing error");
 				return;
 			}
-			TRACE("DOPO IL CHECK");
+			//TRACE("DOPO IL CHECK");
 			Entity entity = scene->em.createEntity(parsedStr[0][0]);
-
-			for (int i = 1;i < parsedStr.size();i++)
+			//TRACE("CREATO IL NOME");
+			PRINT_2D_ARRAY_STR(parsedStr);
+			for (int i = 1;i < parsedStr.size()-1;i++)
 			{
 				if (parsedStr[i][0] == "TRANSFORM")
 				{
@@ -155,19 +157,20 @@ namespace D2Maker
 				}
 				else if (parsedStr[i][0] == "TEXTURE")
 				{
-					TRACE("TRYING TO LOAD TEXTURE");
-					TRACE("parsedSTR[i][1]" + parsedStr[i][1]);
-					TRACE("parsedSTR[i][2]" + parsedStr[i][2]);
+					//TRACE("TRYING TO LOAD TEXTURE");
+					//TRACE("parsedSTR[i][1]" + parsedStr[i][1]);
+					//TRACE("parsedSTR[i][2]" + parsedStr[i][2]);
 					scene->em.addComponent<TextureComponent>(entity,
 						parsedStr[i][1],
 						stoi(parsedStr[i][2])
 					);
-					TRACE("LOADED TEXTURE");
+					//TRACE("LOADED TEXTURE");
 				}
 				else if (parsedStr[i][0] == "ANIMATION")
 				{
+					//TRACE("INTO ANIMATION");
 					std::vector<std::string> names;
-					for (int j = 1;j < parsedStr[i].size() - 3;j++)
+					for (int j = 1;j < parsedStr[i].size() - 2;j++)
 					{
 						names.push_back(parsedStr[i][j]);
 					}
@@ -205,6 +208,7 @@ namespace D2Maker
 						parsedStr[i][2]
 					);
 				}
+				//TRACE("FINISHED FUNCTION");
 			}
 		}
 		static void Save()
@@ -246,6 +250,7 @@ namespace D2Maker
 			if (em.hasComponent<Transform>(entity))
 			{
 				Transform* transform = em.getComponent<Transform>(entity);
+				transform->ResetPos();
 				writeStr += "TRANSFORM " +std::to_string(transform->x) +
 					" " + std::to_string(transform->y) +
 					" " + std::to_string(transform->width) +
@@ -327,6 +332,70 @@ namespace D2Maker
 			out << writeStr;
 			out.close();
 
+
+		}
+
+		static void LoadAssets()
+		{
+			LoadAssets();
+			LoadAudios();
+		}
+		static void LoadAudios()
+		{
+			
+			std::string path = "Projects/" + currentProject + "/audioinfo.txt";
+			std::string audioFolder = "Projects/" + currentProject + "/Resources/Audios";
+			if (!fs::exists(audioFolder))
+			{
+				fs::create_directory(audioFolder);
+			}
+			audioFolder += "/";
+			if (!fs::exists(path) || fs::is_directory(path))
+			{
+				return;
+			}
+			std::vector<std::vector<std::string>> audios;
+			Parser::ParseString(path, audios);
+			for (std::vector<std::string> audio : audios)
+			{
+				if (audio.size() < 2) { continue; }
+				AudioLoader::LoadAudio(audio[0], audioFolder+audio[1]);
+			}
+		}
+		static void LoadImages()
+		{
+			std::string path = "Projects/" + currentProject + "/textureinfo";
+			std::string textureFolder = "Projects/" + currentProject + "/Resources/Textures";
+			if (!fs::exists(textureFolder) || fs::is_directory(textureFolder))
+			{
+				return;
+			}
+			textureFolder += "/";
+			if (fs::exists(path)|| fs::is_directory(path))
+			{
+				return;
+			}
+			std::vector<std::vector<std::string>> textures;
+			Parser::ParseString(path, textures);
+			for (std::vector<std::string> texture : textures)
+			{
+				if (texture.size() < 2) { continue; }
+				TextureLoader::LoadTexture(texture[0], texture[1]);
+			}
+
+		}
+
+
+		static void SaveAssets()
+		{
+
+		}
+		static void SaveTextures()
+		{
+
+		}
+		static void SaveAudios()
+		{
 
 		}
 	};

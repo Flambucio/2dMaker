@@ -93,8 +93,8 @@ namespace D2Maker
 
         static void RunWindow()
         {
-            TextureLoader::LoadTexture("erbucio", "Engine/Resources/TestAssets/image.png", 0);
-            TextureLoader::LoadTexture("a", "Engine/Resources/TestAssets/gin.png", 0);
+            TextureLoader::LoadTexture("erbucio", "Engine/Resources/TestAssets/image.png");
+            TextureLoader::LoadTexture("a", "Engine/Resources/TestAssets/gin.png");
             AudioLoader::LoadAudio("erbuciaccio", "Engine/Resources/TestAssets/numayey.ogg");
             AudioLoader::LoadAudio("disco", "Engine/Resources/TestAssets/disco.ogg");
             FileSys::GetProjects();
@@ -113,7 +113,8 @@ namespace D2Maker
             glDepthFunc(GL_LESS);
             glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
             glfwSetKeyCallback(window, KeyCallback);
-            /*SystemManager sm{window};
+            /*
+            SystemManager sm{window};
             EntityManager em;
             Entity entity1 = scene->em.createEntity("e1");
             Entity entity2 = scene->em.createEntity("e2");

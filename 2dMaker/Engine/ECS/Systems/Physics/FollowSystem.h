@@ -5,6 +5,7 @@ namespace D2Maker
 {
 	class FollowSystem : public System
 	{
+	public:
 		void Update(EntityManager& em)
 		{
 			for (Entity entity : em.aliveEntities)

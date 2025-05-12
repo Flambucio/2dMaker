@@ -15,14 +15,14 @@ namespace D2Maker
 			return textures.find(name) != textures.end();
 		}
 
-		static void LoadTexture(const std::string& name, const std::string& path, int orderInLayer)
+		static void LoadTexture(const std::string& name, const std::string& path)
 		{
 			if (Exists(name))
 			{
 				WARN("Texture name already present");
 				return;
 			}
-			textures[name] = std::make_unique<Texture>(path, orderInLayer);
+			textures[name] = std::make_unique<Texture>(path);
 		}
 
 		static void RemoveTexture(const std::string& name)
@@ -35,19 +35,6 @@ namespace D2Maker
 			textures.erase(name);
 		}
 
-		static void ModifyOrderInLayer(const std::string& name, int newOrderInLayer)
-		{
-			if (!Exists(name))
-			{
-				WARN("Texture nonexistent");
-				return;
-			}
-
-			std::string path = textures[name]->GetPath();
-			RemoveTexture(name);
-			LoadTexture(name, path, newOrderInLayer);
-		}
-
 		static void RenameTexture(const std::string& oldName, const std::string& newName)
 		{
 			if (!Exists(oldName))
@@ -55,11 +42,9 @@ namespace D2Maker
 				WARN("Texture nonexistent");
 				return;
 			}
-
-			int orderInLayer = textures[oldName]->GetOrderInLayer();
 			std::string path = textures[oldName]->GetPath();
 			RemoveTexture(oldName);
-			LoadTexture(newName, path, orderInLayer);
+			LoadTexture(newName, path);
 		}
 
 		static Texture* GetTexture(const std::string& name)
@@ -91,7 +76,7 @@ namespace D2Maker
 		// Debug/Test method
 		static void TestFunction()
 		{
-			LoadTexture("erbucio", "Engine/Resources/TestAssets/image.png", 0);
+			LoadTexture("erbucio", "Engine/Resources/TestAssets/image.png");
 			BindTexture("erbucio");
 		}
 	};

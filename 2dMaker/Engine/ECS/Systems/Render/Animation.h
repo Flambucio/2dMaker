@@ -25,6 +25,7 @@ namespace D2Maker
 				animation->accumulator += DeltaTime::Get();
 				if (animation->accumulator >= animation->timing)
 				{
+					TRACE(animation->texNames.size() - 1);
 					if (animation->index < animation->texNames.size() - 1)
 					{
 						animation->index++;
@@ -44,12 +45,16 @@ namespace D2Maker
 				
 				Animation* animation = em.getComponent < Animation>(entity);
 				if (animation->index == animation->currentTextureIndex) { continue; }
+				else { animation->currentTextureIndex = animation->index; }
 				if (em.hasComponent<TextureComponent>(entity))
 				{
 					em.RemoveComponent<TextureComponent>(entity);
 				}
 				
-
+				TRACE(animation->currentTextureIndex);
+				TRACE(animation->index);
+				TRACE(animation->texNames.size());
+				PRINT_ARRAY_STR(animation->texNames);
 				em.addComponent<TextureComponent>(entity, animation->texNames[animation->index],
 					animation->orderInLayer);
 
