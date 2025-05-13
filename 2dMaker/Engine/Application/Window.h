@@ -93,13 +93,14 @@ namespace D2Maker
 
         static void RunWindow()
         {
-            TextureLoader::LoadTexture("erbucio", "Engine/Resources/TestAssets/image.png");
-            TextureLoader::LoadTexture("a", "Engine/Resources/TestAssets/gin.png");
-            AudioLoader::LoadAudio("erbuciaccio", "Engine/Resources/TestAssets/numayey.ogg");
-            AudioLoader::LoadAudio("disco", "Engine/Resources/TestAssets/disco.ogg");
-            FileSys::GetProjects();
+            //TextureLoader::LoadTexture("erbucio", "Engine/Resources/TestAssets/image.png");
+            //TextureLoader::LoadTexture("a", "Engine/Resources/TestAssets/gin.png");
+            //AudioLoader::LoadAudio("erbuciaccio", "Engine/Resources/TestAssets/numayey.ogg");
+            //AudioLoader::LoadAudio("disco", "Engine/Resources/TestAssets/disco.ogg");
+            //FileSys::GetProjects();
             
             FileSys::SelectProject("Project1");
+            FileSys::LoadAssets();
             FileSys::LoadScenes();
             TRACE("CURRENT PRJ"+FileSys::currentProject);
             PRINT_U_SET_STR(FileSys::projectNames);
@@ -199,6 +200,7 @@ namespace D2Maker
         static void Destruct()
         {
             FileSys::Save();
+            
             glfwTerminate();
             
         }

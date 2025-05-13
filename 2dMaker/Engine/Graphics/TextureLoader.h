@@ -74,11 +74,12 @@ namespace D2Maker
 		}
 
 		// Debug/Test method
+		/*
 		static void TestFunction()
 		{
 			LoadTexture("erbucio", "Engine/Resources/TestAssets/image.png");
 			BindTexture("erbucio");
-		}
+		}*/
 	};
 
 }

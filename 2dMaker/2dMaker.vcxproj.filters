@@ -297,5 +297,11 @@
     <Image Include="Engine\Resources\TestAssets\gin.png">
       <Filter>File di risorse</Filter>
     </Image>
+    <Image Include="Projects\Project1\Resources\Textures\gin.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="Projects\Project1\Resources\Textures\image.png">
+      <Filter>File di risorse</Filter>
+    </Image>
   </ItemGroup>
 </Project>

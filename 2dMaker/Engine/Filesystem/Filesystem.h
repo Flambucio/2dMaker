@@ -35,7 +35,7 @@ namespace D2Maker
 			{
 				if (entry.is_directory())
 				{
-					projectNames.insert(entry.path().string());
+					projectNames.insert(entry.path().filename().string());
 				}
 			}
 		}
@@ -233,6 +233,8 @@ namespace D2Maker
 				
 
 			}
+
+			SaveAssets();
 			
 
 			
@@ -337,7 +339,7 @@ namespace D2Maker
 
 		static void LoadAssets()
 		{
-			LoadAssets();
+			LoadTextures();
 			LoadAudios();
 		}
 		static void LoadAudios()
@@ -362,13 +364,13 @@ namespace D2Maker
 				AudioLoader::LoadAudio(audio[0], audioFolder+audio[1]);
 			}
 		}
-		static void LoadImages()
+		static void LoadTextures()
 		{
-			std::string path = "Projects/" + currentProject + "/textureinfo";
+			std::string path = "Projects/" + currentProject + "/textureinfo.txt";
 			std::string textureFolder = "Projects/" + currentProject + "/Resources/Textures";
-			if (!fs::exists(textureFolder) || fs::is_directory(textureFolder))
+			if (!fs::exists(textureFolder))
 			{
-				return;
+				fs::create_directory(textureFolder);
 			}
 			textureFolder += "/";
 			if (fs::exists(path)|| fs::is_directory(path))
@@ -380,7 +382,7 @@ namespace D2Maker
 			for (std::vector<std::string> texture : textures)
 			{
 				if (texture.size() < 2) { continue; }
-				TextureLoader::LoadTexture(texture[0], texture[1]);
+				TextureLoader::LoadTexture(texture[0], textureFolder+texture[1]);
 			}
 
 		}
@@ -388,15 +390,32 @@ namespace D2Maker
 
 		static void SaveAssets()
 		{
-
+			SaveTextures();
+			SaveAudios();
 		}
 		static void SaveTextures()
 		{
+			std::string writeStr = "";
+			for (auto&texture:TextureLoader::GetMap())
+			{
+				writeStr += texture.first + " " + fs::path(texture.second->GetPath()).filename().string() + ";\n";
 
+			}
+
+			std::ofstream out("Projects/" + currentProject + "/textureinfo.txt");
+			out << writeStr;
+			out.close();
 		}
 		static void SaveAudios()
 		{
-
+			std::string writeStr = "";
+			for (auto& audio : AudioLoader::GetMap())
+			{
+				writeStr += audio.first + " " + fs::path(audio.second->GetFilePath()).filename().string() + ";\n";
+			}
+			std::ofstream out("Projects/" + currentProject + "/audioinfo.txt");
+			out << writeStr;
+			out.close();
 		}
 	};
 }

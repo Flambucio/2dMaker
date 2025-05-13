@@ -287,6 +287,8 @@
   <ItemGroup>
     <Image Include="Engine\Resources\TestAssets\gin.png" />
     <Image Include="Engine\Resources\TestAssets\image.png" />
+    <Image Include="Projects\Project1\Resources\Textures\gin.png" />
+    <Image Include="Projects\Project1\Resources\Textures\image.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
