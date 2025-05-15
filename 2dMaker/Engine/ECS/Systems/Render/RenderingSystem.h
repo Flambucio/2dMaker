@@ -50,8 +50,9 @@ namespace D2Maker
         {
             for (auto entity : em.aliveEntities)
             {
+                if (!em.hasComponent<TextureComponent>(entity)) { continue; }
                 TextureComponent* texcomponent = em.getComponent<TextureComponent>(entity);
-                if (!texcomponent || !texcomponent->exists) { continue; }
+                if (!texcomponent->exists) { continue; }
 
                 queue.push({ entity, texcomponent->orderInLayer });
 

@@ -373,12 +373,13 @@ namespace D2Maker
 				fs::create_directory(textureFolder);
 			}
 			textureFolder += "/";
-			if (fs::exists(path)|| fs::is_directory(path))
+			if (!fs::exists(path)|| fs::is_directory(path))
 			{
 				return;
 			}
 			std::vector<std::vector<std::string>> textures;
 			Parser::ParseString(path, textures);
+			PRINT_2D_ARRAY_STR(textures);
 			for (std::vector<std::string> texture : textures)
 			{
 				if (texture.size() < 2) { continue; }

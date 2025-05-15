@@ -93,15 +93,30 @@ namespace D2Maker
 
         static void RunWindow()
         {
+            
+
+
             //TextureLoader::LoadTexture("erbucio", "Engine/Resources/TestAssets/image.png");
             //TextureLoader::LoadTexture("a", "Engine/Resources/TestAssets/gin.png");
             //AudioLoader::LoadAudio("erbuciaccio", "Engine/Resources/TestAssets/numayey.ogg");
             //AudioLoader::LoadAudio("disco", "Engine/Resources/TestAssets/disco.ogg");
-            //FileSys::GetProjects();
-            
+            FileSys::GetProjects();
             FileSys::SelectProject("Project1");
+            //TextureLoader::LoadTexture("erbucio", "Projects/Project1/Resources/Textures/image.png");
+            //AudioLoader::LoadAudio("disco", "Projects/Project1/Resources/Audios/disco.ogg");
             FileSys::LoadAssets();
+            std::string traceAssStr = "";
+            for (const auto &element : TextureLoader::GetMap())
+            {
+                traceAssStr += element.first + "|" + element.second->filepath + "\n";
+            }
+            for (const auto& element : AudioLoader::GetMap())
+            {
+                traceAssStr += element.first + "|" + element.second->GetFilePath() +"\n";
+            }
+            TRACE(traceAssStr)
             FileSys::LoadScenes();
+            
             TRACE("CURRENT PRJ"+FileSys::currentProject);
             PRINT_U_SET_STR(FileSys::projectNames);
             //SceneManager::AddScene("testscene");
@@ -159,6 +174,8 @@ namespace D2Maker
             
             SceneManager::SelectScene("testscene");
             if(SceneManager::Exists("testscene")) TRACE("EXISTS");
+
+           
 
 
             
