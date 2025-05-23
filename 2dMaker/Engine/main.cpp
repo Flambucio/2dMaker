@@ -8,6 +8,7 @@ int main()
 {
 	D2Maker::GUI::BootWindow bWin;
 	bWin.RunBoot();
+	if (bWin.prjFlag != D2Maker::GUI::ProjectSelectedFlag::SELECTED) return 0;
 	D2Maker::Window::Initialize();
 	D2Maker::Window::RunWindow();
 
