@@ -1,25 +1,26 @@
 #pragma once
 #include "../API/Dropdown.h"
 #include "../API/WindowGUI.h"
+#include "../API/Menu.h"
 //independed window used to select projects
 
 namespace D2Maker
 {
-	namespace GUI
-	{
+    namespace GUI
+    {
         enum class ProjectSelectedFlag
         {
-            NONE=-1,
+            NONE = -1,
             SELECTED,
         };
 
-		class BootWindow
-		{
-		public:
-			GLFWwindow* window = nullptr;
+        class BootWindow
+        {
+        public:
+            GLFWwindow* window = nullptr;
             ProjectSelectedFlag prjFlag = ProjectSelectedFlag::NONE;
-			BootWindow()
-			{
+            BootWindow()
+            {
 
                 if (!glfwInit())
                 {
@@ -34,7 +35,7 @@ namespace D2Maker
                 glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
                 glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-                window = glfwCreateWindow(DEFAULT_WIN_W, DEFAULT_WIN_H, CAPTION, NULL, NULL);
+                window = glfwCreateWindow(DEFAULT_WIN_W, DEFAULT_WIN_H, "2DMaker", NULL, NULL);
                 if (!window)
                 {
                     ERROR("failed to create window");
@@ -67,22 +68,37 @@ namespace D2Maker
                 // 3. Inizializzi il backend (GLFW, SDL, ecc.)
                 ImGui_ImplGlfw_InitForOpenGL(window, true);
                 ImGui_ImplOpenGL3_Init("#version 330");
-			}
+            }
 
             void RunBoot()
             {
-                GUIAPI::Dropdown drop1{ {"Basso","Medio","Alto"},0,"Dettagli Grafica" };
-                GUIAPI::Dropdown drop2{ {"Facile","Normale","Difficile"},0,"Difficolta" };
+                std::vector<std::string> prjs;
+                FileSys::GetProjects();
+                for (std::string prj : FileSys::projectNames)
+                {
+                    prjs.push_back(prj);
+                }
+
+                GUIAPI::Menu menu{prjs,0,100,200,1050,30 };
                 while (!BootWindowShouldClose())
                 {
                     GUIAPI::GUIWindow::StartFrame();
 
-                    // Costruisci la finestra GUI
-                    GUIAPI::GUIWindow::CreateFixedWindow(50, 50, 300, 400,"Controlli del motore");
-                    drop1.Update();
-                    drop2.Update();
+                    GUIAPI::GUIWindow::CreateFixedWindow(0, 0, 1100, 660, "Selezione");
+                    menu.Update();
+                    GUIAPI::GUIWindow::EndWindow();
+                    GUIAPI::GUIWindow::CreateFixedWindow(0, 660, 1100, 60,"Pulsante");
+                    if (ImGui::Button("Select Project", ImVec2(1050, 40)))
+                    {
+                        std::string value = menu.GetCurrentValue();
+                        FileSys::SelectProject(value);
+                    }
                     GUIAPI::GUIWindow::EndWindow();
                     GUIAPI::GUIWindow::EndFrame(window);
+
+
+
+
                 }
 
                 glfwTerminate();

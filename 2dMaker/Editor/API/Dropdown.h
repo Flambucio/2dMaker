@@ -1,5 +1,6 @@
 #pragma once
-#include "../../Engine/EngineExport.h"
+#include "ApiUtils.h"
+
 
 namespace D2Maker
 {
@@ -19,7 +20,7 @@ namespace D2Maker
 				Dropdown(const std::vector<std::string>& values, int defaultValueIndex, const std::string& label)
 					: values(values), label(label)
 				{
-					currentValueIndex = GetValidIndex(defaultValueIndex);
+					currentValueIndex = APIUtils::GetValidIndex<std::string>(values,defaultValueIndex);
 					combo_id = "##combo_" + label;
 				}
 
@@ -44,10 +45,10 @@ namespace D2Maker
 					}
 				}
 
-				void DynamicUpdate(const std::vector<std::string>& newValues, int defaultValueIndex = 0)
+				void DynamicUpdate(const std::vector<std::string>& newValues)
 				{
 					values = newValues;
-					currentValueIndex = GetValidIndex(defaultValueIndex);
+					currentValueIndex = APIUtils::GetValidIndex<std::string>(values,currentValueIndex);
 					Update();
 				}
 
@@ -60,14 +61,6 @@ namespace D2Maker
 				int GetIndex() const
 				{
 					return currentValueIndex;
-				}
-
-			private:
-				int GetValidIndex(int index) const
-				{
-					if (values.empty()) return -1;
-					if (index < 0 || index >= static_cast<int>(values.size())) return 0;
-					return index;
 				}
 			};
 		}
