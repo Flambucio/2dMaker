@@ -1,5 +1,6 @@
 #include "Application/Window.h"
 #include "Filesystem/Filesystem.h"
+#include "../Editor/API/WindowGUI.h"
 
 namespace D2Maker
 {
@@ -80,6 +81,11 @@ namespace D2Maker
 
     };
     std::unordered_set<std::string> FileSys::projectNames = {};
+    ImGuiWindowFlags D2Maker::GUI::GUIAPI::GUIWindow::flags = 
+        ImGuiWindowFlags_NoResize
+        | ImGuiWindowFlags_NoMove
+        | ImGuiWindowFlags_NoCollapse
+        | ImGuiWindowFlags_NoTitleBar;
 }
 
 

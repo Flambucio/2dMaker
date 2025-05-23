@@ -147,8 +147,8 @@
     <ClCompile Include="Lib\stbvorbis\stb_vorbis.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Editor\API\Dropdown.h" />
     <ClInclude Include="Editor\API\dropdown.h" />
+    <ClInclude Include="Editor\API\WindowGUI.h" />
     <ClInclude Include="Editor\Boot\Boot.h" />
     <ClInclude Include="Engine\Application\Scene.h" />
     <ClInclude Include="Engine\Application\SceneManager.h" />

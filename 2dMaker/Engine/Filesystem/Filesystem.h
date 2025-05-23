@@ -1,6 +1,5 @@
 #pragma once
 #include "../Application/SceneManager.h"
-
 namespace D2Maker
 {
 	namespace fs = std::filesystem;
