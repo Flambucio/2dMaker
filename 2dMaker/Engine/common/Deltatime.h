@@ -1,5 +1,4 @@
 #pragma once
-
 #include <chrono>
 
 namespace D2Maker

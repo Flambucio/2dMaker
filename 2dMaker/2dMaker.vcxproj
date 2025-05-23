@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -136,10 +136,20 @@
     <ClCompile Include="Engine\common\Deltatime.cpp" />
     <ClCompile Include="Engine\main.cpp" />
     <ClCompile Include="Engine\StaticDef.cpp" />
+    <ClCompile Include="Lib\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Lib\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Lib\imgui\imgui.cpp" />
+    <ClCompile Include="Lib\imgui\imgui_demo.cpp" />
+    <ClCompile Include="Lib\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Lib\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Lib\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Lib\stbimage\stb_image.cpp" />
     <ClCompile Include="Lib\stbvorbis\stb_vorbis.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Editor\API\Dropdown.h" />
+    <ClInclude Include="Editor\API\dropdown.h" />
+    <ClInclude Include="Editor\Boot\Boot.h" />
     <ClInclude Include="Engine\Application\Scene.h" />
     <ClInclude Include="Engine\Application\SceneManager.h" />
     <ClInclude Include="Engine\Application\Window.h" />
@@ -169,6 +179,7 @@
     <ClInclude Include="Engine\ECS\Systems\Physics\Physics.h" />
     <ClInclude Include="Engine\Events\EventManager.h" />
     <ClInclude Include="Engine\Events\Keys.h" />
+    <ClInclude Include="Engine\EngineExport.h" />
     <ClInclude Include="Engine\Filesystem\Filesystem.h" />
     <ClInclude Include="Engine\Graphics\GL\IndexBuffer.h" />
     <ClInclude Include="Engine\Graphics\GL\VertexArray.h" />
@@ -177,7 +188,6 @@
     <ClInclude Include="Engine\Graphics\GL\Shaders.h" />
     <ClInclude Include="Engine\Graphics\Renderer.h" />
     <ClInclude Include="Engine\Graphics\TextureLoader.h" />
-    <ClInclude Include="Engine\Graphics\TextureRenderer.h" />
     <ClInclude Include="Engine\Graphics\Texture.h" />
     <ClInclude Include="Lib\GLEW\include\GL\eglew.h" />
     <ClInclude Include="Lib\GLEW\include\GL\glew.h" />
@@ -185,6 +195,15 @@
     <ClInclude Include="Lib\GLEW\include\GL\wglew.h" />
     <ClInclude Include="Lib\glfw\include\GLFW\glfw3.h" />
     <ClInclude Include="Lib\glfw\include\GLFW\glfw3native.h" />
+    <ClInclude Include="Lib\imgui\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="Lib\imgui\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="Lib\imgui\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="Lib\imgui\imconfig.h" />
+    <ClInclude Include="Lib\imgui\imgui.h" />
+    <ClInclude Include="Lib\imgui\imgui_internal.h" />
+    <ClInclude Include="Lib\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Lib\imgui\imstb_textedit.h" />
+    <ClInclude Include="Lib\imgui\imstb_truetype.h" />
     <ClInclude Include="Lib\openAL\include\AL\al.h" />
     <ClInclude Include="Lib\openAL\include\AL\alc.h" />
     <ClInclude Include="Lib\openAL\include\AL\alext.h" />

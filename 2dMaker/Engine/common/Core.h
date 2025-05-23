@@ -1,5 +1,5 @@
 #pragma once
-
+//Default libs
 #include <memory>
 #include <iostream>
 #include <vector>
@@ -17,25 +17,35 @@
 #include <filesystem>
 #include <cmath>
 
-
+//Core Files
 #include "Log.h"
 #include "Deltatime.h"
 
-
+//ImGui
+#include "../../Lib/imgui/imgui.h"
+#include "../../Lib/imgui/imconfig.h"
+#include "../../Lib/imgui/backends/imgui_impl_glfw.h"
+#include "../../Lib/imgui/backends/imgui_impl_opengl3.h"
+//STB_IMAGE
 #include "../../Lib/stbimage/stb_image.h"
 #include "../../Lib/stbvorbis/stb_vorbis.h"
-
 #define GLEW_STATIC
 #include "../../Lib/GLEW/include/GL/glew.h"
 #include "../../Lib/glfw/include/GLFW/glfw3.h"
 
+//OpenAL
 #include "../../Lib/openAL/include/AL/al.h"
 #include "../../Lib/openAL/include/AL/alc.h"
 
+
+
+
+//Window default
 #define CAPTION "game"
 #define DEFAULT_WIN_H  720
 #define DEFAULT_WIN_W 1280
 
+//Virtual coords
 #define VIRTUAL_WIDTH 1600
 #define VIRTUAL_HEIGHT  900
 
@@ -48,10 +58,7 @@
 
 namespace D2Maker
 {
-	inline bool is_multiple_of_360(float x)
-	{
-		if (x != (int)x) return false;
-		if (int(x) % 360 != 0) return false;
-		return true;
-	}
+
+    
+    
 }

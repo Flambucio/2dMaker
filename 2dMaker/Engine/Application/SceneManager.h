@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Scene.h"
 
 namespace D2Maker

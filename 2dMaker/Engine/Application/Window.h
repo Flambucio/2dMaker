@@ -6,16 +6,11 @@ namespace D2Maker
 
     static class Window
     {
+    private:
         static GLFWwindow* window;
+        static GLFWwindow* guiWindow;
         static int m_Width;
         static int m_Height;
-
-    
-    private:
-        static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-        {
-            glViewport(0, 0, width, height);
-        }
     public:
 
 
@@ -33,6 +28,7 @@ namespace D2Maker
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
             window = glfwCreateWindow(DEFAULT_WIN_W, DEFAULT_WIN_H, CAPTION, NULL, NULL);
             if (!window)
             {
@@ -72,18 +68,21 @@ namespace D2Maker
 
 
         }
-        
-
-        static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+        static inline void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
         {
             if (action == GLFW_PRESS)
             {
                 EventManager::PushEvent(static_cast<Keys>(key));
             }
-            else if(action==GLFW_RELEASE)
+            else if (action == GLFW_RELEASE)
             {
                 EventManager::ReleaseKey(static_cast<Keys>(key));
             }
+        }
+
+        static inline void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+        {
+            glViewport(0, 0, width, height);
         }
         static bool FileExists(const std::string& path)
         {
@@ -217,7 +216,6 @@ namespace D2Maker
         static void Destruct()
         {
             FileSys::Save();
-            
             glfwTerminate();
             
         }

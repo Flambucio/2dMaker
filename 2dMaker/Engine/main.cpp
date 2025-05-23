@@ -2,9 +2,12 @@
 //
 
 #include "Application/Window.h"
+#include "../Editor/Boot/Boot.h"
 
 int main()
 {
+	D2Maker::GUI::BootWindow bWin;
+	bWin.RunBoot();
 	D2Maker::Window::Initialize();
 	D2Maker::Window::RunWindow();
 
