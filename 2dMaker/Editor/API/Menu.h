@@ -12,16 +12,12 @@ namespace D2Maker
 			public:
 				std::vector<std::string> values;
 				int currentValueIndex = 0;
-				int height = 0;
-				int width = 0;
 				int bWidth = 0;
 				int bHeight = 0;
-				Menu(std::vector<std::string>values,int defaultValueIndex,int width,int height,int bWidth,int bHeight)
+				Menu(std::vector<std::string>values,int defaultValueIndex,int bWidth,int bHeight)
 				{
 					this->values = values;
 					this->currentValueIndex = APIUtils::GetValidIndex<std::string>(values, defaultValueIndex);
-					this->width=width;
-					this->height=height;
 					this->bHeight = bHeight;
 					this->bWidth = bWidth;
 
@@ -49,13 +45,6 @@ namespace D2Maker
 						{
 							ImGui::PopStyleColor(3);
 						}
-
-						// Indicatore opzionale
-						if (i == currentValueIndex)
-						{
-							ImGui::SameLine();
-							ImGui::Text("<--");
-						}
 					}
 				}
 
@@ -70,6 +59,12 @@ namespace D2Maker
 				{
 					if (currentValueIndex < 0 || currentValueIndex >= static_cast<int>(values.size())) return "";
 					return values[currentValueIndex];
+				}
+
+				void UpdateValues(std::vector<std::string> newValues)
+				{
+					values = newValues;
+					currentValueIndex = APIUtils::GetValidIndex<std::string>(values, currentValueIndex);
 				}
 			};
 		}

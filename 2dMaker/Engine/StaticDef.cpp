@@ -5,6 +5,8 @@
 namespace D2Maker
 {
 	GLFWwindow* Window::window = nullptr;
+    GLFWwindow* Window::guiWindow = nullptr;
+    GUI::Editor Window::editor(Window::guiWindow);
     int Window::m_Width = DEFAULT_WIN_W;
     int Window::m_Height=DEFAULT_WIN_H;
 	std::unordered_map<std::string, std::unique_ptr<Texture>> TextureLoader::textures;
@@ -81,6 +83,7 @@ namespace D2Maker
 
     };
     std::unordered_set<std::string> FileSys::projectNames = {};
+    std::string FileSys::defaultScene = "";
     ImGuiWindowFlags D2Maker::GUI::GUIAPI::GUIWindow::flags = 
         ImGuiWindowFlags_NoResize
         | ImGuiWindowFlags_NoMove

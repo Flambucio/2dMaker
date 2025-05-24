@@ -8,13 +8,14 @@ namespace D2Maker
 	public:
 		static std::string currentProject;
 		static std::unordered_set<std::string> projectNames;
+		static std::string defaultScene;
 		
-		static void CreateProject(const std::string&name)
+		static bool CreateProject(const std::string&name)
 		{
 			if (fs::exists("Projects/" + name))
 			{
 				WARN("This project already exists");
-				return;
+				return false;
 			}
 
 			fs::create_directory("Projects/" + name);
@@ -23,6 +24,7 @@ namespace D2Maker
 			fs::create_directories ("Projects/" + name + "/Resources");
 			fs::create_directories("Projects/" + name + "/Resources/Textures");
 			fs::create_directories("Projects/" + name + "/Resources/Audios");
+			return true;
 			
 
 
@@ -30,6 +32,7 @@ namespace D2Maker
 		}
 		static void GetProjects()
 		{
+			projectNames.clear();
 			for (const auto& entry : fs::directory_iterator("Projects")) 
 			{
 				if (entry.is_directory())
@@ -93,6 +96,23 @@ namespace D2Maker
 				}
 			}
 
+			std::string defScenePath = "Projects/" + currentProject + "/defaultscene.txt";
+			if (!fs::exists(defScenePath) || !fs::is_regular_file(defScenePath))
+			{
+				return;
+			}
+
+			std::vector<std::vector<std::string>> parsedDefSceneStr;
+			Parser::ParseString(defScenePath, parsedDefSceneStr);
+			if (parsedDefSceneStr.size() != 1)
+			{
+				return;			}
+			if (parsedDefSceneStr[0].size() != 1)
+			{
+				return;
+			}
+
+			defaultScene = parsedDefSceneStr[0][0];
 			
 
 
@@ -232,7 +252,10 @@ namespace D2Maker
 				
 
 			}
-
+			
+			std::ofstream out(currentProjectPath +"/defaultscene.txt");
+			out << defaultScene;
+			out.close();
 			SaveAssets();
 			
 

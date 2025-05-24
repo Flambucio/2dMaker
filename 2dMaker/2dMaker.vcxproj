@@ -149,13 +149,19 @@
   <ItemGroup>
     <ClInclude Include="Editor\API\APIExport.h" />
     <ClInclude Include="Editor\API\ApiUtils.h" />
+    <ClInclude Include="Editor\API\Button.h" />
+    <ClInclude Include="Editor\API\ButtonWithCallback.h" />
+    <ClInclude Include="Editor\API\CheckBox.h" />
     <ClInclude Include="Editor\API\dropdown.h" />
     <ClInclude Include="Editor\API\Menu.h" />
+    <ClInclude Include="Editor\API\PopUp.h" />
+    <ClInclude Include="Editor\API\TextField.h" />
     <ClInclude Include="Editor\API\WindowGUI.h" />
     <ClInclude Include="Editor\Boot\Boot.h" />
-    <ClInclude Include="Editor\Boot\Windows\Create.h" />
-    <ClInclude Include="Editor\Boot\Windows\Delete.h" />
     <ClInclude Include="Editor\Boot\Windows\Select.h" />
+    <ClInclude Include="Editor\Boot\Windows\Create.h" />
+    <ClInclude Include="Editor\Main\Editor.h" />
+    <ClInclude Include="Editor\Main\Windows\SceneMenu.h" />
     <ClInclude Include="Engine\Application\Scene.h" />
     <ClInclude Include="Engine\Application\SceneManager.h" />
     <ClInclude Include="Engine\Application\Window.h" />

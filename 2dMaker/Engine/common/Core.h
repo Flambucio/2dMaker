@@ -40,6 +40,7 @@
 
 
 
+
 //Window default
 #define CAPTION "game"
 #define DEFAULT_WIN_H  720
@@ -58,7 +59,22 @@
 
 namespace D2Maker
 {
-
-    
+    template<typename T>
+    inline void SetToVector(const std::unordered_set<T>& set, std::vector<T>& vec)
+    {
+        vec.clear();
+        for (auto element : set)
+        {
+            vec.push_back(element);
+        }
+    }
+    template<typename T,typename U>
+    inline void FirstElementOfMapToVector(const std::unordered_map<T, U>& map, std::vector<T>& vec)
+    {
+        for (auto& element : map)
+        {
+            vec.push_back(element.first);
+        }
+    }
     
 }

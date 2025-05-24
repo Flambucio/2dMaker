@@ -1,5 +1,5 @@
 #pragma once
-#include "Windows/Create.h"
+#include "Windows/Select.h"
 //independed window used to select projects
 
 namespace D2Maker
@@ -76,11 +76,11 @@ namespace D2Maker
                 {
                     prjs.push_back(prj);
                 }
-                APIBootWindowCreate ABWC{ prjs };
+                BootWindowSelect BWS{ prjs };
                 while (!BootWindowShouldClose())
                 {
                     GUIAPI::GUIWindow::StartFrame();
-                    ABWC.Update();
+                    BWS.Update();
 
                     GUIAPI::GUIWindow::EndFrame(window);
 
@@ -88,7 +88,9 @@ namespace D2Maker
 
 
                 }
-
+                ImGui_ImplOpenGL3_Shutdown();
+                ImGui_ImplGlfw_Shutdown();
+                ImGui::DestroyContext();
                 glfwTerminate();
             }
 

@@ -47,8 +47,7 @@ namespace D2Maker
 
 				void DynamicUpdate(const std::vector<std::string>& newValues)
 				{
-					values = newValues;
-					currentValueIndex = APIUtils::GetValidIndex<std::string>(values,currentValueIndex);
+					UpdateValues(newValues);
 					Update();
 				}
 
@@ -61,6 +60,12 @@ namespace D2Maker
 				int GetIndex() const
 				{
 					return currentValueIndex;
+				}
+
+				void UpdateValues(const std::vector<std::string>& newValues)
+				{
+					values = newValues;
+					currentValueIndex = APIUtils::GetValidIndex<std::string>(values, currentValueIndex);
 				}
 			};
 		}

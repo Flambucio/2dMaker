@@ -1,2 +1,0 @@
-e5;
-SCRIPT Projects/Script2.txt;

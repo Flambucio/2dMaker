@@ -1,2 +1,0 @@
-erbucio image.png;
-a gin.png;
