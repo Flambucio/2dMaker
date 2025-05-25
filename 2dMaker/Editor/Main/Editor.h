@@ -1,5 +1,5 @@
 #pragma once
-#include "Windows/SceneMenu.h"
+#include "Windows/SceneMenu/SceneMenu.h"
 
 namespace D2Maker
 {
@@ -33,7 +33,8 @@ namespace D2Maker
 
 			void LoadStartingScenesNames()
 			{
-				sceneMenu.LoadStartingSceneNames();
+				sceneMenu.LoadSceneNames();
+				sceneMenu.scenesDropdown.SetCurrVal(SceneManager::defaultScene);
 			}
 
 		};

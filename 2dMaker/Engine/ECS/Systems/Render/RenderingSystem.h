@@ -12,7 +12,7 @@ namespace D2Maker
 	{
         bool operator()(const std::pair<T, int>& a, const std::pair<T, int>& b) const
 		{
-			return a.second < b.second;
+			return a.second > b.second;
 		}
 	};
 

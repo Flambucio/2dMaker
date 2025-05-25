@@ -38,6 +38,10 @@ namespace D2Maker
 					}
 				}
 			}
+			for (auto& audio : AudioLoader::GetMap())
+			{
+				AudioLoader::StopAudio(audio.first);
+			}
 		}
 	};
 }

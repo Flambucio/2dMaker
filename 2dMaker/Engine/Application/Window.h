@@ -134,8 +134,8 @@ namespace D2Maker
             TRACE(traceAssStr)
             FileSys::LoadScenes();
             editor.LoadStartingScenesNames();
-            TRACE("defaultscene" + FileSys::defaultScene);
-            SceneManager::SelectScene(FileSys::defaultScene);
+            TRACE("defaultscene" +  SceneManager::defaultScene);
+            SceneManager::SelectScene(SceneManager::defaultScene);
 
           
             float accumulator = 0;

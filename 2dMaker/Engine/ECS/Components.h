@@ -31,11 +31,12 @@ namespace D2Maker
 			this->width			  = width;
 			this->height		  = height;
 			this->rotationDegrees = rotationDegrees;
-			this->defaultX = x;
-			this->defaultY = y;
+			this->defaultX		  = x;
+			this->defaultY		  = y;
 		}
 		void ResetPos()
 		{
+			TRACE("resetting pos...");
 			x = defaultX;
 			y = defaultY;
 		}

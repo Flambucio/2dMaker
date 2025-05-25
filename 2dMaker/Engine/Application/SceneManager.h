@@ -6,19 +6,23 @@ namespace D2Maker
 	class SceneManager
 	{
 	private:
-		static std::string currentScene;
+		
 		
 		static GLFWwindow* window;
 	public:
+		static std::string currentScene;
 		static std::unordered_map<std::string, std::unique_ptr<Scene>> scenes;
+		static std::string defaultScene;
 		static void InitManager(GLFWwindow * windowIn)
 		{
 			window = windowIn;
 		}
 		static void SelectScene(const std::string& name)
 		{
+			TRACE("EXISTS CURRENT:"+ Exists(currentScene))
 			if (Exists(currentScene))
 			{
+				TRACE("stopping scene");
 				scenes[currentScene]->StopScene();
 			}
 			if (!Exists(name))
@@ -37,15 +41,20 @@ namespace D2Maker
 			return scenes.find(name) != scenes.end();
 		}
 
-		static void AddScene(const std::string& name)
+		static bool AddScene(const std::string& name)
 		{
 			if (Exists(name))
 			{
 				WARN("scene already exists");
-				return;
+				return false;
 			}
 
 			scenes[name] = std::make_unique<Scene>(window);
+			for (auto& element : scenes) 
+			{
+				TRACE(element.first);
+			}
+			return true;
 
 		}
 

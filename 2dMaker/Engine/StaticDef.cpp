@@ -83,7 +83,7 @@ namespace D2Maker
 
     };
     std::unordered_set<std::string> FileSys::projectNames = {};
-    std::string FileSys::defaultScene = "";
+    std::string SceneManager::defaultScene = "";
     ImGuiWindowFlags D2Maker::GUI::GUIAPI::GUIWindow::flags = 
         ImGuiWindowFlags_NoResize
         | ImGuiWindowFlags_NoMove

@@ -67,6 +67,19 @@ namespace D2Maker
 					values = newValues;
 					currentValueIndex = APIUtils::GetValidIndex<std::string>(values, currentValueIndex);
 				}
+
+
+				void SetCurrVal(std::string newVal)
+				{
+					for (int i = 0;i < values.size();i++)
+					{
+						if (values[i] == newVal)
+						{
+							currentValueIndex = i;
+						}
+					}
+
+				}
 			};
 		}
 	}

@@ -8,7 +8,6 @@ namespace D2Maker
 	public:
 		static std::string currentProject;
 		static std::unordered_set<std::string> projectNames;
-		static std::string defaultScene;
 		
 		static bool CreateProject(const std::string&name)
 		{
@@ -68,7 +67,7 @@ namespace D2Maker
 		}
 		static void LoadScenes()
 		{
-
+			
 			TRACE("LOAD PROJECT " + currentProject);
 			if (currentProject == "")
 			{
@@ -112,7 +111,7 @@ namespace D2Maker
 				return;
 			}
 
-			defaultScene = parsedDefSceneStr[0][0];
+			SceneManager::defaultScene = parsedDefSceneStr[0][0];
 			
 
 
@@ -254,7 +253,7 @@ namespace D2Maker
 			}
 			
 			std::ofstream out(currentProjectPath +"/defaultscene.txt");
-			out << defaultScene;
+			out << SceneManager::defaultScene;
 			out.close();
 			SaveAssets();
 			

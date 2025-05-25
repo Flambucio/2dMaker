@@ -21,8 +21,16 @@ namespace D2Maker
 		}
 		void StopScene()
 		{
+
 			AudioSystem& as = sm.GetAudioSystem();
 			as.StopSounds(em);
+			for (Entity entity : em.aliveEntities)
+			{
+				if (!em.hasComponent<Transform>(entity)) continue;
+
+				Transform * t = em.getComponent<Transform>(entity);
+				t->ResetPos();
+			}
 		}
 	};
 }

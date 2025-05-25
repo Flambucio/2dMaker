@@ -14,7 +14,7 @@ namespace D2Maker
 			GUIAPI::ButtonWithCallback<> createBtn;
 			GUIAPI::ButtonWithCallback<> closeBtn;
 		public:
-			BootPopUpCreate() : popup("createprj"), name("Project name"),
+			BootPopUpCreate() : popup("Create Project Menu"), name("Project name"),
 				createBtn(150, 30,"Create Project", [this]()
 					{
 						if (FileSys::CreateProject(name.GetText()))
