@@ -1,5 +1,6 @@
 #pragma once
 #include "Windows/SceneMenu/SceneMenu.h"
+#include "Windows/GameControl/GameControl.h"
 
 namespace D2Maker
 {
@@ -11,10 +12,12 @@ namespace D2Maker
 			GLFWwindow*& guiWindow;
 			Entity selectedEntity;
 			SceneMenu sceneMenu;
+			GameControls gameControls;
 		public:
-			Editor(GLFWwindow*& guiWindow) : guiWindow(guiWindow),sceneMenu(guiWindow)
+			bool runGameFlag = false;
+			Editor(GLFWwindow*& guiWindow) : guiWindow(guiWindow),sceneMenu(guiWindow),gameControls(runGameFlag)
 			{
-				
+
 			}
 
 
@@ -24,6 +27,7 @@ namespace D2Maker
 				GUIAPI::GUIWindow::StartFrame();
 
 				sceneMenu.Update();
+				gameControls.Update();
 
 
 

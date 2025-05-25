@@ -31,9 +31,17 @@ namespace D2Maker
 					{
 						std::string toRemove = SceneManager::currentScene;
 						SceneManager::RemoveScene(toRemove);
-						LoadSceneNames();
+						if (!sceneNames.empty())
+						{
+							LoadSceneNames();
+						}
+						else
+						{
+							sceneNames = {};
+						}
+						
 						std::string nextScene;
-						sceneNames.empty() ? nextScene = sceneNames[0] : nextScene = "";
+						!sceneNames.empty() ? nextScene = sceneNames[0] : nextScene = "";
 						SceneManager::SelectScene(nextScene);
 						scenesDropdown.SetCurrVal(nextScene);
 						if (SceneManager::defaultScene == toRemove) SceneManager::defaultScene = nextScene;

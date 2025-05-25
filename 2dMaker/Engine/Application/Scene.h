@@ -9,10 +9,6 @@ namespace D2Maker
 		SystemManager sm;
 		Scene(GLFWwindow* window) : sm(window)
 		{}
-		void Update()
-		{
-			sm.UpdateSystems(em);
-		}
 		void InitScene()
 		{
 			AudioSystem & as= sm.GetAudioSystem();

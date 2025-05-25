@@ -72,13 +72,13 @@ namespace D2Maker
 
 		}
 
-		static void UpdateCurrentScene(GLFWwindow* window)
+		static void UpdateCurrentScene(GLFWwindow* window,bool runGameFlag)
 		{
 			if (currentScene != "")
 			{
 				if (window)
 				{
-					scenes[currentScene]->sm.UpdateSystems(scenes[currentScene]->em);
+					scenes[currentScene]->sm.UpdateSystems(scenes[currentScene]->em,runGameFlag);
 				}
 			}
 		}

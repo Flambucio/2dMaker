@@ -26,14 +26,17 @@ namespace D2Maker
 		{
 
 		}
-		void UpdateSystems(EntityManager& em)
+		void UpdateSystems(EntityManager& em,bool runGameFlag)
 		{
-			rbs.Update(em);
-			fs.Update(em);
-			ss.Update(em);
-			ps.Update(em);
-			cs.Update(em);
-			ans.Update(em);
+			if (runGameFlag)
+			{
+				rbs.Update(em);
+				fs.Update(em);
+				ss.Update(em);
+				ps.Update(em);
+				cs.Update(em);
+				ans.Update(em);
+			}
 			rs.Update(em);
 
 

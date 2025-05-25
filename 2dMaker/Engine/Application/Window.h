@@ -162,7 +162,7 @@ namespace D2Maker
                 }
                 glfwMakeContextCurrent(window);
                 glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-                SceneManager::UpdateCurrentScene(window);
+                SceneManager::UpdateCurrentScene(window,editor.runGameFlag);
                 editor.Update();
                 glfwSwapBuffers(window);
                 glfwPollEvents();
