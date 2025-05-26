@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneMenuCreatePopup.h"
+#include "SceneMenuDeletePopup.h"
 
 namespace D2Maker
 {
@@ -16,11 +17,13 @@ namespace D2Maker
 			GUIAPI::ButtonWithCallback<> deleteBtn;
 			GUIAPI::ButtonWithCallback<> setDefault;
 			SceneMenuCreatePopup SMCPopup;
+			SceneMenuDeletePopup SMDPopup;
+			
 		public:
 			GUIAPI::Dropdown scenesDropdown;
 			std::vector<std::string> sceneNames;
 			SceneMenu(GLFWwindow*& window) : window(window), scenesDropdown({}, 0, "Current Scene"),
-				noneDropdown({ "(None)" }, 0, "Current Scene"),
+				noneDropdown({ "(None)" }, 0, "Current Scene"), SMDPopup([this](void) {this->DeleteFunc();}),
 				createScene(130, 20, "Create Scene", [this](void)
 					{
 						SMCPopup.Activate();
@@ -29,22 +32,7 @@ namespace D2Maker
 
 				deleteBtn(130, 20, "Delete Scene", [this](void)
 					{
-						std::string toRemove = SceneManager::currentScene;
-						SceneManager::RemoveScene(toRemove);
-						if (!sceneNames.empty())
-						{
-							LoadSceneNames();
-						}
-						else
-						{
-							sceneNames = {};
-						}
-						
-						std::string nextScene;
-						!sceneNames.empty() ? nextScene = sceneNames[0] : nextScene = "";
-						SceneManager::SelectScene(nextScene);
-						scenesDropdown.SetCurrVal(nextScene);
-						if (SceneManager::defaultScene == toRemove) SceneManager::defaultScene = nextScene;
+						SMDPopup.Activate();
 					}
 				),
 				setDefault(150, 20, "Set Default Scene", [this](void)
@@ -82,6 +70,7 @@ namespace D2Maker
 				ImGui::SameLine();
 				setDefault.Update();
 				SMCPopup.Update();
+				SMDPopup.Update();
 				GUIAPI::GUIWindow::EndWindow();
 				std::string sceneName = scenesDropdown.GetCurrVal();
 				if (sceneName != SceneManager::currentScene)
@@ -100,6 +89,26 @@ namespace D2Maker
 
 				}
 				scenesDropdown.UpdateValues(sceneNames);
+			}
+
+			void DeleteFunc()
+			{
+				std::string toRemove = SceneManager::currentScene;
+				SceneManager::RemoveScene(toRemove);
+				if (!sceneNames.empty())
+				{
+					LoadSceneNames();
+				}
+				else
+				{
+					sceneNames = {};
+				}
+
+				std::string nextScene;
+				!sceneNames.empty() ? nextScene = sceneNames[0] : nextScene = "";
+				SceneManager::SelectScene(nextScene);
+				scenesDropdown.SetCurrVal(nextScene);
+				if (SceneManager::defaultScene == toRemove) SceneManager::defaultScene = nextScene;
 			}
 
 		};

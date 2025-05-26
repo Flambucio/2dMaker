@@ -164,6 +164,7 @@
     <ClInclude Include="Editor\Main\Windows\GameControl\GameControl.h" />
     <ClInclude Include="Editor\Main\Windows\SceneMenu\SceneMenu.h" />
     <ClInclude Include="Editor\Main\Windows\SceneMenu\SceneMenuCreatePopup.h" />
+    <ClInclude Include="Editor\Main\Windows\SceneMenu\SceneMenuDeletePopup.h" />
     <ClInclude Include="Engine\Application\Scene.h" />
     <ClInclude Include="Engine\Application\SceneManager.h" />
     <ClInclude Include="Engine\Application\Window.h" />

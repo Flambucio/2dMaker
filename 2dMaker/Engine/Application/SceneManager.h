@@ -43,7 +43,7 @@ namespace D2Maker
 
 		static bool AddScene(const std::string& name)
 		{
-			if (Exists(name))
+			if (Exists(name) || name=="")
 			{
 				WARN("scene already exists");
 				return false;

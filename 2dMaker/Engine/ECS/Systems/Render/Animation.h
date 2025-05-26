@@ -50,11 +50,6 @@ namespace D2Maker
 				{
 					em.RemoveComponent<TextureComponent>(entity);
 				}
-				
-				TRACE(animation->currentTextureIndex);
-				TRACE(animation->index);
-				TRACE(animation->texNames.size());
-				PRINT_ARRAY_STR(animation->texNames);
 				em.addComponent<TextureComponent>(entity, animation->texNames[animation->index],
 					animation->orderInLayer);
 

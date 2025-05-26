@@ -22,10 +22,24 @@ namespace D2Maker
 			as.StopSounds(em);
 			for (Entity entity : em.aliveEntities)
 			{
-				if (!em.hasComponent<Transform>(entity)) continue;
+				if (em.hasComponent<Transform>(entity))
+				{
+					Transform* t = em.getComponent<Transform>(entity);
+					t->ResetPos();
+				}
+				if (em.hasComponent<Animation>(entity))
+				{
+					Animation* a = em.getComponent<Animation>(entity);
+					a->ResetIndexTimes();
+					if (em.hasComponent<TextureComponent>(entity))
+					{
+						em.RemoveComponent<TextureComponent>(entity);
+					}
+					em.addComponent<TextureComponent>(entity, a->texNames[a->index],
+						a->orderInLayer);
+				}
 
-				Transform * t = em.getComponent<Transform>(entity);
-				t->ResetPos();
+
 			}
 		}
 	};
