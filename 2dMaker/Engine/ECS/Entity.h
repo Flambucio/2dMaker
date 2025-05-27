@@ -53,10 +53,6 @@ namespace D2Maker
 			{
 				virtualEntities.insert(id);
 			}
-			else if (type == EntityType::RUNTIME)
-			{
-				runtimeEntities.insert(id);
-			}
 			entityNames[name] = id;
 			return id;
 		}
@@ -365,6 +361,11 @@ namespace D2Maker
 		bool hasComponent(Entity entity) 
 		{
 			return entities[entity].find(std::type_index(typeid(T))) != entities[entity].end();
+		}
+
+		std::unordered_map<Entity, std::unordered_map<std::type_index, std::unique_ptr<Component>>>& GetMap()
+		{
+			return entities;
 		}
 
 		//deprecated

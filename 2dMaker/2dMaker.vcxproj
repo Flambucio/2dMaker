@@ -161,6 +161,9 @@
     <ClInclude Include="Editor\Boot\Windows\Select.h" />
     <ClInclude Include="Editor\Boot\Windows\Create.h" />
     <ClInclude Include="Editor\Main\Editor.h" />
+    <ClInclude Include="Editor\Main\Windows\EntityMenu\EntityCreate.h" />
+    <ClInclude Include="Editor\Main\Windows\EntityMenu\EntityCreatePopup.h" />
+    <ClInclude Include="Editor\Main\Windows\EntityMenu\EntityMenu.h" />
     <ClInclude Include="Editor\Main\Windows\GameControl\GameControl.h" />
     <ClInclude Include="Editor\Main\Windows\SceneMenu\SceneMenu.h" />
     <ClInclude Include="Editor\Main\Windows\SceneMenu\SceneMenuCreatePopup.h" />

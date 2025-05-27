@@ -1,6 +1,7 @@
 #pragma once
 #include "Windows/SceneMenu/SceneMenu.h"
 #include "Windows/GameControl/GameControl.h"
+#include "Windows/EntityMenu/EntityMenu.h"
 
 namespace D2Maker
 {
@@ -13,6 +14,7 @@ namespace D2Maker
 			Entity selectedEntity;
 			SceneMenu sceneMenu;
 			GameControls gameControls;
+			EntityMenu entityMenu;
 		public:
 			bool runGameFlag = false;
 			Editor(GLFWwindow*& guiWindow) : guiWindow(guiWindow),sceneMenu(guiWindow),gameControls(runGameFlag)
@@ -27,6 +29,7 @@ namespace D2Maker
 				GUIAPI::GUIWindow::StartFrame();
 
 				sceneMenu.Update();
+				entityMenu.Update();
 				gameControls.Update();
 
 
