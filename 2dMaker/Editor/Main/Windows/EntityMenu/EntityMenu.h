@@ -108,6 +108,16 @@ namespace D2Maker
 					entityList.UpdateValues(names);
 				}
 			}
+
+			std::unordered_map<std::string, Entity> &GetEntityBuffer()
+			{ 
+				return entitiesBuffer;
+			}
+
+			Entity& GetSelectedEntity()
+			{
+				return selectedEntity;
+			}
 		};
 	}
 }

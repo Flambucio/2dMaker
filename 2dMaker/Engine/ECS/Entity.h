@@ -34,6 +34,12 @@ namespace D2Maker
 		std::unordered_set<Entity> aliveEntities;
 		std::unordered_map<std::string, Entity> entityNames;
 		Entity cameraEntity = 0;
+
+		bool nameAvailable(const std::string &name) const
+		{
+			return (!(name == "")) && entityNames.find(name) == entityNames.end();
+		}
+
 		Entity createEntity(std::string name, EntityType type = EntityType::NORMAL)
 		{
 			

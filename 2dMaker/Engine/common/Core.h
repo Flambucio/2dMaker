@@ -76,5 +76,27 @@ namespace D2Maker
             vec.push_back(element.first);
         }
     }
+
+    inline void SliceStringReference(std::string& str,const int &startIndex,const int &lastIndex)
+    {
+        std::string buffer="";
+        for (int i = 0;i < lastIndex+1;i++)
+        {
+            if (i >= startIndex) buffer += str[i];
+        }
+
+        str = buffer;
+    }
+
+    inline std::string SliceStringValue(std::string str, const int& startIndex, const int& lastIndex)
+    {
+        std::string buffer = "";
+        for (int i = 0;i < lastIndex + 1;i++)
+        {
+            if (i >= startIndex) buffer += str[i];
+        }
+
+        return buffer;
+    }
     
 }

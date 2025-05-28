@@ -2,6 +2,7 @@
 #include "Windows/SceneMenu/SceneMenu.h"
 #include "Windows/GameControl/GameControl.h"
 #include "Windows/EntityMenu/EntityMenu.h"
+#include "Windows/ComponentsMenu/ComponentsMenu.h"
 
 namespace D2Maker
 {
@@ -11,15 +12,17 @@ namespace D2Maker
 		{
 		private:
 			GLFWwindow*& guiWindow;
-			Entity selectedEntity;
+			Entity selectedEntity=0;
 			SceneMenu sceneMenu;
 			GameControls gameControls;
 			EntityMenu entityMenu;
+			ComponentsMenu componentsMenu;
 		public:
 			bool runGameFlag = false;
-			Editor(GLFWwindow*& guiWindow) : guiWindow(guiWindow),sceneMenu(guiWindow),gameControls(runGameFlag)
+			Editor(GLFWwindow*& guiWindow) : guiWindow(guiWindow),sceneMenu(guiWindow),gameControls(runGameFlag),
+				componentsMenu(entityMenu.GetSelectedEntity(),entityMenu.GetEntityBuffer())
 			{
-
+				//componentsMenu.LoadStartingComponentsNames();
 			}
 
 
@@ -31,6 +34,7 @@ namespace D2Maker
 				sceneMenu.Update();
 				entityMenu.Update();
 				gameControls.Update();
+				componentsMenu.Update();
 
 
 
