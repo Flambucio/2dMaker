@@ -20,7 +20,7 @@ namespace D2Maker
 				void Update()
 				{
 					ImGui::Text(text.c_str());
-					ImGui::InputText(("##combo_"+text).c_str(), buffer, IM_ARRAYSIZE(buffer));
+					ImGui::InputText(("##combo_"+text).c_str(), buffer, IM_ARRAYSIZE(buffer), ImGuiInputTextFlags_AllowTabInput);
 				}
 				std::string GetText() const
 				{

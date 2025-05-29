@@ -104,6 +104,27 @@ namespace D2Maker
 			}
 		}
 
+		bool renameEntity(const std::string& oldName,const std::string& newName)
+		{
+			auto it = entityNames.find(oldName);
+			if (it == entityNames.end())
+			{
+				WARN("Entity with name:" + oldName + " does not exist");
+				return false;
+			}
+			if (!nameAvailable(newName))
+			{
+				WARN("Entity name:" + newName + " is already taken or invalid.");
+				return false;
+			}
+
+			Entity entityID = it->second;
+			entityNames.erase(it);
+			entityNames[newName] = entityID;
+			return true;
+
+		}
+
 		bool isAlive(Entity entityID) const
 		{
 			return aliveEntities.find(entityID) != aliveEntities.end();
@@ -373,6 +394,8 @@ namespace D2Maker
 		{
 			return entities;
 		}
+
+		
 
 		//deprecated
 		template<typename T,typename U>

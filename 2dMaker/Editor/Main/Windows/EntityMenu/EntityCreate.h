@@ -23,7 +23,13 @@ namespace D2Maker
 				),
 				create(100, 30, "Create", [this](void)
 					{
-
+						Scene* currentScene = SceneManager::GetScene(SceneManager::currentScene);
+						EntityType type = EntityType::NORMAL;
+						if (currentScene->em.nameAvailable(this->textBox.GetText()))
+						{
+							if (this->checkbox.GetValue()) type = EntityType::VIRTUAL;
+							currentScene->em.createEntity(this->textBox.GetText());
+						}
 					}
 				),
 				textBox("Entity Name"),

@@ -1,5 +1,6 @@
 #pragma once
 #include "EntityCreate.h"
+#include "EntityModify.h"
 
 namespace D2Maker
 {
@@ -22,6 +23,7 @@ namespace D2Maker
 			GUIAPI::ButtonWithCallback<> drag;
 
 			EntityCreatePopup eCreatePopup;
+			EntityModifyPopup eModPopup;
 		public:
 			EntityMenu() : entityList({}, 0, 385, 20),
 				createBtn(120, 50, "Create", [this](void)
@@ -36,7 +38,12 @@ namespace D2Maker
 				),
 				modify(120, 50, "Modify", [this](void)
 					{
-
+						std::string currEntityStr = entityList.GetCurrentValue();
+						if (currEntityStr != "" && !entitiesBuffer.empty())
+						{
+							TRACE(currEntityStr + "CURRent");
+							eModPopup.Activate(currEntityStr);
+						}
 					}
 				),
 				drag(380, 30, "Drag (Coming Soon)", [this](void)
@@ -69,6 +76,7 @@ namespace D2Maker
 				deleteBtn.Update();
 				drag.Update();
 				eCreatePopup.Update();
+				eModPopup.Update();
 				GUIAPI::GUIWindow::EndWindow();
 				GUIAPI::GUIWindow::CreateFixedWindow(401, 600, 600, 120, "Entity Info");
 				if (!entitiesBuffer.empty())
