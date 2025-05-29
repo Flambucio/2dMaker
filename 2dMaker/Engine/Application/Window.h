@@ -98,6 +98,7 @@ namespace D2Maker
         }
         static inline void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
         {
+            ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
             if (action == GLFW_PRESS)
             {
                 EventManager::PushEvent(static_cast<Keys>(key));
