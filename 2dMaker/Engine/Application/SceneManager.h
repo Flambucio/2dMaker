@@ -68,6 +68,9 @@ namespace D2Maker
 			{
 				currentScene = "";
 			}
+			Scene* currentScenePtr = GetScene(name);
+			currentScenePtr->em.aliveEntities.clear();
+			currentScenePtr->em.GetMap().clear();
 			scenes.erase(name);
 
 		}

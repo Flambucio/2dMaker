@@ -1,6 +1,7 @@
 #pragma once
 #include "EntityCreate.h"
 #include "EntityModify.h"
+#include "EntityDelete.h"
 
 namespace D2Maker
 {
@@ -24,16 +25,30 @@ namespace D2Maker
 
 			EntityCreatePopup eCreatePopup;
 			EntityModifyPopup eModPopup;
+			EntityDeletePopup eDelPopup;
 		public:
-			EntityMenu() : entityList({}, 0, 385, 20),
+			EntityMenu() : entityList({}, 0, 385, 20), eDelPopup([this]() {this->DeleteCallback();}),
 				createBtn(120, 50, "Create", [this](void)
 					{
-						this->eCreatePopup.Activate();
+						if (SceneManager::currentScene != "")
+						{
+							this->eCreatePopup.Activate();
+						}
+						
+						
 					}
 				),
 				deleteBtn(120, 50, "Delete", [this](void)
 					{
-
+						if (!entitiesBuffer.empty())
+						{
+							this->eDelPopup.Activate();
+						}
+						entityList.UpdateValues({});
+						nEntitiesBuffer = 0;
+						selectedEntity = 0;
+						entitiesBuffer.clear();
+						
 					}
 				),
 				modify(120, 50, "Modify", [this](void)
@@ -62,10 +77,10 @@ namespace D2Maker
 				if (!entitiesBuffer.empty())
 				{
 					entityList.Update();
-					if (entitiesBuffer[entityList.GetCurrentValue()] != selectedEntity)
-					{
+					//if (entitiesBuffer[entityList.GetCurrentValue()] != selectedEntity)
+					//{
 						selectedEntity = entitiesBuffer[entityList.GetCurrentValue()];
-					}
+					//}
 				}
 				GUIAPI::GUIWindow::EndWindow();
 				GUIAPI::GUIWindow::CreateFixedWindow(0, 600, 400, 110, "Entity Controls");
@@ -77,12 +92,14 @@ namespace D2Maker
 				drag.Update();
 				eCreatePopup.Update();
 				eModPopup.Update();
+				eDelPopup.Update();
 				GUIAPI::GUIWindow::EndWindow();
 				GUIAPI::GUIWindow::CreateFixedWindow(401, 600, 600, 120, "Entity Info");
-				if (!entitiesBuffer.empty())
+				if (!entitiesBuffer.empty() && SceneManager::currentScene!="")
 				{
 					Scene* scene = SceneManager::GetScene(SceneManager::currentScene);
 					std::string type = "";
+					TRACE(selectedEntity);
 					scene->em.isVirtualEntity(selectedEntity) ? type = "Virtual" : type = "Regular";
 					std::string entityInfo_Name= "Entity Name: " + entityList.GetCurrentValue();
 					std::string entityInfo_Type = "Entity Type: " + type;
@@ -99,7 +116,14 @@ namespace D2Maker
 
 			void UpdateBuffers()
 			{
-				if (SceneManager::currentScene == "") return;
+				if (SceneManager::currentScene == "")
+				{
+					nEntitiesBuffer = 0;
+					selectedEntity = 0;
+					entitiesBuffer.clear();
+					entityList.UpdateValues({});
+					return;
+				}
 				Scene* currentScene = SceneManager::GetScene(SceneManager::currentScene);
 				if (nEntitiesBuffer != currentScene->em.aliveEntities.size() ||
 					SceneManager::currentScene != sceneNameBuffer)
@@ -125,6 +149,13 @@ namespace D2Maker
 			Entity& GetSelectedEntity()
 			{
 				return selectedEntity;
+			}
+
+		
+			void DeleteCallback()
+			{
+				Scene* scene = SceneManager::GetScene(SceneManager::currentScene);
+				scene->em.destroyEntity(entityList.GetCurrentValue());
 			}
 		};
 	}

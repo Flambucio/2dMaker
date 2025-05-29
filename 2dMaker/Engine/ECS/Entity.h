@@ -62,8 +62,8 @@ namespace D2Maker
 			entityNames[name] = id;
 			return id;
 		}
-
-		void destroyEntity(Entity entityID)
+		
+		void destroyEntityFromID(Entity entityID)
 		{
 			for (auto it = entityNames.begin(); it != entityNames.end(); ++it)
 			{

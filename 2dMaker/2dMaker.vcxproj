@@ -164,6 +164,7 @@
     <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentsMenu.h" />
     <ClInclude Include="Editor\Main\Windows\EntityMenu\EntityCreate.h" />
     <ClInclude Include="Editor\Main\Windows\EntityMenu\EntityCreatePopup.h" />
+    <ClInclude Include="Editor\Main\Windows\EntityMenu\EntityDelete.h" />
     <ClInclude Include="Editor\Main\Windows\EntityMenu\EntityMenu.h" />
     <ClInclude Include="Editor\Main\Windows\EntityMenu\EntityModify.h" />
     <ClInclude Include="Editor\Main\Windows\GameControl\GameControl.h" />
