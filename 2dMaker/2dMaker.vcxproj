@@ -161,6 +161,13 @@
     <ClInclude Include="Editor\Boot\Windows\Select.h" />
     <ClInclude Include="Editor\Boot\Windows\Create.h" />
     <ClInclude Include="Editor\Main\Editor.h" />
+    <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentCreation\AudioComponentCreator.h" />
+    <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentCreation\ColliderCreation.h" />
+    <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentCreation\ComponentCreation.h" />
+    <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentCreation\NameCreator.h" />
+    <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentCreation\TimerCreator.h" />
+    <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentCreation\TransformCreation.h" />
+    <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentCreation\VelocityCreator.h" />
     <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentsMenu.h" />
     <ClInclude Include="Editor\Main\Windows\EntityMenu\EntityCreate.h" />
     <ClInclude Include="Editor\Main\Windows\EntityMenu\EntityCreatePopup.h" />

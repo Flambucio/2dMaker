@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../API/APIExport.h"
+#include "ComponentCreation/ComponentCreation.h"
 
 namespace D2Maker
 {
@@ -15,9 +15,30 @@ namespace D2Maker
 			std::vector<std::string> componentNames = {};
 			GUIAPI::Menu componentList;
 			
+			GUIAPI::ButtonWithCallback<> createBtn;
+			GUIAPI::ButtonWithCallback<> deleteBtn;
+			GUIAPI::ButtonWithCallback<> modifyBtn;
+			ComponentCreation componentCreation;
+			
 		public:
 			ComponentsMenu(Entity& selectedEntity, std::unordered_map<std::string, Entity>& entitiesBuffer) :
-				selectedEntity(selectedEntity),entitiesBuffer(entitiesBuffer),componentList({},0,580,20)
+				selectedEntity(selectedEntity), entitiesBuffer(entitiesBuffer), componentList({}, 0, 580, 20),
+				createBtn(190, 30, "Add", [this](void)
+					{
+						componentCreation.Activate();
+					}
+				),
+				deleteBtn(190, 30, "Delete", [this](void)
+					{
+
+					}
+				),
+				modifyBtn(190, 30, "Modify", [this](void)
+					{
+
+					}
+				),
+				componentCreation(selectedEntity, [this](void) {this->UpdateBuffers();})
 			{
 			}
 
@@ -27,28 +48,41 @@ namespace D2Maker
 				ImGui::Text("Components");
 				if (!entitiesBuffer.empty())
 				{
-					UpdateBuffers();
+					BufferCheck();
 					componentList.Update();
 				}
+				GUIAPI::GUIWindow::EndWindow();
+				GUIAPI::GUIWindow::CreateFixedWindow(400, 330, 600,300, "Components Control");
+				modifyBtn.Update();
+				ImGui::SameLine();
+				createBtn.Update();
+				ImGui::SameLine();
+				deleteBtn.Update();
+				componentCreation.Update();
 				GUIAPI::GUIWindow::EndWindow();
 			}
 
 		private:
-			void UpdateBuffers()
+			void BufferCheck()
 			{	
 				if (selectedEntity != selectedEntityBuffer)
 				{
 					selectedEntityBuffer = selectedEntity;
-					componentNames.clear();
-					for (auto& pair : SceneManager::GetScene(SceneManager::currentScene)->em.GetMap()[selectedEntity])
-					{
-						std::string componentStr = pair.first.name();
-						SliceStringReference(componentStr, 16, componentStr.size() - 1);
-						if (componentStr == "TextureComponent") componentStr = "Texture";
-						componentNames.push_back(componentStr);
-					}
-					componentList.UpdateValues(componentNames);
+					UpdateBuffers();
 				}
+			}
+
+			void UpdateBuffers()
+			{
+				componentNames.clear();
+				for (auto& pair : SceneManager::GetScene(SceneManager::currentScene)->em.GetMap()[selectedEntity])
+				{
+					std::string componentStr = pair.first.name();
+					SliceStringReference(componentStr, 16, componentStr.size() - 1);
+					if (componentStr == "TextureComponent") componentStr = "Texture";
+					componentNames.push_back(componentStr);
+				}
+				componentList.UpdateValues(componentNames);
 			}
 		};
 

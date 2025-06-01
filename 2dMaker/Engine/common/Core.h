@@ -98,5 +98,38 @@ namespace D2Maker
 
         return buffer;
     }
+
+    template<typename NUM>
+    inline bool ConvertStringToNum(const std::string &str, NUM& value)
+    {
+        return false;
+    }
+
+    template<>
+    inline bool ConvertStringToNum<float>(const std::string &str, float& value)
+    {
+        std::istringstream iss(str);
+        iss >> std::noskipws >> value;
+        if (!(iss.eof() && !iss.fail())) return false;
+        return true;
+    }
+
+    template<>
+    inline bool ConvertStringToNum<double>(const std::string &str, double& value)
+    {
+        std::istringstream iss(str);
+        iss >> std::noskipws >> value;
+        if (!(iss.eof() && !iss.fail())) return false;
+        return true;
+    }
+
+    template<>
+    inline bool ConvertStringToNum<int>(const std::string& str, int& value)
+    {
+        std::istringstream iss(str);
+        iss >> std::noskipws >> value;
+        if (!(iss.eof() && !iss.fail())) return false;
+        return true;
+    }
     
 }

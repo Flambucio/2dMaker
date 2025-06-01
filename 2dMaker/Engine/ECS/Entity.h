@@ -143,20 +143,20 @@ namespace D2Maker
 		
 
 		template<typename T,typename...Args>
-		void addComponent(Entity entity, Args&&... args)
+		bool addComponent(Entity entity, Args&&... args)
 		{
 			//TRACE("ADDING TO : ");
 			//TRACE(entity);
 			if (hasComponent<T>(entity))
 			{
 				WARN("Component already added");
-				return;
+				return false;
 			}
 			
 			if (!HasDependences<T>(entity))
 			{
 				WARN("component " +std::string(typeid(T).name()) + " not added because of missing dependences");
-				return;
+				return false;
 			}
 			
 
@@ -164,35 +164,35 @@ namespace D2Maker
 			{
 				if (!CheckFileComponentValidity(FileComponentLoader::SCRIPT, std::forward<Args>(args)...))
 				{
-					return;
+					return false;
 				}
 			}
 			else if constexpr (std::is_same_v<T, TextureComponent>)
 			{
 				if (!CheckFileComponentValidity(FileComponentLoader::TEXTURE, std::forward<Args>(args)...))
 				{
-					return;
+					return false;
 				}
 			}
 			else if constexpr (std::is_same_v < T, Audio>)
 			{
 				if (!CheckFileComponentValidity(FileComponentLoader::AUDIO, std::forward<Args>(args)...))
 				{
-					return;
+					return false;
 				}
 			}
 			else if (std::is_same_v<T, Animation>)
 			{
 				if (!AllTexturesExist(std::forward<Args>(args)...))
 				{
-					return;
+					return false;
 				}
 			}
 			else if constexpr (std::is_same_v<T, Camera>)
 			{
 				if (CheckCameraComponentExistence() || isVirtualEntity(entity))
 				{
-					return;
+					return false;
 				}
 				cameraEntity = entity;
 			}
@@ -200,6 +200,7 @@ namespace D2Maker
 			
 			
 			entities[entity][std::type_index(typeid(T))] = std::make_unique<T>(std::forward<Args>(args)...);
+			return true;
 			//TRACE("added component:");
 			//TRACE(typeid(T).name());
 		}
