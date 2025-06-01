@@ -171,7 +171,7 @@ namespace D2Maker
 				}
 				else if (parsedStr[i][0] == "SCRIPT")
 				{
-					scene->em.addComponent<Script>(entity, parsedStr[i][1]);
+					scene->em.addComponent<Script>(entity, "Projects/"+currentProject+"/Scripts/"+parsedStr[i][1]);
 				}
 				else if (parsedStr[i][0] == "TEXTURE")
 				{
@@ -309,7 +309,7 @@ namespace D2Maker
 			if (em.hasComponent<Script>(entity))
 			{
 				Script* script = em.getComponent<Script>(entity);
-				writeStr += "SCRIPT " + script->filepath + ";\n";
+				writeStr += "SCRIPT " + fs::path(script->filepath).filename().string() +";\n";
 			}
 			if (em.hasComponent<TextureComponent>(entity) && !em.hasComponent<Animation>(entity))
 			{
