@@ -99,7 +99,7 @@ namespace D2Maker
 				{
 					Scene* scene = SceneManager::GetScene(SceneManager::currentScene);
 					std::string type = "";
-					TRACE(selectedEntity);
+					//TRACE(selectedEntity);
 					scene->em.isVirtualEntity(selectedEntity) ? type = "Virtual" : type = "Regular";
 					std::string entityInfo_Name= "Entity Name: " + entityList.GetCurrentValue();
 					std::string entityInfo_Type = "Entity Type: " + type;

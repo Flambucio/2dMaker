@@ -4,7 +4,7 @@ namespace D2Maker
 {
 	namespace GUI
 	{
-		class ColliderCreator
+		class AudioComponentCreator
 		{
 		private:
 			Entity& selectedEntity;
@@ -12,20 +12,15 @@ namespace D2Maker
 			GUIAPI::ButtonWithCallback<> addBtn;
 			GUIAPI::ButtonWithCallback<> closeBtn;
 			std::function<void()> closeCreation;
+			GUIAPI::TextField textBox;
 		public:
-			ColliderCreator(Entity& selectedEntity,std::function<void()> closeCreation) : closeCreation(closeCreation),
-				popup("Add - Collider"),
+			AudioComponentCreator(Entity& selectedEntity, std::function<void()> closeCreation) : closeCreation(closeCreation),
+				popup("Add - Audio"),
 				selectedEntity(selectedEntity),
+				textBox("Audio Name"),
 				addBtn(100, 30, "Add", [this](void)
 					{
-						if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Collider>(this->selectedEntity))
-						{
-							popup.Close();
-							if (this->closeCreation)
-							{
-								this->closeCreation();
-							}
-						}
+						AddAudioComponent();
 					}
 				),
 				closeBtn(100, 30, "Close", [this](void)
@@ -33,12 +28,14 @@ namespace D2Maker
 						popup.Close();
 					}
 				)
-			{}
-			
+			{
+			}
+
 			void Update()
 			{
 				if (popup.Begin())
 				{
+					textBox.Update();
 					closeBtn.Update();
 					ImGui::SameLine();
 					addBtn.Update();
@@ -51,6 +48,20 @@ namespace D2Maker
 				popup.Open();
 			}
 
+			void AddAudioComponent()
+			{
+				if (textBox.GetText() == "") return;
+				if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<AudioComponent>(this->selectedEntity,textBox.GetText()))
+				{
+					popup.Close();
+					if (this->closeCreation)
+					{
+						this->closeCreation();
+					}
+				}
+			}
+
 		};
 	}
 }
+

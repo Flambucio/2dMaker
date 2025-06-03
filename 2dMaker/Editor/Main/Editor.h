@@ -2,7 +2,7 @@
 #include "Windows/SceneMenu/SceneMenu.h"
 #include "Windows/GameControl/GameControl.h"
 #include "Windows/EntityMenu/EntityMenu.h"
-#include "Windows/ComponentsMenu/ComponentsMenu.h"
+#include "Windows/ComponentsMenu/ComponentsMenuMain.h"
 
 namespace D2Maker
 {

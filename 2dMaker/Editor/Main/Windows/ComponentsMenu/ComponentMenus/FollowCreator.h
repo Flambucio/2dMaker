@@ -4,7 +4,7 @@ namespace D2Maker
 {
 	namespace GUI
 	{
-		class AudioComponentCreator
+		class FollowCreator
 		{
 		private:
 			Entity& selectedEntity;
@@ -12,15 +12,17 @@ namespace D2Maker
 			GUIAPI::ButtonWithCallback<> addBtn;
 			GUIAPI::ButtonWithCallback<> closeBtn;
 			std::function<void()> closeCreation;
-			GUIAPI::TextField textBox;
+			GUIAPI::TextField textBox_NameToFollow;
+			GUIAPI::TextField textBox_Vel;
 		public:
-			AudioComponentCreator(Entity& selectedEntity, std::function<void()> closeCreation) : closeCreation(closeCreation),
-				popup("Add - Audio"),
+			FollowCreator(Entity& selectedEntity, std::function<void()> closeCreation) : closeCreation(closeCreation),
+				popup("Add - Follow"),
 				selectedEntity(selectedEntity),
-				textBox("Audio Name"),
+				textBox_NameToFollow("name to follow"),
+				textBox_Vel("Velocity"),
 				addBtn(100, 30, "Add", [this](void)
 					{
-						AddAudioComponent();
+
 					}
 				),
 				closeBtn(100, 30, "Close", [this](void)
@@ -35,7 +37,8 @@ namespace D2Maker
 			{
 				if (popup.Begin())
 				{
-					textBox.GetText();
+					textBox_NameToFollow.Update();
+					textBox_Vel.Update();
 					closeBtn.Update();
 					ImGui::SameLine();
 					addBtn.Update();
@@ -48,10 +51,14 @@ namespace D2Maker
 				popup.Open();
 			}
 
-			void AddAudioComponent()
+			void AddFollowComponent()
 			{
-				if (textBox.GetText() == "") return;
-				if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Audio>(this->selectedEntity,textBox.GetText()))
+				float vel = 0;
+				std::string name = textBox_NameToFollow.GetText();
+				if (name == "") return;
+				if (!ConvertStringToNum<float>(textBox_Vel.GetText(), vel)) return;
+
+				if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Follow>(this->selectedEntity, vel,name))
 				{
 					popup.Close();
 					if (this->closeCreation)
@@ -59,9 +66,9 @@ namespace D2Maker
 						this->closeCreation();
 					}
 				}
+				
 			}
 
 		};
 	}
 }
-

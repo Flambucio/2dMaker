@@ -163,14 +163,14 @@ namespace D2Maker
 	public:
 		bool enableX;
 		bool enableY;
-		int x;
-		int y;
-		Camera(bool enableX, bool enableY,int x,int y)
+		float x;
+		float y;
+		Camera(bool enableX, bool enableY,float x,float y)
 		{
 			this->enableX = enableX;
 			this->enableY = enableY;
 			enableX ? this->x = x : this->x = 0;
-			enableY ? this->y = y : this->y = 0;//enable x and y only if the boolean is statisfied
+			enableY ? this->y = y : this->y = 0;//enable x and y only if the boolean is statisfie
 			
 		}
 	};

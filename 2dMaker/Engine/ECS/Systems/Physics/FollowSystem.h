@@ -51,8 +51,8 @@ namespace D2Maker
 					float directionX = ((double)deltaX / (double)hypothenuse) * (double)follow->velocity;
 					float directionY = ((double)deltaY / (double)hypothenuse) * (double)follow->velocity;
 
-					velocity->dx -= (int)directionX;
-					velocity->dy -= (int)directionY;
+					velocity->dx -= (float)directionX;
+					velocity->dy -= (float)directionY;
 				}
 
 				
