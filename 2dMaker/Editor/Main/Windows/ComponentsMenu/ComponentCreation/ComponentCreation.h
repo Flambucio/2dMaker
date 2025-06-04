@@ -1,4 +1,6 @@
 #pragma once
+#include "../ComponentMenus/ComponentMenus.h"
+#include "OpenComponentMenuEvent.h"
 
 namespace D2Maker
 {
@@ -17,11 +19,12 @@ namespace D2Maker
 			GUIAPI::ButtonWithCallback<> closeBtn;
 			GUIAPI::ButtonWithCallback<> selectBtn;
 			std::function<void()> updateComponents;
-			std::function<void(std::string,bool)> find;
+			std::unique_ptr<OpenComponentMenuEventUI> &EventPtr;
 		public:
-			ComponentCreation(Entity& selectedEntity,std::function<void()> updateComponents) : selectedEntity(selectedEntity),
+			bool createEvent;
+			ComponentCreation(Entity& selectedEntity, std::function<void()> updateComponents,std::unique_ptr<OpenComponentMenuEventUI>& EventPtr) : selectedEntity(selectedEntity),
 				popup("Add Component"),
-
+				EventPtr(EventPtr),
 				dropdown(componentsStrArr, 0, "Select Component"),
 				updateComponents(updateComponents),
 				closeBtn(100, 30, "Close", [this](void)
@@ -31,12 +34,7 @@ namespace D2Maker
 				),
 				selectBtn(100, 30, "Select", [this](void)
 					{
-						//TRACE("select");
-						if (find)
-						{
-							//TRACE("find func found!");
-							this->find(dropdown.GetCurrVal(),false);
-						}
+						this->EventPtr = std::make_unique<OpenComponentMenuEventUI>(dropdown.GetCurrVal(), false);
 					}
 				)
 			{}
@@ -66,12 +64,6 @@ namespace D2Maker
 				{ 
 					this->updateComponents(); 
 				}
-			}
-
-
-			void SetFindCallback(std::function<void(std::string,bool)> f)
-			{
-				find = f;
 			}
 			
 		};

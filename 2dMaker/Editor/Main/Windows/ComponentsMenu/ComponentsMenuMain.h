@@ -1,5 +1,5 @@
 #pragma once
-#include "ComponentCreation/ComponentUIBridge.h"
+#include "ComponentCreation/ComponentCreation.h"
 
 namespace D2Maker
 {
@@ -20,6 +20,7 @@ namespace D2Maker
 			GUIAPI::ButtonWithCallback<> modifyBtn;
 			ComponentMenus componentMenus;
 			ComponentCreation componentCreation;
+			std::unique_ptr<OpenComponentMenuEventUI> OCMEUI = nullptr;
 			
 			
 		public:
@@ -38,18 +39,20 @@ namespace D2Maker
 				),
 				modifyBtn(190, 30, "Modify", [this](void)
 					{
-						componentMenus.ActivateComponentWindow(componentList.GetCurrentValue());
+						OCMEUI = std::make_unique<OpenComponentMenuEventUI>(componentList.GetCurrentValue(), true);
+
 					}
 				),
-				componentCreation(selectedEntity, [this](void) {this->UpdateBuffers();})
+				componentCreation(selectedEntity, [this](void) {this->UpdateBuffers();},OCMEUI)
 				
 			{
-				ComponentUIBridge bridge(componentMenus,componentCreation);
+				
 			}
 
 			void Update()
 			{
 				GUIAPI::GUIWindow::CreateFixedWindow(400, 60, 600, 270, "Components Menu");
+				
 				ImGui::Text("Components");
 				if (!entitiesBuffer.empty())
 				{
@@ -64,7 +67,14 @@ namespace D2Maker
 				ImGui::SameLine();
 				deleteBtn.Update();
 				componentCreation.Update();
+
+				if (OCMEUI)
+				{
+					componentMenus.ActivateComponentWindow(OCMEUI->component, OCMEUI->componentExists);
+					OCMEUI = nullptr;
+				}
 				componentMenus.Update();
+				
 				GUIAPI::GUIWindow::EndWindow();
 			}
 
