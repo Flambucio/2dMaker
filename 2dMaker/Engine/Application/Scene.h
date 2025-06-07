@@ -38,6 +38,11 @@ namespace D2Maker
 					em.addComponent<TextureComponent>(entity, a->texNames[a->index],
 						a->orderInLayer);
 				}
+				if (em.hasComponent<Timer>(entity))
+				{
+					Timer* timer = em.getComponent<Timer>(entity);
+					timer->ResetAcc();
+				}
 
 
 			}

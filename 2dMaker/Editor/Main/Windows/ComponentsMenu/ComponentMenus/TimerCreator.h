@@ -11,19 +11,19 @@ namespace D2Maker
 			GUIAPI::PopUp popup;
 			GUIAPI::ButtonWithCallback<> addBtn;
 			GUIAPI::ButtonWithCallback<> closeBtn;
-			std::function<void()> closeCreation;
+			std::function<void()> updateComponents;
 		public:
-			TimerCreator(Entity& selectedEntity, std::function<void()> closeCreation) : closeCreation(closeCreation),
-				popup("Add - Timer"),
+			TimerCreator(Entity& selectedEntity, std::function<void()> closeCreation) : updateComponents(updateComponents),
+				popup("Timer"),
 				selectedEntity(selectedEntity),
 				addBtn(100, 30, "Add", [this](void)
 					{
 						if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Timer>(this->selectedEntity))
 						{
 							popup.Close();
-							if (this->closeCreation)
+							if (this->updateComponents)
 							{
-								this->closeCreation();
+								this->updateComponents();
 							}
 						}
 					}
@@ -47,8 +47,9 @@ namespace D2Maker
 				}
 			}
 
-			void Activate()
+			void Activate(bool componentExists)
 			{
+				if (componentExists) return;
 				popup.Open();
 			}
 

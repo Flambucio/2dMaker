@@ -174,7 +174,7 @@ namespace D2Maker
 					return false;
 				}
 			}
-			else if constexpr (std::is_same_v < T, Audio>)
+			else if constexpr (std::is_same_v < T, AudioComponent>)
 			{
 				if (!CheckFileComponentValidity(FileComponentLoader::AUDIO, std::forward<Args>(args)...))
 				{
@@ -208,13 +208,13 @@ namespace D2Maker
 		
 
 		template<typename T>
-		void RemoveComponent(Entity entity)
+		bool RemoveComponent(Entity entity)
 		{
 			auto entityIt = entities.find(entity);
 			if (entityIt == entities.end())
 			{
 				WARN("Entity not found");
-				return;
+				return false;
 			}
 
 			auto& componentMap = entityIt->second;
@@ -224,12 +224,14 @@ namespace D2Maker
 			{
 				if (!canSafelyRemove<T>(entity))
 				{
-					return;
+					return false;
 				}
 				componentMap.erase(compIt);
 				//TRACE("Removed component:");
 				//TRACE(typeid(T).name());
 			}
+
+			return true;
 
 		}
 

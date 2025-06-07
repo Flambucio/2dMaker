@@ -72,7 +72,7 @@ namespace D2Maker
         "COLLIDER",
         "VELOCITY",
         "TIMER",
-        "NAME",
+        "NAME", 
         "AUDIO",
         "SCRIPT",
         "TEXTURE",

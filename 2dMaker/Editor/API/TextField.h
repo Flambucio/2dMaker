@@ -26,6 +26,12 @@ namespace D2Maker
 				{
 					return (std::string)(buffer);
 				}
+				void SetText(std::string str)
+				{
+					std::size_t len = std::min(str.size(), sizeof(buffer) - 1);
+					std::memcpy(buffer, str.c_str(), len);
+					buffer[len] = '\0';
+				}
 			};
 		}
 	}

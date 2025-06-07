@@ -11,19 +11,19 @@ namespace D2Maker
 			GUIAPI::PopUp popup;
 			GUIAPI::ButtonWithCallback<> addBtn;
 			GUIAPI::ButtonWithCallback<> closeBtn;
-			std::function<void()> closeCreation;
+			std::function<void()> updateComponents;
 		public:
-			ColliderCreator(Entity& selectedEntity,std::function<void()> closeCreation) : closeCreation(closeCreation),
-				popup("Collider  Menu"),
+			ColliderCreator(Entity& selectedEntity,std::function<void()> updateComponents) : updateComponents(updateComponents),
+				popup("Collider"),
 				selectedEntity(selectedEntity),
 				addBtn(100, 30, "Add", [this](void)
 					{
 						if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Collider>(this->selectedEntity))
 						{
 							popup.Close();
-							if (this->closeCreation)
+							if (this->updateComponents)
 							{
-								this->closeCreation();
+								this->updateComponents();
 							}
 						}
 					}
@@ -48,8 +48,9 @@ namespace D2Maker
 				}
 			}
 
-			void Activate()
+			void Activate(bool componentExists)
 			{
+				if (componentExists) return;
 				popup.Open();
 			}
 

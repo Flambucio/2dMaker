@@ -26,7 +26,7 @@ namespace D2Maker
 		public:
 			ComponentsMenu(Entity& selectedEntity, std::unordered_map<std::string, Entity>& entitiesBuffer) :
 				selectedEntity(selectedEntity), entitiesBuffer(entitiesBuffer), componentList({}, 0, 580, 20),
-				componentMenus(selectedEntity),
+				componentMenus(selectedEntity, [this]() {this-> UpdateBuffers();}),
 				createBtn(190, 30, "Add", [this](void)
 					{
 						componentCreation.Activate();

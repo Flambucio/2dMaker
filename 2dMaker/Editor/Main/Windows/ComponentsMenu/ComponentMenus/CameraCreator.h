@@ -16,16 +16,17 @@ namespace D2Maker
 			GUIAPI::TextField textBox_y;
 			GUIAPI::CheckBox checkBox_enableX;
 			GUIAPI::CheckBox checkBox_enableY;
+			bool componentExists = false;
 			
 		public:
 			CameraCreator(Entity& selectedEntity, std::function<void()> closeCreation) : closeCreation(closeCreation),
-				popup("Add - Camera"),
+				popup("Camera"),
 				textBox_x("Focus x"),
 				textBox_y("Focus y"),
 				checkBox_enableX("Enable X"),
 				checkBox_enableY("Enable Y"),
 				selectedEntity(selectedEntity),
-				addBtn(100, 30, "Add", [this](void)
+				addBtn(100, 30, "Add/Mod", [this](void)
 					{
 						AddCameraComponent();
 					}
@@ -53,8 +54,24 @@ namespace D2Maker
 				}
 			}
 
-			void Activate()
+			void Activate(bool componentExists)
 			{
+				this->componentExists = componentExists;
+				if (componentExists)
+				{
+					Camera* cam = SceneManager::GetScene(SceneManager::currentScene)->em.getComponent<Camera>(selectedEntity);
+					textBox_x.SetText(std::to_string(cam->x));
+					textBox_y.SetText(std::to_string(cam->y));
+					checkBox_enableX.SetValue(cam->enableX);
+					checkBox_enableY.SetValue(cam->enableY);
+				}
+				else
+				{
+					textBox_x.SetText(std::to_string(0));
+					textBox_y.SetText(std::to_string(0));
+					checkBox_enableX.SetValue(false);
+					checkBox_enableY.SetValue(false);
+				}
 				popup.Open();
 			}
 
@@ -66,15 +83,32 @@ namespace D2Maker
 				float y = 0;
 				if (!ConvertStringToNum<float>(textBox_x.GetText(), x)) return;
 				if (!ConvertStringToNum<float>(textBox_y.GetText(), y)) return;
+				bool canClose = false;
+				Scene* currentScene = SceneManager::GetScene(SceneManager::currentScene);
 
-				if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Camera>(this->selectedEntity,
-					enableX,enableY,x,y))
+				if (!componentExists)
 				{
-					popup.Close();
-					if (this->closeCreation)
+					if (currentScene->em.addComponent<Camera>(this->selectedEntity,
+						enableX, enableY, x, y))
 					{
-						this->closeCreation();
+						canClose = true;
 					}
+				}
+				else
+				{
+					Camera* cam = currentScene->em.getComponent<Camera>(selectedEntity);
+					cam->enableX = enableX;
+					cam->enableY = enableY;
+					cam->x = x;
+					cam->y = y;
+					canClose = true;
+				}
+
+				if (!canClose) return;
+				popup.Close();
+				if (this->closeCreation)
+				{
+					this->closeCreation();
 				}
 				
 			}

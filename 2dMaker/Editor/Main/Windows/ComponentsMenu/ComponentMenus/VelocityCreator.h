@@ -9,7 +9,7 @@ namespace D2Maker
 		{
 		private:
 			Entity& selectedEntity;
-			std::function<void()> closeCreation;
+			std::function<void()> updateComponents;
 			
 			GUIAPI::TextField textBox_dx;
 			GUIAPI::TextField textBox_dy;
@@ -19,15 +19,17 @@ namespace D2Maker
 			GUIAPI::ButtonWithCallback<> closeBtn;
 
 			GUIAPI::PopUp popup;
+
+			bool componentExists=false;
 		public:
-			VelocityCreator(Entity& selectedEntity,std::function<void()> closeCreation) :
+			VelocityCreator(Entity& selectedEntity,std::function<void()> updateComponents) :
 				selectedEntity(selectedEntity),
-				closeCreation(closeCreation),
+				updateComponents(updateComponents),
 				textBox_dx("dx"),
 				textBox_dy("dy"),
 				textBox_dtheta("d-theta"),
-				popup("Add - Velocity"),
-				addBtn(100, 30, "Add", [this](void)
+				popup("Velocity"),
+				addBtn(100, 30, "Add/Mod", [this](void)
 					{
 						AddVelocityComponent();
 					}
@@ -55,6 +57,7 @@ namespace D2Maker
 
 			void AddVelocityComponent()
 			{
+				bool canClose = false;
 				float dx=0;
 				float dy=0;
 				float dtheta=0;
@@ -62,19 +65,48 @@ namespace D2Maker
 				if (!ConvertStringToNum<float>(textBox_dy.GetText(), dy))			return;
 				if (!ConvertStringToNum<float>(textBox_dtheta.GetText(), dtheta))	return;
 
-				if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Velocity>(
-					selectedEntity, dx, dy, dtheta))
+				
+				if (!componentExists)
 				{
-					popup.Close();
-					if (this->closeCreation)
+					if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Velocity>(
+						selectedEntity, dx, dy, dtheta))
 					{
-						this->closeCreation();
+						canClose = true;
 					}
+				}
+				else
+				{
+					Velocity* vel = SceneManager::GetScene(SceneManager::currentScene)->em.getComponent<Velocity>(selectedEntity);
+					vel->defaultDx = dx;
+					vel->defaultDy = dy;
+					vel->defaultDtheta = dtheta;
+					canClose = true;
+				}
+
+				if (!canClose) return;
+				popup.Close();
+				if (updateComponents)
+				{
+					updateComponents();
 				}
 			}
 
-			void Activate()
+			void Activate(bool componentExists)
 			{
+				this->componentExists = componentExists;
+				if (componentExists)
+				{
+					Velocity* vel = SceneManager::GetScene(SceneManager::currentScene)->em.getComponent<Velocity>(selectedEntity);
+					textBox_dx.SetText(std::to_string(vel->defaultDx));
+					textBox_dy.SetText(std::to_string(vel->defaultDy));
+					textBox_dtheta.SetText(std::to_string(vel->defaultDtheta));
+				}
+				else
+				{
+					textBox_dx.SetText(std::to_string(0));
+					textBox_dy.SetText(std::to_string(0));
+					textBox_dtheta.SetText(std::to_string(0));
+				}
 				popup.Open();
 			}
 

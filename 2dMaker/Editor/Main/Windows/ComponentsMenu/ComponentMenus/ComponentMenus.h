@@ -39,44 +39,45 @@ namespace D2Maker
 			RigidbodyCreator rbCreator;
 			CameraCreator camCreator;
 			FollowCreator folCreator;
-			std::function<void()> CloseCallbackCreate;
+			std::function<void()> updateComponents;
 			Entity& selectedEntity;
 		public:
 
 
-			ComponentMenus(Entity& selectedEntity) : selectedEntity(selectedEntity),
-				traCreator(selectedEntity, [this](void) {this->CloseCallbackCreate();}),
-				collCreator(selectedEntity, [this](void) {this->CloseCallbackCreate();}),
-				velCreator(selectedEntity, [this](void) { this->CloseCallbackCreate(); }),
-				timCreator(selectedEntity, [this](void) { this->CloseCallbackCreate(); }),
-				nameCreator(selectedEntity, [this](void) { this->CloseCallbackCreate(); }),
-				audCreator(selectedEntity, [this](void) { this->CloseCallbackCreate(); }),
-				scrCreator(selectedEntity, [this](void) {this->CloseCallbackCreate();}),
-				texCreator(selectedEntity, [this](void) {this->CloseCallbackCreate();}),
-				aniCreator(selectedEntity, [this](void) {this->CloseCallbackCreate();}),
-				rbCreator(selectedEntity, [this](void) {this->CloseCallbackCreate();}),
-				folCreator(selectedEntity, [this](void) {this->CloseCallbackCreate();}),
-				camCreator(selectedEntity, [this](void) {this->CloseCallbackCreate();})
+			ComponentMenus(Entity& selectedEntity,std::function<void()> updateComponents) : selectedEntity(selectedEntity),
+				updateComponents(updateComponents),
+				traCreator(selectedEntity, [this](void) {if (this->updateComponents) { this->updateComponents(); }}),
+				collCreator(selectedEntity, [this](void) {if (this->updateComponents) { this->updateComponents(); }}),
+				velCreator (selectedEntity, [this](void) {}),
+				timCreator (selectedEntity, [this](void) {}),
+				nameCreator(selectedEntity, [this](void) {}),
+				audCreator (selectedEntity, [this](void) {}),
+				scrCreator (selectedEntity, [this](void) {}),
+				texCreator (selectedEntity, [this](void) {}),
+				aniCreator (selectedEntity, [this](void) {}),
+				rbCreator  (selectedEntity, [this](void) {}),
+				folCreator (selectedEntity, [this](void) {}),
+				camCreator (selectedEntity, [this](void) {})
 
 			{ }
 
-			void ActivateComponentWindow(std::string componentName, bool componentExists=false)
+			void ActivateComponentWindow(std::string componentName, bool componentExists)
 			{
 				TRACE(componentName);
 				TRACE(" c name");
 				TRACE((componentName == "Collider"));
-				if(componentName=="Transform") traCreator.Activate();
-				if (componentName == "Collider") collCreator.Activate();
-				if (componentName == "Velocity") velCreator.Activate();
-				if (componentName == "Timer") timCreator.Activate();
-				if (componentName == "Name") nameCreator.Activate();
-				if (componentName == "Audio") audCreator.Activate();
-				if (componentName == "Script") scrCreator.Activate();
-				if (componentName == "Texture") texCreator.Activate();
-				if (componentName == "Animation") aniCreator.Activate();
-				if (componentName == "RigidBody") rbCreator.Activate();
-				if (componentName == "Follow") folCreator.Activate();
-				if (componentName == "Camera") camCreator.Activate();
+				if(componentName=="Transform") traCreator.Activate(componentExists);
+				if (componentName == "Collider") collCreator.Activate(componentExists);
+				if (componentName == "Velocity") velCreator.Activate(componentExists);
+				if (componentName == "Timer") timCreator.Activate(componentExists);
+				if (componentName == "Name") nameCreator.Activate(componentExists);
+				if (componentName == "Audio") audCreator.Activate(componentExists);
+				if (componentName == "Script") scrCreator.Activate(componentExists);
+				if (componentName == "Texture") texCreator.Activate(componentExists);
+				if (componentName == "Animation") aniCreator.Activate(componentExists);
+				if (componentName == "RigidBody") rbCreator.Activate(componentExists);
+				if (componentName == "Follow") folCreator.Activate(componentExists);
+				if (componentName == "Camera") camCreator.Activate(componentExists);
 
 			}
 
@@ -94,11 +95,6 @@ namespace D2Maker
 				rbCreator.Update();
 				folCreator.Update();
 				camCreator.Update();
-			}
-
-			void SetCloseCallback(std::function<void()> f)
-			{
-				CloseCallbackCreate = f;
 			}
 
 			

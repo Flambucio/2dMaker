@@ -26,6 +26,10 @@ namespace D2Maker
 				{
 					return value;
 				}
+				void SetValue(bool value)
+				{
+					this->value = value;
+				}
 			};
 		}
 	}

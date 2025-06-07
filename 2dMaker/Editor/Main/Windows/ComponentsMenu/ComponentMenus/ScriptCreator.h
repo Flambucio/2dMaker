@@ -11,20 +11,21 @@ namespace D2Maker
 			GUIAPI::PopUp popup;
 			GUIAPI::ButtonWithCallback<> addBtn;
 			GUIAPI::ButtonWithCallback<> closeBtn;
-			std::function<void()> closeCreation;
+			std::function<void()> updateComponents;
 			GUIAPI::TextField textBox;
+			bool componentExists=false;
 			
 		public:
-			ScriptCreator(Entity& selectedEntity, std::function<void()> closeCreation) : closeCreation(closeCreation),
-				popup("Add - Script"),
+			ScriptCreator(Entity& selectedEntity, std::function<void()> updateComponents) : updateComponents(updateComponents),
+				popup("Script"),
 				selectedEntity(selectedEntity),
-				textBox("Filename"),
-				addBtn(153, 30, "Add", [this](void)
+				textBox("Filepath"),
+				addBtn(180, 30, "Add/Mod", [this](void)
 					{
 						AddScriptComponent();
 					}
 				),
-				closeBtn(153, 30, "Close", [this](void)
+				closeBtn(180, 30, "Close", [this](void)
 					{
 						popup.Close();
 					}
@@ -40,6 +41,16 @@ namespace D2Maker
 					ImGui::Text("Insert only the name of the file (no extension)");
 					ImGui::Text("Custom subdirectories are not supported (yet)");
 					ImGui::Text("file format: txt");
+					ImGui::Text("The file should be into Projects/{currentProject}/Scripts/");
+					if (componentExists)
+					{
+						ImGui::Text("");
+						ImGui::Text("WARNING");
+						ImGui::Text("This component is not really intended to be modified since is a");
+						ImGui::Text("component that relies on external files and not normal values");
+					}
+					
+					
 					closeBtn.Update();
 					ImGui::SameLine();
 					addBtn.Update();
@@ -47,22 +58,60 @@ namespace D2Maker
 				}
 			}
 
-			void Activate()
+			void Activate(bool componentExists)
 			{
+				this->componentExists = componentExists;
+				if (componentExists)
+				{
+					Script* script = SceneManager::GetScene(SceneManager::currentScene)->em.getComponent<Script>(selectedEntity);
+					textBox.SetText(script->filepath);
+				}
 				popup.Open();
 			}
 
 			void AddScriptComponent()
 			{
+				bool canClose = false;
 				if (textBox.GetText() == "") return;
+				Scene* currentScene = SceneManager::GetScene(SceneManager::currentScene);
 				std::string path = "Projects/" + FileSys::currentProject + "/Scripts/" + textBox.GetText() + ".txt";
-				if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Script>(this->selectedEntity, path))
+
+				if (!componentExists)
 				{
-					popup.Close();
-					if (this->closeCreation)
+					if (currentScene->em.addComponent<Script>(this->selectedEntity, path))
 					{
-						this->closeCreation();
+						canClose = true;
 					}
+				}
+				else
+				{
+					std::string oldPath = "";
+					{
+						Script* script = currentScene->em.getComponent<Script>(selectedEntity);
+						oldPath = script->filepath;
+					}
+
+					if (currentScene->em.RemoveComponent<Script>(selectedEntity))
+					{
+						if (currentScene->em.addComponent<Script>(selectedEntity, path))
+						{
+							canClose = true;
+						}
+						else
+						{
+							currentScene->em.addComponent<Script>(selectedEntity, oldPath);
+						}
+					}
+
+					
+				}
+
+
+				if (!canClose) return;
+				popup.Close();
+				if (this->updateComponents)
+				{
+					this->updateComponents();
 				}
 			}
 

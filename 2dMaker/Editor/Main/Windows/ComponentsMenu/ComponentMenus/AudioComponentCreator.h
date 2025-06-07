@@ -11,14 +11,15 @@ namespace D2Maker
 			GUIAPI::PopUp popup;
 			GUIAPI::ButtonWithCallback<> addBtn;
 			GUIAPI::ButtonWithCallback<> closeBtn;
-			std::function<void()> closeCreation;
+			std::function<void()> updateComponents;
 			GUIAPI::TextField textBox;
+			bool componentExists = false;
 		public:
-			AudioComponentCreator(Entity& selectedEntity, std::function<void()> closeCreation) : closeCreation(closeCreation),
-				popup("Add - Audio"),
+			AudioComponentCreator(Entity& selectedEntity, std::function<void()> closeCreation) : updateComponents(updateComponents),
+				popup("Audio"),
 				selectedEntity(selectedEntity),
 				textBox("Audio Name"),
-				addBtn(100, 30, "Add", [this](void)
+				addBtn(100, 30, "Add/Mod", [this](void)
 					{
 						AddAudioComponent();
 					}
@@ -36,6 +37,13 @@ namespace D2Maker
 				if (popup.Begin())
 				{
 					textBox.Update();
+					if (componentExists)
+					{
+						ImGui::Text("");
+						ImGui::Text("WARNING");
+						ImGui::Text("This component is not really intended to be modified since is a");
+						ImGui::Text("component that relies on external files and not normal values");
+					}
 					closeBtn.Update();
 					ImGui::SameLine();
 					addBtn.Update();
@@ -43,21 +51,59 @@ namespace D2Maker
 				}
 			}
 
-			void Activate()
+			void Activate(bool componentExists)
 			{
+				this->componentExists = componentExists;
+				if (componentExists)
+				{
+					AudioComponent* ac = SceneManager::GetScene(SceneManager::currentScene)->em.getComponent<AudioComponent>(selectedEntity);
+					textBox.SetText(ac->name);
+				}
 				popup.Open();
 			}
 
 			void AddAudioComponent()
 			{
 				if (textBox.GetText() == "") return;
-				if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<AudioComponent>(this->selectedEntity,textBox.GetText()))
+				bool canClose = false;
+				Scene* currentScene = SceneManager::GetScene(SceneManager::currentScene);
+
+				if (!componentExists)
 				{
-					popup.Close();
-					if (this->closeCreation)
+					if (currentScene->em.addComponent<AudioComponent>(this->selectedEntity, textBox.GetText()))
 					{
-						this->closeCreation();
+						canClose = true;
 					}
+				}
+				else
+				{
+					std::string oldName = "";
+
+					{
+						AudioComponent* ac = currentScene->em.getComponent<AudioComponent>(selectedEntity);
+						oldName = ac->name;
+					}
+
+					if (currentScene->em.RemoveComponent<AudioComponent>(selectedEntity))
+					{
+						if (currentScene->em.addComponent<AudioComponent>(this->selectedEntity, textBox.GetText()))
+						{
+							canClose = true;
+						}
+						else
+						{
+							currentScene->em.addComponent<AudioComponent>(this->selectedEntity, oldName);
+						}
+					}
+					
+					
+				}
+
+				if (!canClose) return;
+				popup.Close();
+				if (this->updateComponents)
+				{
+					this->updateComponents();
 				}
 			}
 

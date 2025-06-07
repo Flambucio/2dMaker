@@ -12,13 +12,14 @@ namespace D2Maker
 			GUIAPI::ButtonWithCallback<> addBtn;
 			GUIAPI::ButtonWithCallback<> closeBtn;
 			GUIAPI::TextField textBox;
-			std::function<void()> closeCreation;
+			std::function<void()> updateComponents;
+			bool componentExists = false;
 		public:
-			NameCreator(Entity& selectedEntity, std::function<void()> closeCreation) : closeCreation(closeCreation),
-				popup("Add - Name"),
+			NameCreator(Entity& selectedEntity, std::function<void()> closeCreation) : updateComponents(updateComponents),
+				popup("Name"),
 				selectedEntity(selectedEntity),
 				textBox("Name"),
-				addBtn(100, 30, "Add", [this](void)
+				addBtn(100, 30, "Add/Mod", [this](void)
 					{
 						AddNameComponent();
 					}
@@ -43,24 +44,44 @@ namespace D2Maker
 				}
 			}
 
-			void Activate()
+			void Activate(bool componentExists)
 			{
+				this->componentExists = componentExists;
+				if (componentExists)
+				{
+					Name* name = SceneManager::GetScene(SceneManager::currentScene)->em.getComponent<Name>(selectedEntity);
+					textBox.SetText(name->name);
+				}
 				popup.Open();
 			}
 
 			void AddNameComponent()
 			{
+				bool canClose = false;
 				if (textBox.GetText() == "") return;
 
-
-				if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Name>(this->selectedEntity,textBox.GetText()))
+				if (componentExists)
 				{
-
-					popup.Close();
-					if (this->closeCreation)
+					if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Name>(this->selectedEntity, textBox.GetText()))
 					{
-						this->closeCreation();
+						canClose = true;
 					}
+				}
+				else
+				{
+					Name* name = SceneManager::GetScene(SceneManager::currentScene)->em.getComponent<Name>(selectedEntity);
+					name->name = textBox.GetText();
+					canClose = true;
+				}
+
+
+
+
+				if (!canClose) return;
+				popup.Close();
+				if (this->updateComponents)
+				{
+					this->updateComponents();
 				}
 			}
 

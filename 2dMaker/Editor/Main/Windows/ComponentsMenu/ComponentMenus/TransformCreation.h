@@ -17,24 +17,25 @@ namespace D2Maker
 			GUIAPI::ButtonWithCallback<> closeBtn;
 			GUIAPI::ButtonWithCallback<> addBtn;
 			GUIAPI::PopUp popup;
-			std::function<void()> closeCreation;
+			std::function<void()> updateComponents;
+			bool componentExists = false;
 
 		public:
 
-			TransformCreator(Entity&selectedEntity,std::function<void()> closeCreation) : textBox_x("X coord"),textBox_y("Y coord"),
+			TransformCreator(Entity&selectedEntity,std::function<void()> updateComponents) : textBox_x("X coord"),textBox_y("Y coord"),
 				textBox_width("Width"),textBox_height("Height"),textBox_rotation("Rotation (degrees)"),
-				selectedEntity(selectedEntity),popup("Add - Transform"),
+				selectedEntity(selectedEntity),popup("Transform"),
 				closeBtn(100, 30, "Close", [this](void)
 					{
 						popup.Close();
 					}
 				),
-				addBtn(100, 30, "Add", [this](void)
+				addBtn(100, 30, "Add/Mod", [this](void)
 					{
 						AddTransformComponent();
 					}
 				),
-				closeCreation(closeCreation)
+				updateComponents(updateComponents)
 			{
 
 			}
@@ -55,13 +56,35 @@ namespace D2Maker
 				}
 			}
 
-			void Activate()
+			void Activate(bool componentExists)
 			{
+				this->componentExists = componentExists;
+
+				if (componentExists)
+				{
+					Scene* currentScene = SceneManager::GetScene(SceneManager::currentScene);
+					Transform* transform = currentScene->em.getComponent<Transform>(selectedEntity);
+					textBox_x.SetText(std::to_string(transform->defaultX));
+					textBox_y.SetText(std::to_string(transform->defaultY));
+					textBox_width.SetText(std::to_string(transform->width));
+					textBox_height.SetText(std::to_string(transform->height));
+					textBox_rotation.SetText(std::to_string(transform->rotationDegrees));
+
+				}
+				else
+				{
+					textBox_x.SetText(std::to_string(0));
+					textBox_y.SetText(std::to_string(0));
+					textBox_width.SetText(std::to_string(0));
+					textBox_height.SetText(std::to_string(0));
+					textBox_rotation.SetText(std::to_string(0));
+				}
 				popup.Open();
 			}
 
 			void AddTransformComponent()
 			{
+				bool canClose = false;
 				float x=0;
 				float y=0;
 				float width=0;
@@ -72,14 +95,34 @@ namespace D2Maker
 				if (!ConvertStringToNum<float>(textBox_width.GetText(), width))			 return;
 				if (!ConvertStringToNum<float>(textBox_height.GetText(), height))		 return;
 				if (!ConvertStringToNum<float>(textBox_rotation.GetText(), rotationDeg)) return;
-				if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Transform>(
-					selectedEntity, x, y, width, height, rotationDeg))
+				if (!componentExists)
 				{
-					popup.Close();
-					if (this->closeCreation)
+
+
+					if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Transform>(
+						selectedEntity, x, y, width, height, rotationDeg))
 					{
-						this->closeCreation();
+						canClose = true;
 					}
+					
+				}
+				else
+				{
+					Transform* transform = SceneManager::GetScene(SceneManager::currentScene)->em.getComponent<Transform>(selectedEntity);
+					transform->defaultX = x;
+					transform->defaultY = y;
+					transform->width = width;
+					transform->height = height;
+					transform->rotationDegrees = rotationDeg;
+					canClose = true;
+
+				}
+
+				if (!canClose) return;
+				popup.Close();
+				if (updateComponents)
+				{
+					updateComponents();
 				}
 
 				

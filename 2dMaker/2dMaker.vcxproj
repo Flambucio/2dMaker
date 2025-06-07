@@ -162,6 +162,7 @@
     <ClInclude Include="Editor\Boot\Windows\Create.h" />
     <ClInclude Include="Editor\Main\Editor.h" />
     <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentCreation\OpenComponentMenuEvent.h" />
+    <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentDelete.h" />
     <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentMenus\AnimationCreator.h" />
     <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentMenus\AudioComponentCreator.h" />
     <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentMenus\CameraCreator.h" />
