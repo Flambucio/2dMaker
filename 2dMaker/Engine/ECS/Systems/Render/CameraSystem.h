@@ -23,6 +23,7 @@ namespace D2Maker
 			int dx=0;
 			int dy=0;
 			if (!cameraC) return;
+			if (!cameraT) return;
 			if (cameraC->enableX)
 			{
 				dx = cameraC->x - cameraT->x;
@@ -36,7 +37,7 @@ namespace D2Maker
 			{
 				if (!em.hasComponent<Transform>(entity))
 				{
-					return;
+					continue;
 				}
 				Transform* transform = em.getComponent<Transform>(entity);
 				transform->x += dx;

@@ -3,7 +3,7 @@
 #include "Windows/GameControl/GameControl.h"
 #include "Windows/EntityMenu/EntityMenu.h"
 #include "Windows/ComponentsMenu/ComponentsMenuMain.h"
-
+#include "Windows/AssetMenu/AssetMenu.h"
 namespace D2Maker
 {
 	namespace GUI
@@ -17,6 +17,7 @@ namespace D2Maker
 			GameControls gameControls;
 			EntityMenu entityMenu;
 			ComponentsMenu componentsMenu;
+			AssetMenu assetMenu;
 		public:
 			bool runGameFlag = false;
 			Editor(GLFWwindow*& guiWindow) : guiWindow(guiWindow),sceneMenu(guiWindow),gameControls(runGameFlag),
@@ -35,6 +36,7 @@ namespace D2Maker
 				entityMenu.Update();
 				gameControls.Update();
 				componentsMenu.Update();
+				assetMenu.Update();
 
 
 

@@ -118,7 +118,8 @@ namespace D2Maker
 				{
 					ImGui::Text("Are you sure you want to delete this component?");
 					closeBtn.Update();
-					confirmBtn.Update();
+					ImGui::SameLine();
+					confirmBtn.Update();;
 					popup.End();
 				}
 			}
