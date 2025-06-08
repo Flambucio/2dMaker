@@ -50,7 +50,6 @@ namespace D2Maker
 				{
 					DeleteComponent<Transform>();
 				}
-
 				else if (component == "Collider")
 				{
 					DeleteComponent<Collider>();

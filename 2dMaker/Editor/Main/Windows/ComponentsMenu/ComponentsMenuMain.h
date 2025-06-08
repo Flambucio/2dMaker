@@ -1,6 +1,7 @@
 #pragma once
 #include "ComponentCreation/ComponentCreation.h"
 #include "ComponentDelete.h"
+#include "ComponentInfo.h"
 
 namespace D2Maker
 {
@@ -19,9 +20,12 @@ namespace D2Maker
 			GUIAPI::ButtonWithCallback<> createBtn;
 			GUIAPI::ButtonWithCallback<> deleteBtn;
 			GUIAPI::ButtonWithCallback<> modifyBtn;
+			GUIAPI::ButtonWithCallback<> infoBtn;
+			
 			ComponentMenus componentMenus;
 			ComponentCreation componentCreation;
 			ComponentDelete componentDelete;
+			ComponentInfo componentInfo;
 			std::unique_ptr<OpenComponentMenuEventUI> OCMEUI = nullptr;
 			
 			
@@ -49,7 +53,13 @@ namespace D2Maker
 					}
 				),
 				componentCreation(selectedEntity, [this](void) {this->UpdateBuffers();},OCMEUI),
-				componentDelete(selectedEntity, [this](void) {this->UpdateBuffers();})
+				componentDelete(selectedEntity, [this](void) {this->UpdateBuffers();}),
+				infoBtn(585, 30, "Info", [this](void)
+					{
+						if (this->componentNames.empty() || this->entitiesBuffer.empty()) return;
+						componentInfo.Activate(componentList.GetCurrentValue(), this->selectedEntity);
+					}
+				)
 				
 			{
 				
@@ -66,14 +76,16 @@ namespace D2Maker
 					componentList.Update();
 				}
 				GUIAPI::GUIWindow::EndWindow();
-				GUIAPI::GUIWindow::CreateFixedWindow(400, 330, 600,300, "Components Control");
+				GUIAPI::GUIWindow::CreateFixedWindow(400, 330, 600,80, "Components Control");
 				modifyBtn.Update();
 				ImGui::SameLine();
 				createBtn.Update();
 				ImGui::SameLine();
 				deleteBtn.Update();
+				infoBtn.Update();
 				componentCreation.Update();
 				componentDelete.Update();
+				componentInfo.Update();
 
 				if (OCMEUI)
 				{

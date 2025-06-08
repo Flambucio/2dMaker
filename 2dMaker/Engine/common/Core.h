@@ -57,6 +57,10 @@
 #define INVERSE_ASPECT_RATIO = 9.0/16.0
 #define SHADER_PATH "Engine/Resources/Shaders/Shader.shader"
 
+//this macro is for getting the current scene, it was not created immediately during development so
+//you may find a lot of places without this one if i have not modified everything
+#define CURRENT_SCENE SceneManager::GetScene(SceneManager::currentScene)
+
 namespace D2Maker
 {
     template<typename T>
