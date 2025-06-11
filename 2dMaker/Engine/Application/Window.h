@@ -3,6 +3,8 @@
 namespace D2Maker 
 {
 
+    
+
 
     static class Window
     {
@@ -12,6 +14,7 @@ namespace D2Maker
         static int m_Width;
         static int m_Height;
         static GUI::Editor editor;
+        //PreviewTextureWindow previewTextureWindow;
     public:
 
 
@@ -90,7 +93,7 @@ namespace D2Maker
             }
 
             TRACE("USING DEVICE=");
-            TRACE(alcGetString(device, ALC_DEVICE_SPECIFIER))
+            TRACE(alcGetString(device, ALC_DEVICE_SPECIFIER));
             
 
 
@@ -118,6 +121,18 @@ namespace D2Maker
         {
             std::ifstream file(path);
             return file.good();
+        }
+
+
+        static GLFWwindow* ConstructPreviewWindow()
+        {
+            GLFWwindow* pWindow = nullptr;
+            pWindow = glfwCreateWindow(500, 500, "Texture preview", nullptr, window);
+            if (!pWindow)
+            {
+                return nullptr;
+            }
+            return pWindow;
         }
 
         static void RunWindow()
@@ -165,6 +180,7 @@ namespace D2Maker
                 glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                 SceneManager::UpdateCurrentScene(window,editor.runGameFlag);
                 editor.Update();
+                editor.GetPreviewWindowRef().Update();
                 glfwSwapBuffers(window);
                 glfwPollEvents();
             }
@@ -184,6 +200,9 @@ namespace D2Maker
         
 
     };
+
+
+    
 
     
 }

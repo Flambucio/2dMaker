@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Application\PreviewWindow.cpp" />
     <ClCompile Include="Engine\common\Deltatime.cpp" />
     <ClCompile Include="Engine\main.cpp" />
     <ClCompile Include="Engine\StaticDef.cpp" />
@@ -162,6 +163,11 @@
     <ClInclude Include="Editor\Boot\Windows\Create.h" />
     <ClInclude Include="Editor\Main\Editor.h" />
     <ClInclude Include="Editor\Main\Windows\AssetMenu\AssetMenu.h" />
+    <ClInclude Include="Editor\Main\Windows\AssetMenu\Audios\AudioMenu.h" />
+    <ClInclude Include="Editor\Main\Windows\AssetMenu\Audios\AudiosAdd.h" />
+    <ClInclude Include="Editor\Main\Windows\AssetMenu\Audios\AudiosDelete.h" />
+    <ClInclude Include="Editor\Main\Windows\AssetMenu\Textures\TextureAdd.h" />
+    <ClInclude Include="Editor\Main\Windows\AssetMenu\Textures\TextureDelete.h" />
     <ClInclude Include="Editor\Main\Windows\AssetMenu\Textures\TexturesMenu.h" />
     <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentCreation\OpenComponentMenuEvent.h" />
     <ClInclude Include="Editor\Main\Windows\ComponentsMenu\ComponentDelete.h" />
@@ -190,6 +196,7 @@
     <ClInclude Include="Editor\Main\Windows\SceneMenu\SceneMenu.h" />
     <ClInclude Include="Editor\Main\Windows\SceneMenu\SceneMenuCreatePopup.h" />
     <ClInclude Include="Editor\Main\Windows\SceneMenu\SceneMenuDeletePopup.h" />
+    <ClInclude Include="Engine\Application\PreviewWindow.h" />
     <ClInclude Include="Engine\Application\Scene.h" />
     <ClInclude Include="Engine\Application\SceneManager.h" />
     <ClInclude Include="Engine\Application\Window.h" />

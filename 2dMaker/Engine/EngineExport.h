@@ -4,6 +4,7 @@
 
 
 #include "Filesystem/Filesystem.h"
+#include "Application/PreviewWindow.h"
 //every functionality is in here because of: inclusion of other files
 //(filesystem needs everything)
 

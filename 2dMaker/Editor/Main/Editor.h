@@ -50,6 +50,11 @@ namespace D2Maker
 				sceneMenu.scenesDropdown.SetCurrVal(SceneManager::defaultScene);
 			}
 
+			PreviewTextureWindow& GetPreviewWindowRef()
+			{
+				return assetMenu.GetPreviewWindowReference();
+			}
+
 		};
 	}
 }
