@@ -193,6 +193,10 @@
     <ClInclude Include="Editor\Main\Windows\EntityMenu\EntityMenu.h" />
     <ClInclude Include="Editor\Main\Windows\EntityMenu\EntityModify.h" />
     <ClInclude Include="Editor\Main\Windows\GameControl\GameControl.h" />
+    <ClInclude Include="Editor\Main\Windows\Options\General.h" />
+    <ClInclude Include="Editor\Main\Windows\Options\Options.h" />
+    <ClInclude Include="Editor\Main\Windows\Options\Resolution.h" />
+    <ClInclude Include="Editor\Main\Windows\Options\Save.h" />
     <ClInclude Include="Editor\Main\Windows\SceneMenu\SceneMenu.h" />
     <ClInclude Include="Editor\Main\Windows\SceneMenu\SceneMenuCreatePopup.h" />
     <ClInclude Include="Editor\Main\Windows\SceneMenu\SceneMenuDeletePopup.h" />
@@ -202,6 +206,7 @@
     <ClInclude Include="Engine\Application\Window.h" />
     <ClInclude Include="Engine\Audio\Audio.h" />
     <ClInclude Include="Engine\Audio\AudioLoader.h" />
+    <ClInclude Include="Engine\common\Console.h" />
     <ClInclude Include="Engine\common\Core.h" />
     <ClInclude Include="Engine\common\Deltatime.h" />
     <ClInclude Include="Engine\common\GeneralStructs.h" />

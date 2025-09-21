@@ -41,30 +41,29 @@
 
 
 
-//Window default
-#define CAPTION "game"
+//Window default (GUI)
 #define DEFAULT_WIN_H  720
 #define DEFAULT_WIN_W 1280
 
 //Virtual coords
-#define VIRTUAL_WIDTH 1600
-#define VIRTUAL_HEIGHT  900
+//#define VIRTUAL_WIDTH 1600
+//#define VIRTUAL_HEIGHT  900
 
 #define CENTER_X 800
 #define CENTER_Y 450
 
-#define ASPECT_RATIO = 16.0/9.0
+//#define ASPECT_RATIO = 16.0/9.0
 #define INVERSE_ASPECT_RATIO = 9.0/16.0
 #define SHADER_PATH "Engine/Resources/Shaders/Shader.shader"
 
 //this macro is for getting the current scene, it was not created immediately during development so
-//you may find a lot of places without this one if i have not modified everything
+//you may find places without this one
 #define CURRENT_SCENE SceneManager::GetScene(SceneManager::currentScene)
 
 namespace D2Maker
 {
     template<typename T>
-    inline void SetToVector(const std::unordered_set<T>& set, std::vector<T>& vec)
+    inline void SetToVector(const std::unordered_set<T>& set, std::vector<T>& vec) noexcept
     {
         vec.clear();
         for (auto element : set)
@@ -73,7 +72,7 @@ namespace D2Maker
         }
     }
     template<typename T,typename U>
-    inline void FirstElementOfMapToVector(const std::unordered_map<T, U>& map, std::vector<T>& vec)
+    inline void FirstElementOfMapToVector(const std::unordered_map<T, U>& map, std::vector<T>& vec) noexcept
     {
         for (auto& element : map)
         {
@@ -81,7 +80,7 @@ namespace D2Maker
         }
     }
 
-    inline void SliceStringReference(std::string& str,const int &startIndex,const int &lastIndex)
+    inline void SliceStringReference(std::string& str,const int &startIndex,const int &lastIndex) noexcept
     {
         std::string buffer="";
         for (int i = 0;i < lastIndex+1;i++)
@@ -92,7 +91,7 @@ namespace D2Maker
         str = buffer;
     }
 
-    inline std::string SliceStringValue(std::string str, const int& startIndex, const int& lastIndex)
+    inline std::string SliceStringValue(std::string str, const int& startIndex, const int& lastIndex) noexcept
     {
         std::string buffer = "";
         for (int i = 0;i < lastIndex + 1;i++)
@@ -104,13 +103,13 @@ namespace D2Maker
     }
 
     template<typename NUM>
-    inline bool ConvertStringToNum(const std::string &str, NUM& value)
+    inline bool ConvertStringToNum(const std::string &str, NUM& value) noexcept
     {
         return false;
     }
 
     template<>
-    inline bool ConvertStringToNum<float>(const std::string &str, float& value)
+    inline bool ConvertStringToNum<float>(const std::string &str, float& value) noexcept
     {
         std::istringstream iss(str);
         iss >> std::noskipws >> value;
@@ -119,7 +118,7 @@ namespace D2Maker
     }
 
     template<>
-    inline bool ConvertStringToNum<double>(const std::string &str, double& value)
+    inline bool ConvertStringToNum<double>(const std::string &str, double& value) noexcept
     {
         std::istringstream iss(str);
         iss >> std::noskipws >> value;
@@ -128,12 +127,31 @@ namespace D2Maker
     }
 
     template<>
-    inline bool ConvertStringToNum<int>(const std::string& str, int& value)
+    inline bool ConvertStringToNum<int>(const std::string& str, int& value) noexcept
     {
         std::istringstream iss(str);
         iss >> std::noskipws >> value;
         if (!(iss.eof() && !iss.fail())) return false;
         return true;
     }
+
+
+    namespace GameOptions
+    {
+        inline int virtualWidth=1600;
+        inline int virtualHeight=900;
+        inline int defaultHeight=720;
+        inline int defaultWidth=1280;
+        inline int aspectRatioNumerator = 16;
+        inline int aspectRatioDenominator = 9;
+        inline std::string aspectRatioStr = "16/9";
+        inline std::string gameName="Game";
+        inline std::string logoFile="";
+        inline std::string defaultScene="";
+        inline bool fullScreen=false;
+
+
+    }
+    
     
 }

@@ -14,7 +14,10 @@ namespace D2Maker
         static int m_Width;
         static int m_Height;
         static GUI::Editor editor;
-        //PreviewTextureWindow previewTextureWindow;
+        static bool fullscreen;
+        static int windowedX;
+        static int windowedY;
+        inline static ImGuiContext* mainImGuiContext = nullptr;
     public:
 
 
@@ -26,13 +29,25 @@ namespace D2Maker
                 return;
             }
 
+            FileSys::LoadConfigs();
+			/*if (GameOptions::logoFile != "")
+			{
+				std::string logoPath = "Projects/" + FileSys::currentProject + "/Resources/Textures/" + GameOptions::logoFile + ".png";
+				if (FileExists(logoPath))
+				{
+					glfwSetWindowIcon(window, 1, &FileSys::LoadImage(logoPath));
+				}
+			}*/
+            TRACE("GAMENAMEGAMENAMEGAMENAMEGAMENAMEGAMENAMEGAMENAME");
+			TRACE(GameOptions::gameName);
+
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
             // 2. CREA FINESTRA PRINCIPALE (GAME)
-            window = glfwCreateWindow(DEFAULT_WIN_W, DEFAULT_WIN_H, CAPTION, NULL, NULL);
+            window = glfwCreateWindow(GameOptions::defaultWidth, GameOptions::defaultHeight, GameOptions::gameName.c_str(), NULL, NULL);
             if (!window) {
                 ERROR("failed to create window");
                 glfwTerminate();
@@ -40,6 +55,7 @@ namespace D2Maker
             }
             glfwMakeContextCurrent(window);
             glfwSetWindowAspectRatio(window, 16, 9);
+            glfwSwapInterval(1);
 
             // 3. GLEW SOLO UNA VOLTA
             glewExperimental = GL_TRUE;
@@ -59,12 +75,14 @@ namespace D2Maker
                 glfwTerminate();
                 return;
             }
-            ImGuiContext* mainImGuiContext = ImGui::CreateContext();
+            mainImGuiContext = ImGui::CreateContext();
             ImGui::SetCurrentContext(mainImGuiContext);
             glfwMakeContextCurrent(guiWindow);
             ImGui::StyleColorsDark();
             ImGui_ImplGlfw_InitForOpenGL(guiWindow, true);
             ImGui_ImplOpenGL3_Init("#version 330");
+            //ImGuiIO& io = ImGui::GetIO();
+            //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
             // 6. SETUP GLOBALE
             glEnable(GL_BLEND);
@@ -104,6 +122,10 @@ namespace D2Maker
             ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
             if (action == GLFW_PRESS)
             {
+                if (key == GLFW_KEY_F11)
+                {
+                    ToggleFullscreen();
+                }
                 EventManager::PushEvent(static_cast<Keys>(key));
             }
             else if (action == GLFW_RELEASE)
@@ -123,6 +145,36 @@ namespace D2Maker
             return file.good();
         }
 
+        static inline void ToggleFullscreen()
+        {
+            fullscreen = !fullscreen;
+
+            GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+            const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+            if (fullscreen) 
+            {
+                glfwGetWindowPos(window, &windowedX, &windowedY);
+
+                // Passa a fullscreen
+                glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+                int width, height;
+                glfwMakeContextCurrent(window);
+                glfwGetFramebufferSize(window, &width, &height);
+                glViewport(0, 0, width, height);
+                glFinish();
+            }
+            else 
+            {
+                glfwSetWindowMonitor(window, nullptr, windowedX, windowedY, GameOptions::defaultWidth,
+                    GameOptions::defaultHeight, 0);
+            }
+        }
+
+        static GLFWwindow* GetMainWindow()
+        {
+            return window;
+        }
 
         static GLFWwindow* ConstructPreviewWindow()
         {
@@ -153,11 +205,13 @@ namespace D2Maker
             TRACE("defaultscene" +  SceneManager::defaultScene);
             SceneManager::SelectScene(SceneManager::defaultScene);
 
-          
+            if (GameOptions::fullScreen)
+            {
+                ToggleFullscreen();
+            }
             float accumulator = 0;
             int countfps = 0;
-            float r = 0.0f;
-            float increment = 0.05f; 
+
             while (!glfwWindowShouldClose(window) && !glfwWindowShouldClose(guiWindow))
             {
                 DeltaTime::Update();
@@ -179,8 +233,12 @@ namespace D2Maker
                 glfwMakeContextCurrent(window);
                 glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                 SceneManager::UpdateCurrentScene(window,editor.runGameFlag);
+                glfwMakeContextCurrent(guiWindow);
+                glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+                ImGui::SetCurrentContext(mainImGuiContext);
                 editor.Update();
                 editor.GetPreviewWindowRef().Update();
+                
                 glfwSwapBuffers(window);
                 glfwPollEvents();
             }
@@ -190,6 +248,10 @@ namespace D2Maker
 
         static void Destruct()
         {
+            if (editor.GetPreviewWindowRef().windowOpen)
+            {
+                editor.GetPreviewWindowRef().Destruct();
+            }
             glfwDestroyWindow(window);
             glfwDestroyWindow(guiWindow);
             FileSys::Save();

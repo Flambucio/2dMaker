@@ -17,7 +17,7 @@ namespace D2Maker
 		static bool InViewport(Transform* transform)
 		{
 			Rectangle rec(transform->x, transform->y, transform->width, transform->height);
-			Rectangle view(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+			Rectangle view(0, 0, GameOptions::virtualWidth, GameOptions::virtualHeight);
 			return CheckCollision(rec, view);
 		}
 

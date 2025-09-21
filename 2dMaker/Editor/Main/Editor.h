@@ -4,6 +4,8 @@
 #include "Windows/EntityMenu/EntityMenu.h"
 #include "Windows/ComponentsMenu/ComponentsMenuMain.h"
 #include "Windows/AssetMenu/AssetMenu.h"
+#include "Windows/Options/Options.h"
+#include "../../Engine/common/Console.h"
 namespace D2Maker
 {
 	namespace GUI
@@ -18,6 +20,8 @@ namespace D2Maker
 			EntityMenu entityMenu;
 			ComponentsMenu componentsMenu;
 			AssetMenu assetMenu;
+			OptionsMenu optionsMenu;
+			Console console;
 		public:
 			bool runGameFlag = false;
 			Editor(GLFWwindow*& guiWindow) : guiWindow(guiWindow),sceneMenu(guiWindow),gameControls(runGameFlag),
@@ -29,6 +33,7 @@ namespace D2Maker
 
 			void Update()
 			{
+				
 				glfwMakeContextCurrent(guiWindow);
 				GUIAPI::GUIWindow::StartFrame();
 
@@ -37,8 +42,8 @@ namespace D2Maker
 				gameControls.Update();
 				componentsMenu.Update();
 				assetMenu.Update();
-
-
+				optionsMenu.Update();
+				console.Update();
 
 
 				GUIAPI::GUIWindow::EndFrame(guiWindow);

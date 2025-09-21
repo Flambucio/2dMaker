@@ -256,6 +256,7 @@ namespace D2Maker
 			out << SceneManager::defaultScene;
 			out.close();
 			SaveAssets();
+			SaveConfigs();
 			
 
 			
@@ -437,6 +438,96 @@ namespace D2Maker
 			}
 			std::ofstream out("Projects/" + currentProject + "/audioinfo.txt");
 			out << writeStr;
+			out.close();
+		}
+
+		static void LoadConfigs()
+		{
+			TRACE("LOADCONFIGS");
+			if (currentProject == "")
+			{
+				return;
+			}
+			std::string path = "Projects/" + currentProject + "/configs.txt";
+			if (!fs::exists(path) || !fs::is_regular_file(path))
+			{
+				return;
+			}
+			TRACE("CONFIG FILE EXISTS")
+			std::vector<std::vector<std::string>> parsedConfigs;
+			Parser::ParseString(path, parsedConfigs);
+			TRACE("PARSED CONFIGS:");
+			PRINT_2D_ARRAY_STR_ADVANCED(parsedConfigs);
+			for (auto& line : parsedConfigs)
+			{
+				TRACE("LINE:");
+				PRINT_ARRAY_STR(line);
+				int valueInt = 0;
+				std::string valueStr = "";
+				bool valueBool = false;
+				if (line[0] == "END") break;
+				if (line.size() < 2 && !(line[0]=="FULLSCREEN")) continue;
+				if (line[0] == "VIRTUALWIDTH")
+				{
+					if (ConvertStringToNum<int>(line[1], valueInt)) GameOptions::virtualWidth = valueInt;
+				}
+				else if (line[0] == "VIRTUALHEIGHT")
+				{
+					if (ConvertStringToNum<int>(line[1], valueInt)) GameOptions::virtualHeight = valueInt;
+				}
+				else if (line[0] == "DEFAULTWIDTH")
+				{
+					if (ConvertStringToNum<int>(line[1], valueInt)) GameOptions::defaultWidth = valueInt;
+				}
+				else if (line[0] == "DEFAULTHEIGHT")
+				{
+					if (ConvertStringToNum<int>(line[1], valueInt)) GameOptions::defaultHeight = valueInt;
+				}
+				else if (line[0] == "NAME")
+				{
+					GameOptions::gameName = line[1];
+					TRACE("gamename Load: " + line[1]);
+				}
+				else if (line[0] == "LOGOFILE")
+				{
+					GameOptions::logoFile = line[1];
+				}
+				else if (line[0] == "DEFAULTSCENE")
+				{
+					GameOptions::defaultScene = line[1];
+				}
+				else if (line[0] == "FULLSCREEN")
+				{
+					GameOptions::fullScreen = true;
+				}
+			}
+			
+		}
+
+		static void SaveConfigs()
+		{
+			TRACE("Saving configs for project: " + currentProject);
+			if (currentProject == "")
+			{
+				return;
+			}
+			std::string path = "Projects/" + currentProject + "/configs.txt";
+			std::ofstream out(path);
+			if (!out.is_open())
+			{
+				WARN("Could not open configs file for writing");
+				return;
+			}
+			out << "VIRTUALWIDTH " << GameOptions::virtualWidth << ";\n";
+			out << "VIRTUALHEIGHT " << GameOptions::virtualHeight << ";\n";
+			out << "DEFAULTWIDTH " << GameOptions::defaultWidth << ";\n";
+			out << "DEFAULTHEIGHT " << GameOptions::defaultHeight << ";\n";
+			out << "NAME " << GameOptions::gameName << ";\n";
+			out << "LOGOFILE " << GameOptions::logoFile << ";\n";
+			out << "DEFAULTSCENE " << GameOptions::defaultScene << ";\n";
+			if (GameOptions::fullScreen)
+				out << "FULLSCREEN;\n";
+			out << "END;";
 			out.close();
 		}
 	};

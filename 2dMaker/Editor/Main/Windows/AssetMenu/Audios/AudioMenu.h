@@ -19,13 +19,13 @@ namespace D2Maker
 		public:
 			D2Maker::PreviewTextureWindow previewWindow;
 			AudioMenu() : menu(audioNames, 0, 250, 20),
-				deleteBtn(80, 30, "Delete", [this](void)
+				deleteBtn(120, 30, "Delete", [this](void)
 					{
 						if (audioNames.empty()) return;
 						aDel.Activate();
 					}
 				),
-				addBtn(80, 30, "Add", [this](void)
+				addBtn(120, 30, "Add", [this](void)
 					{
 						aAdd.Activate();
 					}

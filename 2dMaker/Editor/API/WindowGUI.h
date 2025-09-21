@@ -24,6 +24,14 @@ namespace D2Maker
 
 
 				}
+				static void CreateWindow(int x, int y, int width, int height, std::string title, std::vector<ImGuiCond_> flagsIn)
+				{
+					ImGuiWindowFlags flags= ImGuiWindowFlags_NoResize;
+					for (int i = 0;i < flagsIn.size();++i){flags |= flagsIn[i];}
+					ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always);
+					ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Always);
+					ImGui::Begin(title.c_str(), nullptr,flags);
+				}
 				static void CreateFixedWindow(int x, int y, int width, int height, std::string title)
 				{
 					ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always);

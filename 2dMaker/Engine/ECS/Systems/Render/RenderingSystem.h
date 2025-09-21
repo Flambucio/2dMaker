@@ -62,6 +62,7 @@ namespace D2Maker
 
         std::array<float, 16> GetVertices(Transform* t)
         {
+            //TRACE("Virtual Width: " + std::to_string(GameOptions::virtualWidth));
             float angle = t->rotationDegrees * (3.14159265f / 180.0f);
             float s = sin(angle);
             float c = cos(angle);
@@ -86,8 +87,8 @@ namespace D2Maker
                 float dy = y - cy;
                 float xRot = dx * c - dy * s + cx;
                 float yRot = dx * s + dy * c + cy;
-                float ndcX = ((2 * xRot) / VIRTUAL_WIDTH) - 1;
-                float ndcY = 1 - ((2 * yRot) / VIRTUAL_HEIGHT);
+                float ndcX = ((2 * xRot) / GameOptions::virtualWidth) - 1;
+                float ndcY = 1 - ((2 * yRot) / GameOptions::virtualHeight);
 
                 
                 result[i * 4 + 0] = ndcX;

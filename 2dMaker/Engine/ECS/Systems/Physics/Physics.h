@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ColliderFunctions.h"
 
 
@@ -19,7 +19,7 @@ namespace D2Maker
 
 		std::vector<Entity> staticEntities;
 		std::vector<Entity> dynamicEntities;
-
+		
 		void CollideAll(EntityManager& em)
 		{
 			float dt = DeltaTime::Get();
@@ -131,6 +131,10 @@ namespace D2Maker
 					
 			}
 		}
+		
+
+		//void CollideAll(EntityManager& em)
+
 		void SetToVector(EntityManager& em)
 		{
 			staticEntities.clear();

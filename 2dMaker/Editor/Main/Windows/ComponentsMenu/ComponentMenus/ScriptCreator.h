@@ -64,7 +64,9 @@ namespace D2Maker
 				if (componentExists)
 				{
 					Script* script = SceneManager::GetScene(SceneManager::currentScene)->em.getComponent<Script>(selectedEntity);
-					textBox.SetText(script->filepath);
+					std::string Ttex = ((fs::path)script->filepath).filename().string();
+					SliceStringReference(Ttex, 0, (Ttex.size() - 5));
+					textBox.SetText(Ttex);
 				}
 				popup.Open();
 			}
