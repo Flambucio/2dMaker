@@ -109,6 +109,7 @@ namespace D2Maker
 
 			void UpdateBuffers()
 			{
+				//updated the names in the menu as you can see on line 7 in this function
 				componentNames.clear();
 				for (auto& pair : SceneManager::GetScene(SceneManager::currentScene)->em.GetMap()[selectedEntity])
 				{

@@ -18,12 +18,15 @@ namespace D2Maker
 			{
 				if (SceneManager::GetScene(SceneManager::currentScene)->em.RemoveComponent<T>(selectedEntity))
 				{
+					std::string component = (std::type_index(typeid(T)).name());
+					CONSOLELOG("Succesfully removed component: " + component);
 					if (updateComponents)
 					{
 						updateComponents();
 					}
 					popup.Close();
 				}
+
 			}
 
 

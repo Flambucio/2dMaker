@@ -24,7 +24,7 @@ namespace D2Maker
 
 
 
-		class ComponentMenus
+		class ComponentMenus //interface to interact with all the other components
 		{
 		private:
 			TransformCreator traCreator;
@@ -48,16 +48,16 @@ namespace D2Maker
 				updateComponents(updateComponents),
 				traCreator(selectedEntity, [this](void) {if (this->updateComponents) { this->updateComponents(); }}),
 				collCreator(selectedEntity, [this](void) {if (this->updateComponents) { this->updateComponents(); }}),
-				velCreator (selectedEntity, [this](void) {}),
-				timCreator (selectedEntity, [this](void) {}),
-				nameCreator(selectedEntity, [this](void) {}),
-				audCreator (selectedEntity, [this](void) {}),
-				scrCreator (selectedEntity, [this](void) {}),
-				texCreator (selectedEntity, [this](void) {}),
-				aniCreator (selectedEntity, [this](void) {}),
-				rbCreator  (selectedEntity, [this](void) {}),
-				folCreator (selectedEntity, [this](void) {}),
-				camCreator (selectedEntity, [this](void) {})
+				velCreator (selectedEntity, [this](void) {if (this->updateComponents) { this->updateComponents(); }}),
+				timCreator (selectedEntity, [this](void) {if (this->updateComponents) { this->updateComponents(); }}),
+				nameCreator(selectedEntity, [this](void) {if (this->updateComponents) { this->updateComponents(); }}),
+				audCreator (selectedEntity, [this](void) {if (this->updateComponents) { this->updateComponents(); }}),
+				scrCreator (selectedEntity, [this](void) {if (this->updateComponents) { this->updateComponents(); }}),
+				texCreator (selectedEntity, [this](void) {if (this->updateComponents) { this->updateComponents(); }}),
+				aniCreator (selectedEntity, [this](void) {if (this->updateComponents) { this->updateComponents(); }}),
+				rbCreator  (selectedEntity, [this](void) {if (this->updateComponents) { this->updateComponents(); }}),
+				folCreator (selectedEntity, [this](void) {if (this->updateComponents) { this->updateComponents(); }}),
+				camCreator (selectedEntity, [this](void) {if (this->updateComponents) { this->updateComponents(); }})
 
 			{ }
 

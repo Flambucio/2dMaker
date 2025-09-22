@@ -84,16 +84,20 @@ namespace D2Maker
 					if (currentScene->em.addComponent<RigidBody>(this->selectedEntity,
 						mass, bounciness, maxDy))
 					{
+						CONSOLELOGCOMPONENTSUCCESS(RigidBody, this->selectedEntity);
 						canClose = true;
 					}
+					else { CONSOLELOGCOMPONENTUNSUCCESFUL(RigidBody, this->selectedEntity); }
 				}
 				else
 				{
+
 					RigidBody* rb = currentScene->em.getComponent<RigidBody>(selectedEntity);
 					rb->bounciness = bounciness;
 					rb->mass = mass;
 					rb->maxDy = maxDy;
 					canClose = true;
+					CONSOLELOGCOMPONENTSUCCESSMODIFY(RigidBody, this->selectedEntity);
 				}
 
 

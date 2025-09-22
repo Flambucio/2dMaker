@@ -38,6 +38,7 @@ namespace D2Maker
 				setDefault(150, 20, "Set Default Scene", [this](void)
 					{
 						SceneManager::defaultScene = SceneManager::currentScene;
+						CONSOLELOG("Set default scene as: " + SceneManager::defaultScene);
 					}
 				),
 				SMCPopup([this](void)
@@ -95,6 +96,7 @@ namespace D2Maker
 			{
 				std::string toRemove = SceneManager::currentScene;
 				SceneManager::RemoveScene(toRemove);
+				CONSOLELOG("Deleted scene: " + toRemove);
 				if (!sceneNames.empty())
 				{
 					LoadSceneNames();

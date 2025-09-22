@@ -19,13 +19,15 @@ namespace D2Maker
 				addBtn(100, 30, "Add", [this](void)
 					{
 						if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Collider>(this->selectedEntity))
-						{
+						{	
+							CONSOLELOGCOMPONENTSUCCESS(Collider, this->selectedEntity);
 							popup.Close();
 							if (this->updateComponents)
 							{
 								this->updateComponents();
 							}
 						}
+						else { CONSOLELOGCOMPONENTUNSUCCESFUL(Collider, this->selectedEntity); }
 					}
 				),
 				closeBtn(100, 30, "Close", [this](void)

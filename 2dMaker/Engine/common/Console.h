@@ -8,8 +8,6 @@ namespace D2Maker
 		class Console
 		{
 		private:
-			//std::vector<std::string> toRender = {};
-			//uint32_t count = 0;
 			GUIAPI::PopUp popup;
 			GUIAPI::ButtonWithCallback<> closeBtn;
 			GUIAPI::ButtonWithCallback<> clearBtn;
@@ -24,7 +22,7 @@ namespace D2Maker
 					{
 						ConsoleToRender::toRender.clear();
 						ConsoleToRender::count = 0;
-						ConsoleToRender::toRender.push_back((std::to_string(ConsoleToRender::count) + ". " + "Logs Cleared!"));
+						ConsoleToRender::Log((std::to_string(ConsoleToRender::count) + ". " + "Logs Cleared!"));
 						ConsoleToRender::toRender.shrink_to_fit();
 					})
 			{}

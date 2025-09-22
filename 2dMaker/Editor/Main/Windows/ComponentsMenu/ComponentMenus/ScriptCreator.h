@@ -83,7 +83,9 @@ namespace D2Maker
 					if (currentScene->em.addComponent<Script>(this->selectedEntity, path))
 					{
 						canClose = true;
+						CONSOLELOGCOMPONENTSUCCESS(Script, this->selectedEntity);
 					}
+					else { CONSOLELOGCOMPONENTUNSUCCESFUL(Script, this->selectedEntity); }
 				}
 				else
 				{
@@ -98,6 +100,7 @@ namespace D2Maker
 						if (currentScene->em.addComponent<Script>(selectedEntity, path))
 						{
 							canClose = true;
+							CONSOLELOGCOMPONENTSUCCESSMODIFY(Script, this->selectedEntity);
 						}
 						else
 						{

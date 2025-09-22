@@ -83,7 +83,9 @@ namespace D2Maker
 						textBox_Name.GetText(), oil))
 					{
 						canClose = true;
+						CONSOLELOGCOMPONENTSUCCESS(TextureComponent, this->selectedEntity);
 					}
+					else { CONSOLELOGCOMPONENTUNSUCCESFUL(TextureComponent, this->selectedEntity); }
 				}
 				else
 				{
@@ -99,6 +101,7 @@ namespace D2Maker
 						if (currentScene->em.addComponent<TextureComponent>(selectedEntity,textBox_Name.GetText(), oil))
 						{
 							canClose = true;
+							CONSOLELOGCOMPONENTSUCCESSMODIFY(TextureComponent, this->selectedEntity);
 						}
 						else
 						{

@@ -19,12 +19,14 @@ namespace D2Maker
 					{
 						if (SceneManager::AddScene(textName.GetText()))
 						{
+							CONSOLELOG("Succesfully added scene: " + textName.GetText());
 							if (loadSceneNamesCallback)
 							{
 								loadSceneNamesCallback();
 							}
 							popup.Close();
 						}
+						else { CONSOLELOG("Failed to add scene: " + textName.GetText()); }
 					}
 				),
 				closeSceneBtn(150, 30, "Close", [this]()

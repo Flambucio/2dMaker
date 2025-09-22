@@ -82,8 +82,8 @@ namespace D2Maker
 				{
 					GameOptions::defaultWidth = defaultWidth;
 					GameOptions::defaultHeight = static_cast<int>(
-						(static_cast<float>(defaultWidth) * GameOptions::aspectRatioDenominator) / GameOptions::aspectRatioNumerator
-						);
+						(static_cast<float>(defaultWidth) * GameOptions::aspectRatioDenominator) / 
+						GameOptions::aspectRatioNumerator);
 				}
 
 				if (virtualWidth >= 144)
@@ -91,10 +91,18 @@ namespace D2Maker
 					TRACE("update virtual width");
 					GameOptions::virtualWidth = virtualWidth;
 					GameOptions::virtualHeight = static_cast<int>(
-						(static_cast<float>(virtualWidth) * GameOptions::aspectRatioDenominator) / GameOptions::aspectRatioNumerator
-						);
+						(static_cast<float>(virtualWidth) * GameOptions::aspectRatioDenominator) / 
+						GameOptions::aspectRatioNumerator);
 				}
 				GameOptions::fullScreen = fullscreenBox.GetValue();
+				CONSOLELOG("Modified resolution to: " + std::to_string(GameOptions::virtualWidth) +
+					"x" + std::to_string(GameOptions::virtualHeight));
+				CONSOLELOG("Modified default size to: " + std::to_string(GameOptions::defaultWidth) +
+					"x" + std::to_string(GameOptions::defaultHeight));
+				CONSOLELOG("Modified aspect ratio to: " + std::to_string(GameOptions::aspectRatioNumerator) +
+					"/" + std::to_string(GameOptions::aspectRatioDenominator));
+				std::string fullscreenValueStr = GameOptions::fullScreen ? "true" : "false";
+				CONSOLELOG("Set default fullscreen to: " + fullscreenValueStr);
 				popup.Close();
 
 			}

@@ -64,14 +64,17 @@ namespace D2Maker
 				{
 					if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Name>(this->selectedEntity, textBox.GetText()))
 					{
+						CONSOLELOGCOMPONENTSUCCESS(Name, this->selectedEntity);
 						canClose = true;
 					}
+					else { CONSOLELOGCOMPONENTUNSUCCESFUL(Name, this->selectedEntity); }
 				}
 				else
 				{
 					Name* name = SceneManager::GetScene(SceneManager::currentScene)->em.getComponent<Name>(selectedEntity);
 					name->name = textBox.GetText();
 					canClose = true;
+					CONSOLELOGCOMPONENTSUCCESSMODIFY(Name, this->selectedEntity);
 				}
 
 

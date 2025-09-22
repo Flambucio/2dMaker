@@ -80,6 +80,6 @@ namespace D2Maker
 		}
 	};
 	#ifndef CONSOLELOG(x)
-	#define CONSOLELOG(x) ConsoleToRender::Log(x);
+	#define CONSOLELOG(x) ConsoleToRender::Log(x)
 	#endif
 }

@@ -34,6 +34,7 @@ namespace D2Maker
 					{
 						FileSys::Save();
 						saveP.Activate();
+						CONSOLELOG("Project saved!");
 					}
 				),
 				consoleBtn(585, 35, "Console", [this](void)

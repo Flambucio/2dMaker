@@ -102,8 +102,10 @@ namespace D2Maker
 					if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Transform>(
 						selectedEntity, x, y, width, height, rotationDeg))
 					{
+						CONSOLELOGCOMPONENTSUCCESS(Transform, this->selectedEntity);
 						canClose = true;
 					}
+					else { CONSOLELOGCOMPONENTUNSUCCESFUL(Transform, this->selectedEntity); }
 					
 				}
 				else
@@ -115,6 +117,7 @@ namespace D2Maker
 					transform->height = height;
 					transform->rotationDegrees = rotationDeg;
 					canClose = true;
+					CONSOLELOGCOMPONENTSUCCESSMODIFY(Transform, this->selectedEntity);
 
 				}
 

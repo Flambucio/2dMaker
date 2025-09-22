@@ -20,12 +20,14 @@ namespace D2Maker
 					{
 						if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Timer>(this->selectedEntity))
 						{
+							CONSOLELOGCOMPONENTSUCCESS(Timer, this->selectedEntity);
 							popup.Close();
 							if (this->updateComponents)
 							{
 								this->updateComponents();
 							}
 						}
+						else { CONSOLELOGCOMPONENTUNSUCCESFUL(Timer, this->selectedEntity); }
 					}
 				),
 				closeBtn(100, 30, "Close", [this](void)

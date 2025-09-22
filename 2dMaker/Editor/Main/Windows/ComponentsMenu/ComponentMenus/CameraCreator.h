@@ -91,8 +91,12 @@ namespace D2Maker
 					if (currentScene->em.addComponent<Camera>(this->selectedEntity,
 						enableX, enableY, x, y))
 					{
+						CONSOLELOGCOMPONENTSUCCESS(Camera, this->selectedEntity);
 						canClose = true;
+
 					}
+					else{ CONSOLELOGCOMPONENTUNSUCCESFUL(Camera, this->selectedEntity); }
+					
 				}
 				else
 				{
@@ -102,6 +106,7 @@ namespace D2Maker
 					cam->x = x;
 					cam->y = y;
 					canClose = true;
+					CONSOLELOGCOMPONENTSUCCESSMODIFY(Camera, this->selectedEntity);
 				}
 
 				if (!canClose) return;

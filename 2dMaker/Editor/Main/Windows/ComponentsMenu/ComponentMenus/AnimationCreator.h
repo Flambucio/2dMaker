@@ -127,8 +127,9 @@ namespace D2Maker
 					if (currentScene->em.addComponent<Animation>(this->selectedEntity,
 						namesVec, timing, oil))
 					{
+						CONSOLELOGCOMPONENTSUCCESS(Animation, this->selectedEntity);
 						canClose = true;
-					}
+					}else { CONSOLELOGCOMPONENTUNSUCCESFUL(Animation,this->selectedEntity) }
 				}
 				else
 				{
@@ -146,6 +147,7 @@ namespace D2Maker
 						if (currentScene->em.addComponent<Animation>(selectedEntity, namesVec, timing, oil))
 						{
 							canClose = true;
+							CONSOLELOGCOMPONENTSUCCESSMODIFY(Animation, this->selectedEntity);
 						}
 						else
 						{

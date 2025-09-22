@@ -72,8 +72,11 @@ namespace D2Maker
 				{
 					if (currentScene->em.addComponent<AudioComponent>(this->selectedEntity, textBox.GetText()))
 					{
+						CONSOLELOGCOMPONENTSUCCESS(AudioComponent, this->selectedEntity);
 						canClose = true;
 					}
+					else{ CONSOLELOGCOMPONENTUNSUCCESFUL(AudioComponent, this->selectedEntity); }
+					
 				}
 				else
 				{
@@ -89,6 +92,7 @@ namespace D2Maker
 						if (currentScene->em.addComponent<AudioComponent>(this->selectedEntity, textBox.GetText()))
 						{
 							canClose = true;
+							CONSOLELOGCOMPONENTSUCCESSMODIFY(AudioComponent, this->selectedEntity);
 						}
 						else
 						{

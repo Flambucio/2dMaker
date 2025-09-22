@@ -76,8 +76,10 @@ namespace D2Maker
 				{
 					if (currentScene->em.addComponent<Follow>(this->selectedEntity, vel, name))
 					{
+						CONSOLELOGCOMPONENTSUCCESS(Follow, this->selectedEntity);
 						canClose = true;
 					}
+					else { CONSOLELOGCOMPONENTUNSUCCESFUL(Follow, this->selectedEntity); }
 				}
 				else
 				{
@@ -91,6 +93,7 @@ namespace D2Maker
 					}
 					if (currentScene->em.addComponent<Follow>(selectedEntity,vel, name))
 					{
+						CONSOLELOGCOMPONENTSUCCESSMODIFY(Follow, this->selectedEntity);
 						canClose = true;
 					}
 					else

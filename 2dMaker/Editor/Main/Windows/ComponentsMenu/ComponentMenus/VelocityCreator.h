@@ -71,8 +71,10 @@ namespace D2Maker
 					if (SceneManager::GetScene(SceneManager::currentScene)->em.addComponent<Velocity>(
 						selectedEntity, dx, dy, dtheta))
 					{
+						CONSOLELOGCOMPONENTSUCCESS(Velocity, this->selectedEntity);
 						canClose = true;
 					}
+					else { CONSOLELOGCOMPONENTUNSUCCESFUL(Velocity, this->selectedEntity); }
 				}
 				else
 				{
@@ -81,6 +83,7 @@ namespace D2Maker
 					vel->defaultDy = dy;
 					vel->defaultDtheta = dtheta;
 					canClose = true;
+					CONSOLELOGCOMPONENTSUCCESSMODIFY(Velocity, this->selectedEntity);
 				}
 
 				if (!canClose) return;
@@ -100,6 +103,7 @@ namespace D2Maker
 					textBox_dx.SetText(std::to_string(vel->defaultDx));
 					textBox_dy.SetText(std::to_string(vel->defaultDy));
 					textBox_dtheta.SetText(std::to_string(vel->defaultDtheta));
+					
 				}
 				else
 				{
