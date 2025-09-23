@@ -72,6 +72,7 @@ namespace D2Maker
 				}
 				if (TextureLoader::Exists(name)) return false;
 				TextureLoader::LoadTexture(name, path);
+				CONSOLELOG("Texture loaded at: " + path + " at: " + name);
 				return true;
 			}
 

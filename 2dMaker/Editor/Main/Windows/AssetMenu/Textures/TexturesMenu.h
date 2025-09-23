@@ -76,6 +76,7 @@ namespace D2Maker
 			{
 				std::string name = menu.GetCurrentValue();
 				TextureLoader::RemoveTexture(name);
+				CONSOLELOG("Deleted texture: " + name);
 				LoadTextureNames();
 			}
 			

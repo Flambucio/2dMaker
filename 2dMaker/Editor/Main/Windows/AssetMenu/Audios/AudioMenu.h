@@ -67,6 +67,7 @@ namespace D2Maker
 			{
 				std::string name = menu.GetCurrentValue();
 				AudioLoader::RemoveAudio(name);
+				CONSOLELOG("Deleted audio: " + name);
 				LoadAudioNames();
 			}
 

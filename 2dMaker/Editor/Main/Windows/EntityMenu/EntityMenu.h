@@ -155,6 +155,7 @@ namespace D2Maker
 			void DeleteCallback()
 			{
 				Scene* scene = SceneManager::GetScene(SceneManager::currentScene);
+				CONSOLELOG("Deleted entity: " + entityList.GetCurrentValue());
 				scene->em.destroyEntity(entityList.GetCurrentValue());
 			}
 		};

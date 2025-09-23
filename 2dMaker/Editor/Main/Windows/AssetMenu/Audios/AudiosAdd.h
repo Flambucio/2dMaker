@@ -73,6 +73,7 @@ namespace D2Maker
 				}
 				if (AudioLoader::Exists(name)) return false;
 				AudioLoader::LoadAudio(name, path);
+				CONSOLELOG("Loaded audio at : " + path + " as: " + name);
 				return true;
 			}
 

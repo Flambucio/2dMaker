@@ -28,8 +28,9 @@ namespace D2Maker
 						if (currentScene->em.nameAvailable(this->textBox.GetText()))
 						{
 							if (this->checkbox.GetValue()) type = EntityType::VIRTUAL;
-							currentScene->em.createEntity(this->textBox.GetText());
+							currentScene->em.createEntity(this->textBox.GetText(),type);
 							popup.Close();
+							CONSOLELOG("Created entity: " + textBox.GetText());
 						}
 					}
 				),
