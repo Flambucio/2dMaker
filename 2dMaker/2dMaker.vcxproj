@@ -221,11 +221,13 @@
     <ClInclude Include="Engine\ECS\Systems\Render\Animation.h" />
     <ClInclude Include="Engine\ECS\Systems\Render\CameraSystem.h" />
     <ClInclude Include="Engine\ECS\Systems\Render\RenderingSystem.h" />
+    <ClInclude Include="Engine\ECS\Systems\Scripting\Environment.h" />
     <ClInclude Include="Engine\ECS\Systems\Scripting\Interpreter.h" />
     <ClInclude Include="Engine\ECS\Systems\Scripting\Parser.h" />
     <ClInclude Include="Engine\ECS\Systems\Scripting\ScriptSystem.h">
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
+    <ClInclude Include="Engine\ECS\Systems\Scripting\Statements.h" />
     <ClInclude Include="Engine\ECS\Systems\Scripting\Tokens.h" />
     <ClInclude Include="Engine\ECS\Systems\Sysbase.h" />
     <ClInclude Include="Engine\ECS\Systems\Physics\Physics.h" />
