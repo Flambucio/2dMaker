@@ -16,6 +16,7 @@
 #include <unordered_set>
 #include <filesystem>
 #include <cmath>
+#include <variant>
 
 //Core Files
 #include "Log.h"
