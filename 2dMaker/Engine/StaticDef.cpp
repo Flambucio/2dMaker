@@ -14,6 +14,8 @@ namespace D2Maker
     int Window::windowedY = 0;
 	std::unordered_map<std::string, std::unique_ptr<Texture>> TextureLoader::textures;
 	std::unordered_set<Keys> EventManager::pressedKeys;
+    std::unordered_set<Keys> EventManager::justClicked;
+    std::unordered_map<Keys, bool> EventManager::consumedKeys;
     const std::unordered_map<std::string, D2Maker::Keys> Tokens::keyMap = {
     {"ZERO", D2Maker::Keys::ZERO},
     {"ONE", D2Maker::Keys::ONE},

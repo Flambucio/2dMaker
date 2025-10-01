@@ -23,6 +23,14 @@ namespace D2Maker
 
 	};
 
+	enum LogicOperators
+	{
+		AND,
+		OR,
+		NOT,
+		NUL
+	};
+
 	class Statement
 	{
 	public:
@@ -263,6 +271,76 @@ namespace D2Maker
 			}
 		}
 	};
+
+	class LogicExpression : public BooleanExpression
+	{
+		std::unique_ptr<BooleanExpression> &left;
+		std::unique_ptr<BooleanExpression> &right;
+		bool both = false;
+		LogicOperators op = NUL;
+		LogicExpression(std::unique_ptr<BooleanExpression>& leftin, std::unique_ptr<BooleanExpression>& rightin, std::string opstr)
+			: left(leftin),right(rightin)
+		{
+			char c = opstr[0];
+			switch (c)
+			{
+			case 'A':
+				op = AND;
+				break;
+			case 'O':
+				op = OR;
+				break;
+			case 'N':
+				op = NOT;
+				break;
+			}
+		}
+
+
+		bool evaluate()
+		{
+			switch (op)
+			{
+			case AND:
+				return left->evaluate() && right->evaluate();
+			case OR:
+				return left->evaluate() || right->evaluate();
+			case NOT:
+				if (left != nullptr) { return !left->evaluate(); }
+			}
+
+			return false; //fallback
+		}
+	};
+
+	class KeyPressCondition : public Condition
+	{
+		Keys key = Keys::NUL;
+		KeyPressCondition(std::string keystr)
+		{
+			key = Tokens::InterpretKey(keystr);
+		}
+
+		bool evaluate()
+		{
+			return EventManager::IsKeyPressed(key);
+		}
+	};
+
+	class KeyClickCondition : public Condition
+	{
+		Keys key = Keys::NUL;
+		KeyClickCondition(std::string keystr)
+		{
+			key = Tokens::InterpretKey(keystr);
+		}
+		bool evaluate()
+		{
+			return EventManager::IsKeyPressedOnce(key);
+		}
+	};
+
+
 
 
 

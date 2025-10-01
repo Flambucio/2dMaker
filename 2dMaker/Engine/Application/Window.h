@@ -126,10 +126,17 @@ namespace D2Maker
                 {
                     ToggleFullscreen();
                 }
-                EventManager::PushEvent(static_cast<Keys>(key));
+                EventManager::PushEvent(static_cast<Keys>(key),EventType::HOLD);
+
+                if (!EventManager::GetConsumedKeys()[static_cast<Keys>(key)])
+                {
+                    EventManager::PushEvent(static_cast<Keys>(key), CLICK);
+                    EventManager::GetConsumedKeys()[static_cast<Keys>(key)] = true;
+                }
             }
             else if (action == GLFW_RELEASE)
             {
+                EventManager::GetConsumedKeys()[static_cast<Keys>(key)] = false;
                 EventManager::ReleaseKey(static_cast<Keys>(key));
             }
         }
