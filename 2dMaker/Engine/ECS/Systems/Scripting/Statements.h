@@ -340,6 +340,42 @@ namespace D2Maker
 		}
 	};
 
+	class MouseClickCondition : public Condition
+	{
+		Entity entity = 0;
+		Keys key = Keys::NUL;
+		EntityManager& em;
+		MouseClickCondition(Entity entity, Keys key,EntityManager& em) : em(em)
+		{
+			if (!(key == Keys::LEFT || key == Keys::RIGHT))
+			{
+				return;
+			}
+			
+			this->key = key;
+			this->entity = entity;
+
+		}
+
+		bool evaluate()
+		{
+			if (!em.hasComponent<Transform>(entity) || key==Keys::NUL)
+			{
+				return false;
+			}
+			if (EventManager::IsKeyPressedOnce(key))
+			{
+				Transform* t = em.getComponent<Transform>(entity);
+				return ColliderFunctions::MousePointerCollisionWithRec({ t->x,t->y,t->width,t->height });
+			}
+			return false;
+
+		}
+
+		
+
+	};
+
 
 
 

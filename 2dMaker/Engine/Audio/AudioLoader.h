@@ -13,7 +13,7 @@ namespace D2Maker
 			return audios.find(name) != audios.end();
 		}
 		static void LoadAudio(const std::string& name, const std::string& filepath)
-		{
+		{	
 			if (Exists(name))
 			{
 				WARN("audio name already present");

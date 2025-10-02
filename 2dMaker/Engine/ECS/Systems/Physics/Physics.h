@@ -118,6 +118,8 @@ namespace D2Maker
 					}
 				}
 
+				
+
 				if (!collidedX)
 				{
 					ApplyMovementX(transform, velocity);
