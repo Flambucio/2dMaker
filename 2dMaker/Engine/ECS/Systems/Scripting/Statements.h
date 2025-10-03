@@ -31,6 +31,14 @@ namespace D2Maker
 		NUL
 	};
 
+	enum CoordType
+	{
+		X,
+		Y,
+		THETA,
+		NUL
+	};
+
 	class Statement
 	{
 	public:
@@ -181,9 +189,12 @@ namespace D2Maker
 	template<typename T>
 	class RelationalExpression : public BooleanExpression
 	{
+	private:
+	
 		T left;
 		T right;
 		RelationalOperators op=NUL;
+	public:
 		RelationalExpression(T left, T right, std::string opstr) : left(left),right(right)
 		{
 			char c = opstr[0]; //size controlled before creating the obj
@@ -274,10 +285,12 @@ namespace D2Maker
 
 	class LogicExpression : public BooleanExpression
 	{
+	private:
 		std::unique_ptr<BooleanExpression> &left;
 		std::unique_ptr<BooleanExpression> &right;
 		bool both = false;
-		LogicOperators op = NUL;
+		LogicOperators op = LogicOperators::NUL;
+	public:
 		LogicExpression(std::unique_ptr<BooleanExpression>& leftin, std::unique_ptr<BooleanExpression>& rightin, std::string opstr)
 			: left(leftin),right(rightin)
 		{
@@ -315,7 +328,9 @@ namespace D2Maker
 
 	class KeyPressCondition : public Condition
 	{
+	private:
 		Keys key = Keys::NUL;
+	public:
 		KeyPressCondition(std::string keystr)
 		{
 			key = Tokens::InterpretKey(keystr);
@@ -329,7 +344,9 @@ namespace D2Maker
 
 	class KeyClickCondition : public Condition
 	{
+	private:
 		Keys key = Keys::NUL;
+	public:
 		KeyClickCondition(std::string keystr)
 		{
 			key = Tokens::InterpretKey(keystr);
@@ -342,9 +359,11 @@ namespace D2Maker
 
 	class MouseClickCondition : public Condition
 	{
+	private:
 		Entity entity = 0;
 		Keys key = Keys::NUL;
 		EntityManager& em;
+	public:
 		MouseClickCondition(Entity entity, Keys key,EntityManager& em) : em(em)
 		{
 			if (!(key == Keys::LEFT || key == Keys::RIGHT))
@@ -371,17 +390,134 @@ namespace D2Maker
 			return false;
 
 		}
+	};
+
+	class CollideCondition : public Condition
+	{
+	private:
+		Entity e1;
+		Entity e2;
+		EntityManager& em;
+	public:
+		CollideCondition(Entity e1, Entity e2,EntityManager&em) : e1(e1), e2(e2),em(em) {}
+		bool evaluate()
+		{
+			if (!em.hasComponent<Collider>(e1) || !em.hasComponent<Collider>(e2))
+			{
+				return false;
+			}
+
+			Transform* t1 = em.getComponent<Transform>(e1);
+			Transform* t2 = em.getComponent<Transform>(e2);
+			return ColliderFunctions::CheckCollision({ t1->x,t1->y,t1->width,t1->height },
+				{ t2->x,t2->y,t2->width,t2->height });
+
+		}
+	};
+
+	class Instruction : public Statement
+	{
+	public:
+		Instruction(uint32_t line) : Statement(line){}
+	};
+
+	class MoveStatement : public Instruction
+	{
+	private:
+		EntityManager& em;
+		Entity e = 0;
+		CoordType c = CoordType::NUL;
+		std::unique_ptr<NumericExpression> &expr;
+		bool relative = false;
+	public:
+		MoveStatement(std::uint32_t line,EntityManager& em, Entity e, CoordType c, std::unique_ptr<NumericExpression>& expr,
+			bool relative) : em(em),e(e),c(c),expr(expr),relative(relative) ,Instruction(line)
+		{
+		}
+
+		void Execute()
+		{
+			if (!em.hasComponent<Velocity>(e)) return;
+			Velocity* v = em.getComponent<Velocity>(e);
+			float default_ = 0;
+			float& ref=default_;
+			switch (c)
+			{
+			case X:
+				ref = v->dx;
+				break;
+			case Y:
+				ref = (float)v->dy;
+				break;
+			case THETA:
+				ref = (float)v->dtheta;
+				break;
+
+			}
+			if (relative) ref += NumericExpression::NumberToFloat(expr->evaluate());
+			else ref= NumericExpression::NumberToFloat(expr->evaluate());
+		}
 
 		
 
+
+	};
+
+	class SetStatement : public Instruction
+	{
+	private:
+		EntityManager& em;
+		Entity e = 0;
+		CoordType c = CoordType::NUL;
+		std::unique_ptr<NumericExpression>& expr;
+		bool relative = false;
+	public:
+		SetStatement(std::uint32_t line, EntityManager& em, Entity e, CoordType c, std::unique_ptr<NumericExpression>& expr,
+			bool relative) : em(em), e(e), c(c), expr(expr), relative(relative), Instruction(line)
+		{
+		}
+
+
+		void Execute()
+		{
+			if (!em.hasComponent<Transform>(e)) return;
+			Transform* t = em.getComponent<Transform>(e);
+			float default_ = 0;
+			float& ref = default_;
+			switch (c)
+			{
+			case X:
+				ref = t->x;
+				break;
+			case Y:
+				ref = (float)t->y;
+				break;
+			case THETA:
+				ref = (float)t->rotationDegrees;
+				break;
+
+			}
+			if (relative) ref += NumericExpression::NumberToFloat(expr->evaluate());
+			else ref = NumericExpression::NumberToFloat(expr->evaluate());
+		}
 	};
 
 
 
-
+	
 
 
 }
+
+
+	
+
+
+
+
+
+
+
 
 
 
