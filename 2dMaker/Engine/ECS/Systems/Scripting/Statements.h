@@ -504,6 +504,49 @@ namespace D2Maker
 
 
 
+	class PlayInstruction : public Instruction
+	{
+	private:
+		std::string audioName = "";
+	public:
+		PlayInstruction(std::string audioName, uint32_t line) : audioName(audioName), Instruction(line){}
+		void execute()
+		{
+			if (AudioLoader::Exists(audioName))
+			{
+				AudioLoader::PlayAudio(audioName);
+			}
+		}
+
+	};
+
+	class IFStament : public Statement
+	{
+	private:
+		std::unique_ptr<Condition> &condition;
+		std::vector<std::unique_ptr<Instruction>>& instructions;
+	public:
+		IFStament(std::unique_ptr<Condition>& condition, 
+			std::vector<std::unique_ptr<Instruction>>& instructions,uint32_t line) :
+			condition(condition),instructions(instructions), Statement(line){ }
+		void execute()
+		{
+			if (condition->evaluate())
+			{
+				for (const auto& i : instructions)
+				{
+					i->Execute();
+				}
+			}
+		}
+
+
+	};
+
+
+
+
+
 	
 
 
