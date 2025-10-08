@@ -39,7 +39,13 @@ namespace D2Maker
 		NUL
 	};
 
-	class Statement
+	class ASTNode
+	{
+	public:
+		virtual ~ASTNode() = default;
+	};
+
+	class Statement : public ASTNode
 	{
 	public:
 		uint32_t line = 0;
@@ -48,7 +54,7 @@ namespace D2Maker
 	};
 
 
-	class Expression
+	class Expression : public ASTNode
 	{
 	public:
 		virtual ~Expression() = default;
@@ -62,6 +68,37 @@ namespace D2Maker
 			return std::visit([](auto&& v)->float {return static_cast<float>(v);}, n);
 		}
 	};
+
+	class StringExpression : public Expression
+	{
+	public:
+		virtual std::string evaluate() = 0;
+	};
+
+	class ConstantString : public StringExpression
+	{
+	private:
+		std::string str = "";
+	public:
+		ConstantString(std::string str) : str(str) {}
+		std::string evaluate() 
+		{
+			return str;
+		}
+	};
+
+	class VariableString : public StringExpression
+	{
+	private:
+		std::string variableName;
+		VariableString(std::string variableName) : variableName(variableName) {}
+		std::string evaluate()
+		{
+			return Environment::Retrieve<std::string>(variableName);
+		}
+	};
+
+	
 
 	template<typename T>
 	class ConstantExpression : public Expression
@@ -95,13 +132,11 @@ namespace D2Maker
 	class VariableNumber : public NumericExpression
 	{
 	private:
-		Number value;
+		std::string valueName;
 	public:
-		VariableNumber(const std::string& var)
-		{
-			value = Environment::RetrieveNumber(var);
-		}
-		Number evaluate() { return value; }
+		VariableNumber(const std::string& var) : valueName(var)
+		{}
+		Number evaluate() { return Environment::RetrieveNumber(valueName); }
 	};
 
 
@@ -145,10 +180,10 @@ namespace D2Maker
 
 	public:
 		Operands operand = Operands::PLUS;
-		std::unique_ptr<NumericExpression>& left;
-		std::unique_ptr<NumericExpression>& right;
-		BinaryExpression(std::unique_ptr<NumericExpression>& left, std::unique_ptr<NumericExpression>& right, char operandc) :
-			left(left), right(right)
+		std::unique_ptr<NumericExpression> left;
+		std::unique_ptr<NumericExpression> right;
+		BinaryExpression(std::unique_ptr<NumericExpression> left, std::unique_ptr<NumericExpression> right, char operandc) :
+			left(std::move(left)), right(std::move(right))
 		{
 			switch (operandc)
 			{
@@ -185,6 +220,26 @@ namespace D2Maker
 	};
 
 	class BooleanExpression : public Condition{};
+
+	class ConstantBool : public BooleanExpression
+	{
+		bool value;
+		ConstantBool(bool value) : value(value) {}
+		bool evaluate()
+		{
+			return value;
+		}
+	};
+
+	class VariableBool : public BooleanExpression
+	{
+		std::string variableName;
+		VariableBool(std::string variableName) : variableName(variableName) {}
+		bool evaluate()
+		{
+			return Environment::Retrieve<bool>(variableName);
+		}
+	};
 	
 	template<typename T>
 	class RelationalExpression : public BooleanExpression
@@ -286,13 +341,13 @@ namespace D2Maker
 	class LogicExpression : public BooleanExpression
 	{
 	private:
-		std::unique_ptr<BooleanExpression> &left;
-		std::unique_ptr<BooleanExpression> &right;
+		std::unique_ptr<BooleanExpression> left;
+		std::unique_ptr<BooleanExpression> right;
 		bool both = false;
 		LogicOperators op = LogicOperators::NUL;
 	public:
-		LogicExpression(std::unique_ptr<BooleanExpression>& leftin, std::unique_ptr<BooleanExpression>& rightin, std::string opstr)
-			: left(leftin),right(rightin)
+		LogicExpression(std::unique_ptr<BooleanExpression> leftin, std::unique_ptr<BooleanExpression> rightin, std::string opstr)
+			: left(std::move(leftin)),right(std::move(rightin))
 		{
 			char c = opstr[0];
 			switch (c)
@@ -427,11 +482,11 @@ namespace D2Maker
 		EntityManager& em;
 		Entity e = 0;
 		CoordType c = CoordType::NUL;
-		std::unique_ptr<NumericExpression> &expr;
+		std::unique_ptr<NumericExpression> expr;
 		bool relative = false;
 	public:
-		MoveStatement(std::uint32_t line,EntityManager& em, Entity e, CoordType c, std::unique_ptr<NumericExpression>& expr,
-			bool relative) : em(em),e(e),c(c),expr(expr),relative(relative) ,Instruction(line)
+		MoveStatement(std::uint32_t line,EntityManager& em, Entity e, CoordType c, std::unique_ptr<NumericExpression> expr,
+			bool relative) : em(em),e(e),c(c),expr(std::move(expr)),relative(relative) ,Instruction(line)
 		{
 		}
 
@@ -469,11 +524,11 @@ namespace D2Maker
 		EntityManager& em;
 		Entity e = 0;
 		CoordType c = CoordType::NUL;
-		std::unique_ptr<NumericExpression>& expr;
+		std::unique_ptr<NumericExpression>expr;
 		bool relative = false;
 	public:
-		SetStatement(std::uint32_t line, EntityManager& em, Entity e, CoordType c, std::unique_ptr<NumericExpression>& expr,
-			bool relative) : em(em), e(e), c(c), expr(expr), relative(relative), Instruction(line)
+		SetStatement(std::uint32_t line, EntityManager& em, Entity e, CoordType c, std::unique_ptr<NumericExpression> expr,
+			bool relative) : em(em), e(e), c(c), expr(std::move(expr)), relative(relative), Instruction(line)
 		{
 		}
 
@@ -510,7 +565,7 @@ namespace D2Maker
 		std::string audioName = "";
 	public:
 		PlayInstruction(std::string audioName, uint32_t line) : audioName(audioName), Instruction(line){}
-		void execute()
+		void Execute()
 		{
 			if (AudioLoader::Exists(audioName))
 			{
@@ -520,16 +575,16 @@ namespace D2Maker
 
 	};
 
-	class IFStament : public Statement
+	class IfStament : public Statement
 	{
 	private:
-		std::unique_ptr<Condition> &condition;
-		std::vector<std::unique_ptr<Instruction>>& instructions;
+		std::unique_ptr<Condition> condition;
+		std::vector<std::unique_ptr<Instruction>> instructions;
 	public:
-		IFStament(std::unique_ptr<Condition>& condition, 
-			std::vector<std::unique_ptr<Instruction>>& instructions,uint32_t line) :
-			condition(condition),instructions(instructions), Statement(line){ }
-		void execute()
+		IfStament(std::unique_ptr<Condition> condition, 
+			std::vector<std::unique_ptr<Instruction>> instructions,uint32_t line) :
+			condition(std::move(condition)),instructions(std::move(instructions)), Statement(line){ }
+		void Execute()
 		{
 			if (condition->evaluate())
 			{
@@ -542,25 +597,4 @@ namespace D2Maker
 
 
 	};
-
-
-
-
-
-	
-
-
 }
-
-
-	
-
-
-
-
-
-
-
-
-
-

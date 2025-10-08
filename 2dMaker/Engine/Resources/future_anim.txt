@@ -1,0 +1,135 @@
+﻿Perfetto, 💯 questa è una scelta intelligente e pulita da motore —
+lasciare che AnimationController sia il componente “intelligente” che gestisce quando e come caricare i file, e mantenere Animation come un semplice contenitore dati (texture, timing, indice…).
+
+E la tua idea di skippare il system se mancano dati è assolutamente giusta — è un ottimo modo per evitare crash e allo stesso tempo avere fallback automatico.
+
+💡 Ti riassumo la struttura ideale:
+🧩 1. Animation
+
+componente semplice, gestito da AnimationSystem
+
+struct Animation : public Component {
+    std::vector<std::string> texNames;
+    float timing = 0;
+    float accumulator = 0;
+    int index = 0;
+    int orderInLayer = 0;
+    int currentTextureIndex = -1;
+    bool active = true; // <-- puoi usarlo per “disattivare” l'animazione
+
+    Animation() = default;
+    Animation(std::vector<std::string> names, float timing, int order)
+        : texNames(std::move(names)), timing(timing), orderInLayer(order) {}
+
+    void ResetIndexTimes() {
+        index = 0;
+        accumulator = 0;
+        currentTextureIndex = -1;
+    }
+
+    bool IsValid() const {
+        return !texNames.empty() && timing > 0;
+    }
+};
+
+⚙️ 2. AnimationSystem
+
+Prima di aggiornare, controlla che l’animazione sia valida:
+
+void Update(EntityManager& em) {
+    for (Entity entity : em.aliveEntities) {
+        if (!em.hasComponent<Animation>(entity)) continue;
+
+        auto* anim = em.getComponent<Animation>(entity);
+        if (!anim->IsValid() || !anim->active) continue; // <— skip automatico
+
+        anim->accumulator += DeltaTime::Get();
+        if (anim->accumulator >= anim->timing) {
+            anim->index = (anim->index + 1) % anim->texNames.size();
+            anim->accumulator -= anim->timing;
+        }
+
+        if (em.hasComponent<TextureComponent>(entity)) {
+            em.RemoveComponent<TextureComponent>(entity);
+        }
+
+        em.addComponent<TextureComponent>(entity, anim->texNames[anim->index],
+                                          anim->orderInLayer);
+    }
+}
+
+🧠 3. AnimationController
+
+gestisce logica condizionale, trigger, caricamento file, etc.
+
+struct AnimationController : public Component {
+    std::unordered_map<std::string, Animation> animations;
+    std::string current = "";
+
+    void LoadFromFile(const std::string& filepath) {
+        // Parser del file .anim
+        // Popola la mappa animations[name] = Animation(...);
+    }
+
+    void SetAnimation(const std::string& name) {
+        if (animations.contains(name))
+            current = name;
+    }
+
+    Animation* GetCurrentAnimation() {
+        if (animations.contains(current))
+            return &animations[current];
+        return nullptr;
+    }
+};
+
+
+Poi puoi fare un AnimationControllerSystem che sincronizza la Animation del componente:
+
+void Update(EntityManager& em) {
+    for (Entity e : em.aliveEntities) {
+        if (!em.hasComponent<AnimationController>(e)) continue;
+        auto* ctrl = em.getComponent<AnimationController>(e);
+
+        auto* anim = ctrl->GetCurrentAnimation();
+        if (!anim) continue;
+
+        // sincronizza i dati con Animation
+        if (!em.hasComponent<Animation>(e))
+            em.addComponent<Animation>(e, anim->texNames, anim->timing, anim->orderInLayer);
+        else
+            *em.getComponent<Animation>(e) = *anim;
+    }
+}
+
+🧩 4. Nel file .entity
+
+Ecco come puoi combinare i due approcci:
+
+🔹 Animazione semplice (inline)
+ANIMATION walk1 walk2 walk3 0.15 1;
+
+🔹 Animazione controllata (da file)
+ANIMATIONCONTROLLER walkcycles.anim;
+
+✅ Vantaggi di questa struttura
+
+Animation = dati puri (texture, timing, indice)
+
+AnimationController = logica e condizione (trigger, cambio animazioni)
+
+AnimationSystem = gestione automatica dei frame
+
+AnimationControllerSystem = gestione transizioni o eventi
+
+E se un’animazione è incompleta → IsValid() evita bug o crash
+
+Se vuoi, ti posso mostrare come strutturare un file .anim (senza JSON, nello stesso stile del tuo linguaggio) per permettere cose tipo:
+
+IDLE walk1 walk2 walk3 0.2 1;
+RUN  run1 run2 run3 0.1 1;
+CONDITION KEYPRESS W RUN;
+CONDITION !KEYPRESS W IDLE;
+
+
+Vuoi che ti scriva un parser e struttura base per questo formato?s

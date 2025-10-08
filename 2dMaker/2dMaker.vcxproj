@@ -222,6 +222,7 @@
     <ClInclude Include="Engine\ECS\Systems\Render\Animation.h" />
     <ClInclude Include="Engine\ECS\Systems\Render\CameraSystem.h" />
     <ClInclude Include="Engine\ECS\Systems\Render\RenderingSystem.h" />
+    <ClInclude Include="Engine\ECS\Systems\Scripting\ASTBuilder.h" />
     <ClInclude Include="Engine\ECS\Systems\Scripting\Environment.h" />
     <ClInclude Include="Engine\ECS\Systems\Scripting\Interpreter.h" />
     <ClInclude Include="Engine\ECS\Systems\Scripting\Parser.h" />
