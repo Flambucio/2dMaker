@@ -114,27 +114,82 @@ namespace D2Maker
 
 		inline static ParseResult ParseBinaryExpression(const std::vector<std::string>& tokens, size_t& i)
 		{
+			static inline std::unordered_set<std::string> operators = { "+","-","*","/" };
+			char c = ' ';
+			ParseResult resultLeft = ParseValueExpression(tokens, i);
+			if (!resultLeft.success) return resultLeft;
+			if (dynamic_cast<NumericExpression*> (resultLeft.node.get())==nullptr)
+			{
+				return { nullptr,false,"binary expressions must have numeric values on both sides" };
+			}
+			if (operators.find(tokens[i]) == operators.end()) return { nullptr,false,"invalid binary expression operator" };
+
+			char c = char(tokens[i][0]);
+			i++;
+
+			ParseResult resultRight = ParseValueExpression(tokens, i);
+			if (!resultRight.success) return resultRight;
+			if (dynamic_cast<NumericExpression*>(resultRight.node.get())==nullptr)
+			{
+				return { nullptr,false,"binary expressions must have numeric values on both sides" };
+			}
+
+			return { std::make_unique<BinaryExpression>(std::move(resultLeft.node),
+				std::move(resultRight.node),c) };
+			
+
 			
 		}
 
 		inline static ParseResult ParseValueExpression(const std::vector<std::string>& tokens, size_t& i)
 		{
+			ParseResult result = { nullptr,false,"not executed" };
 			if (tokens[i] == "VAR")
 			{
+				
+				if (Environment::Exists(tokens[i + 1], Type::STRING))
+				{
+					result = { std::make_unique<VariableString>(tokens[i + 1]),true,"success" };
+				}
+				else if (Environment::Exists(tokens[i + 1], Type::INT) || Environment::Exists(tokens[i + 1], Type::FLOAT))
+				{
+					result = { std::make_unique<VariableNumber>(tokens[i + 1]),true,"success" };
+				}
+				else if (Environment::Exists(tokens[i + 1], Type::BOOL))
+				{
+					result = { std::make_unique<VariableBool>(tokens[i + 1]),true,"success" };
+				}
+				else
+				{
+					result = { nullptr,false,"variable not found" };
+				}
+				
+				i += 2;
 
 			}
 			else
 			{
-				ParseResult result = { nullptr,false,"not executed" };
-				if (Environment::Exists(tokens[i+1], Type::STRING))
+				float f = 0;
+				if (tokens[i] == "true" || tokens[i] == "false")
 				{
-					result = { std::make_unique<VariableString>(tokens[i + 1]),true,"success"};
+					bool value = tokens[i] == "true" ? true : false;
+					result= { std::make_unique<ConstantBool>(value),true,"success" };
 				}
-				else if (Environment::Exists(tokens[i + 1], Type::INT) || Environment::Exists(tokens[i+1],Type::FLOAT))
+				else if (ConvertStringToNum<float>(tokens[i], f)) 
 				{
-					result = { std::make_unique<VariableNumber>(tokens[i + 1]),true,"success" };
+					result= { std::make_unique<ConstantNumber>(f),true,"success" };
 				}
+				else
+				{
+					result = { std::make_unique<ConstantString>(tokens[i]),true,"success"};
+				}
+
+				i++;
+
+				
 			}
+
+			return result;
 		}
 	};
 }
