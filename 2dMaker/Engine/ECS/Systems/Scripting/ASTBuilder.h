@@ -81,8 +81,7 @@ namespace D2Maker
 				else
 				{
 					i++;
-					
-
+					ParseResult exprRes = ParseRelationalExpression(tokens, i);
 				}
 			}
 		}
@@ -91,12 +90,38 @@ namespace D2Maker
 
 		inline static ParseResult ParseRelationalExpression(const std::vector<std::string>&tokens,size_t&i)
 		{
+			static const std::unordered_set<std::string> operators = { "==","!=",">","<",">=","<=" };
+			ParseResult left = ParseBinaryorValueExpression(tokens, i);
+			if (!left.node) return left;
+			if (operators.find(tokens[i]) == operators.end()) return { nullptr,false,"invalid operator" };
+			char c = tokens[i][0];
+			i++;
+			ParseResult right = ParseBinaryorValueExpression(tokens, i);
+			if (!right.node) return right;
+			return MakeRelationalExpression(left, right, c);
+		}
+
+		inline static ParseResult MakeRelationalExpression(const ParseResult& left, const ParseResult& right, char op)
+		{
+			if (typeid(left.node.get()) != typeid(*right.node.get()))
+			{
+				return { nullptr,false,"different types in relational expression" };
+			}
 			
+			if (typeid(left.node.get()) == typeid(VariableString) || typeid(left.node.get()) == typeid(ConstantString))
+			{
+				return { std::make_unique<RelationalExpression<std::string>>(std::move(left.node),std::move(right.node),op),true,"success" };
+			}
+			else if (dynamic_cast<NumericExpression*>(left.node.get()) == nullptr)
+			{
+				return { std::make_unique<RelationalExpression<NumericExpression>>(std::move(left.node),std::move(right.node),op),true,"success" };
+			}
+			else return { nullptr,false,"different types in relational expression" };
 		}
 
 		inline static ParseResult ParseBinaryorValueExpression(const std::vector<std::string>& tokens, size_t& i)
 		{
-			static const std::unordered_set<std::string> operators = { "==","!=",">","<",">=","<=" };
+			static inline std::unordered_set<std::string> operators = { "+","-","*","/" };
 			int foundcount = 0;
 			for (int i = 0;i < 5 && i < tokens.size();i++)
 			{
