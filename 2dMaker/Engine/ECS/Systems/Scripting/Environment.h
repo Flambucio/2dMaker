@@ -7,7 +7,7 @@
 namespace D2Maker
 {
     using Number = std::variant<int, float>;
-    enum Type
+    enum class Type
     {
         STRING,
         INT,

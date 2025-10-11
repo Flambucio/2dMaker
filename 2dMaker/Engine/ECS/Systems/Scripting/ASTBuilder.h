@@ -9,6 +9,12 @@ namespace D2Maker
 		std::string errorMessage;
 	};
 
+	enum class RelationType
+	{
+		STRING,
+		NUMERIC,
+		INVALID
+	};
 
 	class ASTBuilder
 	{
@@ -103,9 +109,16 @@ namespace D2Maker
 
 		inline static ParseResult MakeRelationalExpression(const ParseResult& left, const ParseResult& right, char op)
 		{
-			if (typeid(left.node.get()) != typeid(*right.node.get()))
+			RelationType rtype = RelationType::INVALID;
+			if (dynamic_cast<StringExpression*>(left.node.get()) != nullptr)
 			{
-				return { nullptr,false,"different types in relational expression" };
+				if(dynamic_cast<StringExpression*>(right.node.get()) == nullptr) return { nullptr,false,"different types in relational expression" };
+				rtype = RelationType::STRING;
+			}
+			else if (dynamic_cast<NumericExpression*>(left.node.get()) != nullptr)
+			{
+				if (dynamic_cast<NumericExpression*>(right.node.get()) == nullptr) return { nullptr,false,"different types in relational expression" };
+				rtype = RelationType::NUMERIC;
 			}
 			
 			if (typeid(left.node.get()) == typeid(VariableString) || typeid(left.node.get()) == typeid(ConstantString))
@@ -121,7 +134,7 @@ namespace D2Maker
 
 		inline static ParseResult ParseBinaryorValueExpression(const std::vector<std::string>& tokens, size_t& i)
 		{
-			static inline std::unordered_set<std::string> operators = { "+","-","*","/" };
+			static std::unordered_set<std::string> operators = { "+","-","*","/" };
 			int foundcount = 0;
 			for (int i = 0;i < 5 && i < tokens.size();i++)
 			{
@@ -139,11 +152,11 @@ namespace D2Maker
 
 		inline static ParseResult ParseBinaryExpression(const std::vector<std::string>& tokens, size_t& i)
 		{
-			static inline std::unordered_set<std::string> operators = { "+","-","*","/" };
-			char c = ' ';
+			static std::unordered_set<std::string> operators = { "+","-","*","/" };
 			ParseResult resultLeft = ParseValueExpression(tokens, i);
 			if (!resultLeft.success) return resultLeft;
-			if (dynamic_cast<NumericExpression*> (resultLeft.node.get())==nullptr)
+			auto resultLeftptr = dynamic_cast<NumericExpression*> (resultLeft.node.get());
+			if (!resultLeftptr)
 			{
 				return { nullptr,false,"binary expressions must have numeric values on both sides" };
 			}
@@ -154,13 +167,21 @@ namespace D2Maker
 
 			ParseResult resultRight = ParseValueExpression(tokens, i);
 			if (!resultRight.success) return resultRight;
-			if (dynamic_cast<NumericExpression*>(resultRight.node.get())==nullptr)
+			auto resultRightptr = dynamic_cast<NumericExpression*>(resultRight.node.get());
+			if (!resultRightptr)
 			{
 				return { nullptr,false,"binary expressions must have numeric values on both sides" };
 			}
 
-			return { std::make_unique<BinaryExpression>(std::move(resultLeft.node),
-				std::move(resultRight.node),c) };
+			std::unique_ptr<NumericExpression> leftNumeric(
+				dynamic_cast<NumericExpression*>(resultLeft.node.release())
+			);
+			std::unique_ptr<NumericExpression> rightNumeric(
+				dynamic_cast<NumericExpression*>(resultRight.node.release())
+			);
+
+			return { std::make_unique<BinaryExpression>(std::move(leftNumeric),
+				std::move(rightNumeric),c) };
 			
 
 			

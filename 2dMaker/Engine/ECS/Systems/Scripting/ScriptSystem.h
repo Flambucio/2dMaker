@@ -1,5 +1,6 @@
 #pragma once
 #include "Interpreter.h"
+#include "ASTBuilder.h"
 
 namespace D2Maker
 {

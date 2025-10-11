@@ -3,7 +3,7 @@
 
 namespace D2Maker
 {
-	enum Operands
+	enum class Operands
 	{
 		PLUS,
 		SUBTRACT,
@@ -11,7 +11,7 @@ namespace D2Maker
 		DIVIDE
 	};
 
-	enum RelationalOperators   
+	enum class RelationalOperators   
 	{
 		EQUALITY,
 		INEQUALITY,
@@ -23,7 +23,7 @@ namespace D2Maker
 
 	};
 
-	enum LogicOperators
+	enum class LogicOperators
 	{
 		AND,
 		OR,
@@ -31,7 +31,7 @@ namespace D2Maker
 		NUL
 	};
 
-	enum CoordType
+	enum class CoordType
 	{
 		X,
 		Y,
@@ -91,34 +91,13 @@ namespace D2Maker
 	{
 	private:
 		std::string variableName;
+	public:
 		VariableString(std::string variableName) : variableName(variableName) {}
 		std::string evaluate()
 		{
 			return Environment::Retrieve<std::string>(variableName);
 		}
 	};
-
-	
-
-	template<typename T>
-	class ConstantExpression : public Expression
-	{
-		T value;
-		ConstantExpression(T value) : value(value) {}
-		T evaluate() { return value; }
-
-	};
-	template<typename T>
-	class VariableExpression : public Expression
-	{
-		bool componentVariable false;
-		T value;
-		VariableExpression(const std::string& var)
-		{
-			value = Environment::Retrieve<T>(var);
-		}
-	};
-
 
 	class ConstantNumber : public NumericExpression
 	{
@@ -223,7 +202,9 @@ namespace D2Maker
 
 	class ConstantBool : public BooleanExpression
 	{
+	private:
 		bool value;
+	public:
 		ConstantBool(bool value) : value(value) {}
 		bool evaluate()
 		{
@@ -233,7 +214,9 @@ namespace D2Maker
 
 	class VariableBool : public BooleanExpression
 	{
+	private:
 		std::string variableName;
+	public:
 		VariableBool(std::string variableName) : variableName(variableName) {}
 		bool evaluate()
 		{
@@ -246,8 +229,8 @@ namespace D2Maker
 	{
 	private:
 	
-		T left;
-		T right;
+		std::unique_ptr<ASTNode> left;
+		std::unique_ptr<ASTNode> right;
 		RelationalOperators op=NUL;
 	public:
 		RelationalExpression(T left, T right, std::string opstr) : left(left),right(right)
@@ -258,10 +241,10 @@ namespace D2Maker
 				switch (c)
 				{
 				case '>':
-					op = GREATER_THAN;
+					op = RelationalOperators::GREATER_THAN;
 					break;
 				case '<':
-					op = LESS_THAN;
+					op = RelationalOperators::LESS_THAN;
 					break;
 				}
 			}
@@ -270,16 +253,16 @@ namespace D2Maker
 				switch (c)
 				{
 				case '=':
-					op = EQUALITY;
+					op = RelationalOperators::EQUALITY;
 					break;
 				case '!':
-					op = INEQUALITY;
+					op = RelationalOperators::INEQUALITY;
 					break;
 				case '>':
-					op = GREATER_THAN_OR_EQUAL;
+					op = RelationalOperators::GREATER_THAN_OR_EQUAL;
 					break;
 				case '<':
-					op = LESS_THAN_OR_EQUAL;
+					op = RelationalOperators::LESS_THAN_OR_EQUAL;
 					break;
 				}
 			}
@@ -293,9 +276,9 @@ namespace D2Maker
 			{
 				switch (op)
 				{
-				case EQUALITY:
+				case RelationalOperators::EQUALITY:
 					return left == right;
-				case INEQUALITY:
+				case RelationalOperators::INEQUALITY:
 					return left != right;
 				default:
 					return false; //fallback
@@ -317,17 +300,17 @@ namespace D2Maker
 
 				switch (op)
 				{
-				case EQUALITY:
+				case RelationalOperators::EQUALITY:
 					return a == b;
-				case INEQUALITY:
+				case RelationalOperators::INEQUALITY:
 					return a != b;
-				case GREATER_THAN:
+				case RelationalOperators::GREATER_THAN:
 					return a > b;
-				case LESS_THAN:
+				case RelationalOperators::LESS_THAN:
 					return a < b;
-				case GREATER_THAN_OR_EQUAL:
+				case RelationalOperators::GREATER_THAN_OR_EQUAL:
 					return a >= b;
-				case LESS_THAN_OR_EQUAL:
+				case RelationalOperators::LESS_THAN_OR_EQUAL:
 					return a <= b;
 				default:
 					return false; // fallback
@@ -353,13 +336,13 @@ namespace D2Maker
 			switch (c)
 			{
 			case 'A':
-				op = AND;
+				op = LogicOperators::AND;
 				break;
 			case 'O':
-				op = OR;
+				op = LogicOperators::OR;
 				break;
 			case 'N':
-				op = NOT;
+				op = LogicOperators::NOT;
 				break;
 			}
 		}
@@ -369,11 +352,11 @@ namespace D2Maker
 		{
 			switch (op)
 			{
-			case AND:
+			case LogicOperators::AND:
 				return left->evaluate() && right->evaluate();
-			case OR:
+			case LogicOperators::OR:
 				return left->evaluate() || right->evaluate();
-			case NOT:
+			case LogicOperators::NOT:
 				if (left != nullptr) { return !left->evaluate(); }
 			}
 
@@ -498,13 +481,13 @@ namespace D2Maker
 			float& ref=default_;
 			switch (c)
 			{
-			case X:
+			case CoordType::X:
 				ref = v->dx;
 				break;
-			case Y:
+			case CoordType::Y:
 				ref = (float)v->dy;
 				break;
-			case THETA:
+			case CoordType::THETA:
 				ref = (float)v->dtheta;
 				break;
 
@@ -541,13 +524,13 @@ namespace D2Maker
 			float& ref = default_;
 			switch (c)
 			{
-			case X:
+			case CoordType::X:
 				ref = t->x;
 				break;
-			case Y:
+			case CoordType::Y:
 				ref = (float)t->y;
 				break;
-			case THETA:
+			case CoordType::THETA:
 				ref = (float)t->rotationDegrees;
 				break;
 
