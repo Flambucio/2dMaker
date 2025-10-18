@@ -224,18 +224,18 @@ namespace D2Maker
 		}
 	};
 	
-	template<typename T>
+	
 	class RelationalExpression : public BooleanExpression
 	{
 	private:
 	
 		std::unique_ptr<ASTNode> left;
 		std::unique_ptr<ASTNode> right;
-		RelationalOperators op=NUL;
+		RelationalOperators op=RelationalOperators::NUL;
 	public:
-		RelationalExpression(T left, T right, std::string opstr) : left(left),right(right)
+		RelationalExpression(std::unique_ptr<ASTNode> left, std::unique_ptr<ASTNode> right, std::string opstr) : left(std::move(left)),right(std::move(right))
 		{
-			char c = opstr[0]; //size controlled before creating the obj
+			char c = (char)opstr[0]; //size controlled before creating the obj
 			if (opstr.length() == 1)
 			{
 				switch (c)
@@ -271,32 +271,28 @@ namespace D2Maker
 
 		bool evaluate()
 		{
-			if constexpr (!std::is_same_v<T, Number> && !std::is_same_v<T, float> &&
-				!std::is_same_v<T, int>)
+			StringExpression* sExprLeft = dynamic_cast<StringExpression*>(left.get());
+			StringExpression* sExprRight = dynamic_cast<StringExpression*>(right.get());
+			NumericExpression* nExprLeft = dynamic_cast<NumericExpression*>(left.get());
+			NumericExpression* nExprRight = dynamic_cast<NumericExpression*>(right.get());
+			if(sExprLeft!=nullptr || sExprRight!=nullptr)
 			{
 				switch (op)
 				{
 				case RelationalOperators::EQUALITY:
-					return left == right;
+					return sExprLeft->evaluate() == sExprRight->evaluate();
 				case RelationalOperators::INEQUALITY:
-					return left != right;
+					return sExprLeft->evaluate() != sExprRight->evaluate();
 				default:
 					return false; //fallback
 				}
 			}
-			else
+			else if(nExprLeft != nullptr || nExprRight != nullptr)
 			{
 				float a = 0, b = 0;
-				if constexpr (std::is_same_v<T, Number>)
-				{
-					a = NumericExpression::NumberToFloat(left);
-					b = NumericExpression::NumberToFloat(right);
-				}
-				else
-				{
-					a = left;
-					b = right;
-				}
+
+				a = NumericExpression::NumberToFloat(nExprLeft->evaluate());
+				b = NumericExpression::NumberToFloat(nExprRight->evaluate());
 
 				switch (op)
 				{
@@ -577,6 +573,8 @@ namespace D2Maker
 				}
 			}
 		}
+
+		
 
 
 	};
