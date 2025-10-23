@@ -51,7 +51,7 @@ namespace D2Maker
 
 		inline static ParseResult ParseCondition(const std::vector<std::string>& tokens, size_t& i)
 		{
-			if (tokens[i].size() == 2 && Environment::Exists(tokens[i + 1], Type::BOOL))
+			if (!OutOfBounds(tokens, i, 1) && Environment::Exists(tokens[i + 1], Type::BOOL))
 			{
 				return { std::make_unique<VariableBool>(tokens[i+1]),true,"success"};
 				//dont need to increment cause if the condition is complete the statement is complete and
@@ -111,8 +111,10 @@ namespace D2Maker
 		{
 			ParseResult left=ParseRelationalExpressionOrBool(tokens,i);
 			VALIDITY_CHECK(left);
+			std::unique_ptr<BooleanExpression> leftBoolean(dynamic_cast<BooleanExpression*>(left.node.release()));
+			if (!leftBoolean) return { nullptr,false,"invalid value in logic expression" };
 			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid logic expression" };
-			if (tokens[i] != "AND" && tokens[i] != "NOT")
+			if (tokens[i] != "AND" && tokens[i] != "OR")
 			{
 				return { nullptr,false,"invalid logic operator" };
 			}
@@ -120,8 +122,9 @@ namespace D2Maker
 			i++;
 			ParseResult right = ParseRelationalExpressionOrBool(tokens, i);
 			VALIDITY_CHECK(right);
-
-			return { std::make_unique<LogicExpression>(left,right,op) };
+			std::unique_ptr<BooleanExpression> rightBoolean(dynamic_cast<BooleanExpression*>(right.node.release()));
+			if (!rightBoolean) return { nullptr,false,"invalid value in logic expression" };
+			return { std::make_unique<LogicExpression>(std::move(leftBoolean),std::move(rightBoolean),op) };
 
 			
 		}
@@ -131,7 +134,9 @@ namespace D2Maker
 			//not expressions
 			ParseResult rInside = ParseRelationalExpressionOrBool(tokens, i);
 			VALIDITY_CHECK(rInside);
-			ParseResult r = { std::make_unique <LogicExpression>(rInside,nullptr,"NOT") };
+			std::unique_ptr<BooleanExpression> rInsideCasted(dynamic_cast<BooleanExpression*>(rInside.node.release()));
+			if (!rInsideCasted) return { nullptr,false,"invalid value in logic expression" };
+			ParseResult r = { std::make_unique <LogicExpression>(std::move(rInsideCasted),nullptr,"NOT") };
 			return r;
 		}
 
@@ -156,18 +161,7 @@ namespace D2Maker
 		inline static ParseResult MakeRelationalExpression(ParseResult& left,ParseResult& right, std::string op)
 		{
 			RelationType rtype = RelationType::INVALID;
-			if (dynamic_cast<StringExpression*>(left.node.get()) != nullptr)
-			{
-				if(dynamic_cast<StringExpression*>(right.node.get()) == nullptr) return { nullptr,false,"different types in relational expression" };
-				rtype = RelationType::STRING;
-			}
-			else if (dynamic_cast<NumericExpression*>(left.node.get()) != nullptr)
-			{
-				if (dynamic_cast<NumericExpression*>(right.node.get()) == nullptr) return { nullptr,false,"different types in relational expression" };
-				rtype = RelationType::NUMERIC;
-			}
-			else return { nullptr,false,"different types in relational expression" };
-			
+			if (!AreSameType(left.node.get(),right.node.get())) return { nullptr,false,"different types in relational expression" };
 			return { std::make_unique<RelationalExpression>(std::move(left.node),std::move(right.node),op),true,"success" };
 			
 		}
@@ -290,9 +284,14 @@ namespace D2Maker
 			return result;
 		}
 
-		static bool OutOfBounds(const std::vector<std::string> &v, const size_t &i, const uint32_t &toAccess)
+		inline static bool OutOfBounds(const std::vector<std::string> &v, const size_t &i, const uint32_t &toAccess)
 		{
 			return i + toAccess >= v.size();
+		}
+
+		inline static bool AreSameType(ASTNode* a, ASTNode* b) {
+			return (dynamic_cast<StringExpression*>(a) && dynamic_cast<StringExpression*>(b)) ||
+				(dynamic_cast<NumericExpression*>(a) && dynamic_cast<NumericExpression*>(b));
 		}
 	};
 
