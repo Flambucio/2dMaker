@@ -1,7 +1,11 @@
 #pragma once
 #include "Statements.h"
+#define VALIDITY_CHECK(var)  if(!var.success) return var //solo in unary per il momento
+#define OUTOFBOUNDS(uint) OutOfBounds(tokens,i,uint)
+//TODO : sostituire se funziona
 namespace D2Maker
 {
+
 	struct ParseResult
 	{
 		std::unique_ptr<ASTNode> node;
@@ -42,37 +46,37 @@ namespace D2Maker
 
 		inline static ParseResult ParseSetStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t& line)
 		{
-
+			
 		}
 
 		inline static ParseResult ParseCondition(const std::vector<std::string>& tokens, size_t& i)
 		{
 			if (tokens[i].size() == 2 && Environment::Exists(tokens[i + 1], Type::BOOL))
 			{
-				
 				return { std::make_unique<VariableBool>(tokens[i+1]),true,"success"};
+				//dont need to increment cause if the condition is complete the statement is complete and
+				//skips to next line
 			}
 			else if (tokens[i].size() < 3)
 			{
 				return { nullptr,false,"Invalid Condition" };
 			}
+			static const std::unordered_set<std::string> relationalOperators = { ">","<","==","!=",">=","<=" };
 			bool logicExpression = false;
+			bool relationalExpression = false;
 			for (const auto& token : tokens) {
 				if (token == "AND" || token == "OR" || token == "NOT") logicExpression = true;
+				if (relationalOperators.find(token) != relationalOperators.end()) relationalExpression = true;
 			}
-
+			//logic expression has the priority
 			if (logicExpression) {
 				return ParseLogicExpression(tokens, i);
 			}
-			
-			/*
-			else if (tokens[i] == "NOT")
-			{
-				if (tokens[i + 1] == "VAR" && Environment::Exists(tokens[i+2],Type::BOOL))
-				{
-					return { std::make_unique <VariableBool>(tokens[i + 2]),true,"success" };
-				}
-			}*/
+			if (relationalExpression) {
+				return ParseRelationalExpression(tokens, i);
+			}
+
+			return { nullptr,false,"invalid boolean expression" };
 		}
 
 		inline static ParseResult ParseLogicExpression(const std::vector<std::string>& tokens, size_t& i)
@@ -87,19 +91,48 @@ namespace D2Maker
 
 		}
 
+		inline static ParseResult ParseRelationalExpressionOrBool(const std::vector<std::string>&tokens, size_t&i)
+		{
+			if (OutOfBounds(tokens,i,1)) 
+			{
+				return { nullptr,false,"invalid expression" };
+			}
+			if (tokens[i] == "VAR" && Environment::Exists(tokens[i + 1], Type::BOOL))
+			{
+				ParseResult r= { std::make_unique<VariableBool>(tokens[i + 1]) ,true,"success" };
+				i += 2;
+				return r;
+			}
+
+			return ParseRelationalExpression(tokens, i);
+		}
+
 		inline static ParseResult ParseLogicExpressionBinary(const std::vector<std::string>& tokens, size_t& i)
 		{
+			ParseResult left=ParseRelationalExpressionOrBool(tokens,i);
+			VALIDITY_CHECK(left);
+			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid logic expression" };
+			if (tokens[i] != "AND" && tokens[i] != "NOT")
+			{
+				return { nullptr,false,"invalid logic operator" };
+			}
+			std::string op = tokens[i];
+			i++;
+			ParseResult right = ParseRelationalExpressionOrBool(tokens, i);
+			VALIDITY_CHECK(right);
 
+			return { std::make_unique<LogicExpression>(left,right,op) };
+
+			
 		}
 
 		inline static ParseResult ParseLogicExpressionUnary(const std::vector<std::string>& tokens, size_t& i)
 		{
-			if (tokens[i] == "VAR" && Environment::Exists(tokens[i+1], Type::BOOL))
-			{
-				return { std::make_unique<VariableBool>(tokens[i + 1]) ,true,"success" };
-			}
-
-			return ParseRelationalExpression(tokens, i);
+			//not expressions
+			ParseResult rInside = ParseRelationalExpressionOrBool(tokens, i);
+			VALIDITY_CHECK(rInside);
+			ParseResult r = { std::make_unique <LogicExpression>(rInside,nullptr,"NOT") };
+			return r;
 		}
 
 		
@@ -110,12 +143,13 @@ namespace D2Maker
 		{
 			static const std::unordered_set<std::string> operators = { "==","!=",">","<",">=","<=" };
 			ParseResult left = ParseBinaryorValueExpression(tokens, i);
-			if (!left.node) return left;
-			if (operators.find(tokens[i]) == operators.end()) return { nullptr,false,"invalid operator" };
+			VALIDITY_CHECK(left);
+			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid relational expression" };
+ 			if (operators.find(tokens[i]) == operators.end()) return { nullptr,false,"invalid operator" };
 			std::string c = tokens[i];
 			i++;
 			ParseResult right = ParseBinaryorValueExpression(tokens, i);
-			if (!right.node) return right;
+			VALIDITY_CHECK(right);
 			return MakeRelationalExpression(left, right, c);
 		}
 
@@ -132,16 +166,10 @@ namespace D2Maker
 				if (dynamic_cast<NumericExpression*>(right.node.get()) == nullptr) return { nullptr,false,"different types in relational expression" };
 				rtype = RelationType::NUMERIC;
 			}
-			
-			if (dynamic_cast<StringExpression*>(left.node.get()) != nullptr)
-			{
-				return { std::make_unique<RelationalExpression>(std::move(left.node),std::move(right.node),op),true,"success" };
-			}
-			else if (dynamic_cast<NumericExpression*>(left.node.get()) != nullptr)
-			{
-				return { std::make_unique<RelationalExpression>(std::move(left.node),std::move(right.node),op),true,"success" };
-			}
 			else return { nullptr,false,"different types in relational expression" };
+			
+			return { std::make_unique<RelationalExpression>(std::move(left.node),std::move(right.node),op),true,"success" };
+			
 		}
 
 		inline static ParseResult ParseBinaryorValueExpression(const std::vector<std::string>& tokens, size_t& i)
@@ -166,19 +194,23 @@ namespace D2Maker
 		{
 			static std::unordered_set<std::string> operators = { "+","-","*","/" };
 			ParseResult resultLeft = ParseValueExpression(tokens, i);
-			if (!resultLeft.success) return resultLeft;
+			VALIDITY_CHECK(resultLeft);
 			auto resultLeftptr = dynamic_cast<NumericExpression*> (resultLeft.node.get());
 			if (!resultLeftptr)
 			{
 				return { nullptr,false,"binary expressions must have numeric values on both sides" };
 			}
+
+			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid binary expression" };
 			if (operators.find(tokens[i]) == operators.end()) return { nullptr,false,"invalid binary expression operator" };
 
+			//cant be outofbounds cause it needs at least 1 character to exist
+			//in the first place
 			char c = char(tokens[i][0]);
 			i++;
 
 			ParseResult resultRight = ParseValueExpression(tokens, i);
-			if (!resultRight.success) return resultRight;
+			VALIDITY_CHECK(resultRight);
 			auto resultRightptr = dynamic_cast<NumericExpression*>(resultRight.node.get());
 			if (!resultRightptr)
 			{
@@ -204,6 +236,10 @@ namespace D2Maker
 			ParseResult result = { nullptr,false,"not executed" };
 			if (tokens[i] == "VAR")
 			{
+				if (OutOfBounds(tokens, i, 1))
+				{
+					return { nullptr,false,"invalid value/variable" };
+				}
 				
 				if (Environment::Exists(tokens[i + 1], Type::STRING))
 				{
@@ -227,6 +263,10 @@ namespace D2Maker
 			}
 			else
 			{
+				if (OutOfBounds(tokens, i, 1))
+				{
+					return { nullptr,false,"invalid value/variable" };
+				}
 				float f = 0;
 				if (tokens[i] == "true" || tokens[i] == "false")
 				{
@@ -249,5 +289,12 @@ namespace D2Maker
 
 			return result;
 		}
+
+		static bool OutOfBounds(const std::vector<std::string> &v, const size_t &i, const uint32_t &toAccess)
+		{
+			return i + toAccess >= v.size();
+		}
 	};
+
+	
 }

@@ -322,7 +322,7 @@ namespace D2Maker
 	private:
 		std::unique_ptr<BooleanExpression> left;
 		std::unique_ptr<BooleanExpression> right;
-		bool both = false;
+		bool valid = false;
 		LogicOperators op = LogicOperators::NUL;
 	public:
 		LogicExpression(std::unique_ptr<BooleanExpression> leftin, std::unique_ptr<BooleanExpression> rightin, std::string opstr)
@@ -341,21 +341,29 @@ namespace D2Maker
 				op = LogicOperators::NOT;
 				break;
 			}
+
+			if (op == LogicOperators::AND || op == LogicOperators::OR)
+			{
+				if (left == nullptr || right == nullptr) valid = false;
+			}
+			
 		}
 
 
 		bool evaluate()
 		{
-			switch (op)
+			if (valid)
 			{
-			case LogicOperators::AND:
-				return left->evaluate() && right->evaluate();
-			case LogicOperators::OR:
-				return left->evaluate() || right->evaluate();
-			case LogicOperators::NOT:
-				if (left != nullptr) { return !left->evaluate(); }
+				switch (op)
+				{
+				case LogicOperators::AND:
+					return left->evaluate() && right->evaluate();
+				case LogicOperators::OR:
+					return left->evaluate() || right->evaluate();
+				case LogicOperators::NOT:
+					if (left != nullptr) { return !left->evaluate(); }
+				}
 			}
-
 			return false; //fallback
 		}
 	};
