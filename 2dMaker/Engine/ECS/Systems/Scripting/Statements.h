@@ -39,6 +39,12 @@ namespace D2Maker
 		NUL
 	};
 
+	struct ScriptContext 
+	{
+		EntityManager& em;
+		Entity e;
+	};
+
 	class ASTNode
 	{
 	public:

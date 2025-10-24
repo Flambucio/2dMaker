@@ -20,20 +20,27 @@ namespace D2Maker
 		INVALID
 	};
 
+	enum class PhysicsInstructionType {MOVE,SET};
+	typedef PhysicsInstructionType PIT; // exclusively for shorting the ternary operator length
+
 	
 	class ASTBuilder
 	{
 	private:
-		inline static ParseResult ParseStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t&line)
+		inline static ParseResult ParseStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t&line,ScriptContext sc)
 		{
 			if (tokens[line].size() == 0) return {nullptr,false,"Empty Script"};
-			else if (tokens[line][i] == "IF") { i++;return ParseIfStatement(tokens, i, line); }
-			else if (tokens[line][i] == "MOVE") { i++; return ParseMoveStatement(tokens, i, line); }
-			else if (tokens[line][i] == "SET") { i++; return ParseSetStatement(tokens, i, line); }
+			else if (tokens[line][i] == "IF") { i++;return ParseIfStatement(tokens, i, line,sc); }
+			else if (tokens[line][i] == "MOVE" || tokens[line][i]=="SET") 
+			{ 
+				i++;
+				PhysicsInstructionType PIT_ = tokens[line][i] == "MOVE" ? PIT::MOVE : PIT::SET;
+				return ParseSetMoveStatement(tokens, i, line, sc,PIT_); 
+			}
 			else return { nullptr,false,"Unknown Statement" };
 		}
 
-		inline static ParseResult ParseIfStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t& line)
+		inline static ParseResult ParseIfStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t& line,ScriptContext sc)
 		{
 			ParseResult condition = ParseCondition(tokens[line], i);
 			VALIDITY_CHECK(condition);
@@ -45,12 +52,32 @@ namespace D2Maker
 
 		}
 
-		inline static ParseResult ParseMoveStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t& line)
+		inline static ParseResult ParseSetMoveStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t& line, ScriptContext sc,PhysicsInstructionType PIT_)
 		{
+			if (OutOfBounds(tokens[line], i, 0))
+			{
+				return { nullptr,false,"invalid move/set statement" };
+			}
+			CoordType ct = CoordType::NUL;
+			if (tokens[line][i] == "X") ct = CoordType::X;
+			else if (tokens[line][i] == "Y") ct = CoordType::Y;
+			else if (tokens[line][i] == "THETA") ct = CoordType::THETA;
+			else return { nullptr,false,"invalid coordinate in move/set statement" };
+			ParseResult value = ParseBinaryorValueExpression(tokens[line], i);
+			VALIDITY_CHECK(value);
+			auto valuePtr = dynamic_cast<NumericExpression*>(value.node.get());
+			if (!valuePtr) return { nullptr,false,"invalid value in move/set statement" };
+			std::unique_ptr<NumericExpression> valueCasted (dynamic_cast<NumericExpression*>(value.node.release()));
+			bool relative = false;
+			if (!OutOfBounds(tokens[line], i, 0))
+			{
+				if (tokens[line][i] == "RELATIVE") relative = true;
+				else return { nullptr,false,"invalid end in move/set statement" };
+			}
 
 		}
 
-		inline static ParseResult ParseSetStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t& line)
+		inline static ParseResult ParseSetStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t& line,ScriptContext sc)
 		{
 			
 		}
