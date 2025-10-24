@@ -20,22 +20,28 @@ namespace D2Maker
 		INVALID
 	};
 
+	
 	class ASTBuilder
 	{
 	private:
 		inline static ParseResult ParseStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t&line)
 		{
 			if (tokens[line].size() == 0) return {nullptr,false,"Empty Script"};
-			else if (tokens[line][i] == "IF") return ParseIfStatement(tokens, i, line);
-			else if (tokens[line][i] == "MOVE") return ParseMoveStatement(tokens, i,line);
-			else if (tokens[line][i] == "SET") return ParseSetStatement(tokens, i,line);
+			else if (tokens[line][i] == "IF") { i++;return ParseIfStatement(tokens, i, line); }
+			else if (tokens[line][i] == "MOVE") { i++; return ParseMoveStatement(tokens, i, line); }
+			else if (tokens[line][i] == "SET") { i++; return ParseSetStatement(tokens, i, line); }
 			else return { nullptr,false,"Unknown Statement" };
 		}
 
 		inline static ParseResult ParseIfStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t& line)
 		{
-			i++;
-			
+			ParseResult condition = ParseCondition(tokens[line], i);
+			VALIDITY_CHECK(condition);
+			if (!OutOfBounds(tokens[line], i, 0)) return { nullptr,false,"invalid if statement" };
+			//since instructions should begin in a new line it checks if there is extra logic
+			//this time we want to be OutOfBounds
+
+
 
 		}
 
@@ -50,6 +56,26 @@ namespace D2Maker
 		}
 
 		inline static ParseResult ParseCondition(const std::vector<std::string>& tokens, size_t& i)
+		{
+			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid condition" };
+			if (tokens[i] == "COLLIDE") { i++; return ParseCollideCondition(tokens, i); }
+			if (tokens[i] == "KEYPRESS") { i++; return ParseKeypressCondition(tokens, i); }
+			return ParseClassicCondition(tokens, i);
+		}
+
+		inline static ParseResult ParseCollideCondition(const std::vector<std::string>& tokens, size_t& i)
+		{
+
+		}
+
+		inline static ParseResult ParseKeypressCondition(const std::vector<std::string>& tokens, size_t& i)
+		{
+
+		}
+
+
+
+		inline static ParseResult ParseClassicCondition(const std::vector<std::string>& tokens, size_t& i)
 		{
 			if (!OutOfBounds(tokens, i, 1) && Environment::Exists(tokens[i + 1], Type::BOOL))
 			{
