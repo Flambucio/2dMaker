@@ -75,11 +75,9 @@ namespace D2Maker
 				else return { nullptr,false,"invalid end in move/set statement" };
 			}
 
-		}
+			if (PIT_ == PIT::MOVE) return { std::make_unique<MoveStatement>(line + 1,sc.em,sc.e,ct,valueCasted,relative) };
+			else return { std::make_unique<SetStatement>(line + 1,sc.em,sc.e,ct,valueCasted,relative) };
 
-		inline static ParseResult ParseSetStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t& line,ScriptContext sc)
-		{
-			
 		}
 
 		inline static ParseResult ParseCondition(const std::vector<std::string>& tokens, size_t& i)
@@ -100,6 +98,10 @@ namespace D2Maker
 
 		}
 
+		inline static ParseResult ParseTimerCondition(const std::vector<std::string>& tokens, size_t& i)
+		{
+
+		}
 
 
 		inline static ParseResult ParseClassicCondition(const std::vector<std::string>& tokens, size_t& i)
