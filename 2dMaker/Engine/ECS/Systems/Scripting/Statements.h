@@ -200,6 +200,7 @@ namespace D2Maker
 	class Condition : public Expression
 	{
 	public:
+		~Condition() = default;
 		virtual bool evaluate() = 0;
 
 	};
@@ -404,7 +405,7 @@ namespace D2Maker
 			return EventManager::IsKeyPressedOnce(key);
 		}
 	};
-
+	
 	class MouseClickCondition : public Condition
 	{
 	private:
@@ -460,6 +461,27 @@ namespace D2Maker
 			return ColliderFunctions::CheckCollision({ t1->x,t1->y,t1->width,t1->height },
 				{ t2->x,t2->y,t2->width,t2->height });
 
+		}
+	};
+
+	class TimerCondition : public Condition
+	{
+	private:
+		double accumulator = 0;
+		double timing = 0;
+	public:
+		TimerCondition(double timing) : timing(timing)
+		{}
+
+		bool evaluate()
+		{
+			accumulator += DeltaTime::Get();
+			if (accumulator >= timing)
+			{
+				accumulator -= timing;
+				return true;
+			}
+			return false;
 		}
 	};
 
@@ -572,10 +594,10 @@ namespace D2Maker
 	{
 	private:
 		std::unique_ptr<Condition> condition;
-		std::vector<std::unique_ptr<Instruction>> instructions;
+		std::vector<std::unique_ptr<Statement>> instructions;
 	public:
 		IfStament(std::unique_ptr<Condition> condition, 
-			std::vector<std::unique_ptr<Instruction>> instructions,uint32_t line) :
+			std::vector<std::unique_ptr<Statement>> instructions,uint32_t line) :
 			condition(std::move(condition)),instructions(std::move(instructions)), Statement(line){ }
 		void Execute()
 		{

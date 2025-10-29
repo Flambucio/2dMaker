@@ -13,6 +13,13 @@ namespace D2Maker
 		std::string errorMessage;
 	};
 
+	struct CheckIfDepthResult
+	{
+		bool success;
+		std::string message;
+
+	};
+
 	enum class RelationType
 	{
 		STRING,
@@ -20,13 +27,43 @@ namespace D2Maker
 		INVALID
 	};
 
+	enum class KeyConditionType 
+	{
+		REGULAR,
+		CLICK
+	};
+
 	enum class PhysicsInstructionType {MOVE,SET};
-	typedef PhysicsInstructionType PIT; // exclusively for shorting the ternary operator length
+	typedef PhysicsInstructionType PIT; // exclusively for shorting length
 
 	
 	class ASTBuilder
 	{
 	private:
+
+		inline static CheckIfDepthResult CheckIfsDepth(const std::vector<std::vector<std::string>>& tokens,std::string& message)
+		{
+			unsigned int ifDepth = 0;
+			for (int i=0; i < tokens.size();i++) 
+			{
+				if (tokens[i].size() == 0) continue;
+				const std::string& word = tokens[i][0];
+
+				if (word == "IF") ifDepth++;
+				else if (word == "ENDIF")
+				{
+					if (ifDepth == 0) return{ false,"ENDIF closes nothing" };
+					ifDepth--;
+				}
+			}
+
+			// alla fine
+			if (ifDepth != 0) 
+			{
+				return { false,"IF not closed" };
+			}
+			return { true,"success" };
+		}
 		inline static ParseResult ParseStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t&line,ScriptContext sc)
 		{
 			if (tokens[line].size() == 0) return {nullptr,false,"Empty Script"};
@@ -42,15 +79,37 @@ namespace D2Maker
 
 		inline static ParseResult ParseIfStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t& line,ScriptContext sc)
 		{
-			ParseResult condition = ParseCondition(tokens[line], i);
+			ParseResult condition = ParseCondition(tokens[line], i,sc);
 			VALIDITY_CHECK(condition);
+			std::unique_ptr<Condition> cond(dynamic_cast<Condition*>(condition.node.release()));
 			if (!OutOfBounds(tokens[line], i, 0)) return { nullptr,false,"invalid if statement" };
+			
 			//since instructions should begin in a new line it checks if there is extra logic
 			//this time we want to be OutOfBounds
+			line++;
+			i = 0;
+			bool success = true;
+			std::vector<std::unique_ptr<Statement>> statements;
+			while (tokens[line][0] != "ENDIF")
+			{
+				ParseResult pr = ParseStatement(tokens, i, line, sc);
+				VALIDITY_CHECK(pr);
+				std::unique_ptr<Statement> statement(
+					dynamic_cast<Statement*>(pr.node.release())
+				);
+				if (statement == nullptr) return { nullptr,false,"invalid instruction inside if statement" };
+				statements.push_back(std::move(statement));
+
+			}
 
 
+			return { std::make_unique<IfStament>(std::move(cond),std::move(statements),line) };
 
 		}
+
+
+
+		
 
 		inline static ParseResult ParseSetMoveStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t& line, ScriptContext sc,PhysicsInstructionType PIT_)
 		{
@@ -75,32 +134,58 @@ namespace D2Maker
 				else return { nullptr,false,"invalid end in move/set statement" };
 			}
 
-			if (PIT_ == PIT::MOVE) return { std::make_unique<MoveStatement>(line + 1,sc.em,sc.e,ct,valueCasted,relative) };
-			else return { std::make_unique<SetStatement>(line + 1,sc.em,sc.e,ct,valueCasted,relative) };
+			if (PIT_ == PIT::MOVE) return { std::make_unique<MoveStatement>(line + 1,sc.em,sc.e,ct,std::move(valueCasted),relative) };
+			else return { std::make_unique<SetStatement>(line + 1,sc.em,sc.e,ct,std::move(valueCasted),relative) };
 
 		}
 
-		inline static ParseResult ParseCondition(const std::vector<std::string>& tokens, size_t& i)
+		inline static ParseResult ParseCondition(const std::vector<std::string>& tokens, size_t& i,ScriptContext& sc)
 		{
 			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid condition" };
-			if (tokens[i] == "COLLIDE") { i++; return ParseCollideCondition(tokens, i); }
-			if (tokens[i] == "KEYPRESS") { i++; return ParseKeypressCondition(tokens, i); }
+			if (tokens[i] == "COLLIDE") { i++; return ParseCollideCondition(tokens, i,sc); }
+			if (tokens[i] == "KEYPRESS" || tokens[i]=="KEYCLICK") { return ParseKeypressCondition(tokens, i); }
+			if (tokens[i] == "TIMER") { i++; return ParseTimerCondition(tokens, i); }
 			return ParseClassicCondition(tokens, i);
 		}
 
-		inline static ParseResult ParseCollideCondition(const std::vector<std::string>& tokens, size_t& i)
+		inline static ParseResult ParseCollideCondition(const std::vector<std::string>& tokens, size_t& i,ScriptContext& sc)
 		{
+			if (OutOfBounds(tokens, i, 1)) return { nullptr,false,"invalid collide condition" };
+			std::array<Entity, 2> collideEntities;
+			for (int j = 0;i < 2;j++) 
+			{
+				if (j==0 && tokens[i] == "this") collideEntities[j] = sc.e;
+				else
+				{
+					if (!sc.em.isAlive(tokens[i])) return { nullptr,false,"entity does not exist" };
+					collideEntities[j] = sc.em.entityNames[tokens[i]];
+					i++;
+				}
+			}
+
+			return { std::make_unique<CollideCondition>(collideEntities[0],collideEntities[1],sc.em),true,"success" };
+
 
 		}
 
 		inline static ParseResult ParseKeypressCondition(const std::vector<std::string>& tokens, size_t& i)
 		{
-
+			typedef KeyConditionType KCT;
+			KeyConditionType kct = tokens[i] == "KEYPRESS" ? KCT::REGULAR : KCT::CLICK;
+			i++;
+			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid keycondition" };
+			std::string key = tokens[i];
+			i++;
+			if (kct == KCT::REGULAR) return { std::make_unique<KeyPressCondition>(key),true,"success" };
+			else return { std::make_unique<KeyClickCondition>(key),true,"success" };
 		}
 
 		inline static ParseResult ParseTimerCondition(const std::vector<std::string>& tokens, size_t& i)
 		{
-
+			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid timer condition" };
+			double val = 0;
+			if (!ConvertStringToNum<double>(tokens[i], val)) return { nullptr,false,"invalid timer condition value" };
+			return { std::make_unique<TimerCondition>(val),true,"success" };
 		}
 
 

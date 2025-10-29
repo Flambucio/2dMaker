@@ -62,6 +62,8 @@ namespace D2Maker
 			entityNames[name] = id;
 			return id;
 		}
+
+		
 		
 		void destroyEntityFromID(Entity entityID)
 		{
@@ -128,6 +130,12 @@ namespace D2Maker
 		bool isAlive(Entity entityID) const
 		{
 			return aliveEntities.find(entityID) != aliveEntities.end();
+		}
+
+		bool isAlive(std::string name) const 
+		{
+			if (entityNames.find(name) != entityNames.end()) return true;
+			return false;
 		}
 
 		bool isRuntimeEntity(Entity entityID) const
