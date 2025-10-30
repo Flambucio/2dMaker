@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="Engine\Application\PreviewWindow.cpp" />
     <ClCompile Include="Engine\common\Deltatime.cpp" />
+    <ClCompile Include="Engine\ECS\Components.cpp" />
     <ClCompile Include="Engine\ECS\Systems\Physics\ColliderFunctions.cpp" />
     <ClCompile Include="Engine\main.cpp" />
     <ClCompile Include="Engine\StaticDef.cpp" />

@@ -6,7 +6,7 @@
 #include "../Audio/AudioLoader.h"
 namespace D2Maker
 {
-
+	class Statement;
 
 	struct Component
 	{
@@ -111,6 +111,7 @@ namespace D2Maker
 	public:
 		std::string filepath;
 		std::vector<std::vector<std::string>> parsedStr;
+		std::vector <std::unique_ptr<Statement>> statements;
 		Script(std::string filepath)
 		{
 			this->filepath = filepath;

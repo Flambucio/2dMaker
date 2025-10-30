@@ -107,7 +107,7 @@ namespace D2Maker
 
 		}
 
-
+		
 
 		
 
@@ -204,15 +204,18 @@ namespace D2Maker
 			static const std::unordered_set<std::string> relationalOperators = { ">","<","==","!=",">=","<=" };
 			bool logicExpression = false;
 			bool relationalExpression = false;
-			for (const auto& token : tokens) {
+			for (const auto& token : tokens) 
+			{
 				if (token == "AND" || token == "OR" || token == "NOT") logicExpression = true;
 				if (relationalOperators.find(token) != relationalOperators.end()) relationalExpression = true;
 			}
 			//logic expression has the priority
-			if (logicExpression) {
+			if (logicExpression) 
+			{
 				return ParseLogicExpression(tokens, i);
 			}
-			if (relationalExpression) {
+			if (relationalExpression) 
+			{
 				return ParseRelationalExpression(tokens, i);
 			}
 

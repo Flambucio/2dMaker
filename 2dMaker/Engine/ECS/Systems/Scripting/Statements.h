@@ -11,6 +11,8 @@ namespace D2Maker
 		DIVIDE
 	};
 
+	
+
 	enum class RelationalOperators   
 	{
 		EQUALITY,
@@ -588,6 +590,59 @@ namespace D2Maker
 			}
 		}
 
+	};
+
+	class AssigmentInstruction : public Instruction
+	{
+	private:
+		std::string varToAssign;
+		std::unique_ptr<Expression> assignToVar;
+		Type type = Type::NUL;
+	public:
+		AssigmentInstruction(std::string varToAssign, std::unique_ptr<Expression> assignToVar,Type type,uint32_t line) :
+			varToAssign(varToAssign), assignToVar(std::move(assignToVar)), type(type),Instruction(line){ }
+
+		void Execute()
+		{
+			if (type == Type::STRING) ExecuteStr();
+			else if (type == Type::FLOAT || type == Type::INT) ExecuteNumeric();
+			else ExecuteBool();
+		}
+
+		void ExecuteStr()
+		{
+			StringExpression* strExpr = dynamic_cast<StringExpression*>(assignToVar.get());
+			if (!strExpr) return;
+			Environment::stringVars[varToAssign] = strExpr->evaluate();
+		}
+
+		void ExecuteNumeric()
+		{
+			NumericExpression* numExpr = dynamic_cast<NumericExpression*>(assignToVar.get());
+			if (!numExpr) return;
+			float value = NumericExpression::NumberToFloat(numExpr->evaluate());
+			if (type == Type::FLOAT)
+			{
+				Environment::floatVars[varToAssign] = value;
+			}
+			else
+			{
+				int valInt = (int)(value);
+				Environment::intVars[varToAssign] = valInt;
+			}
+			
+
+		}
+
+		void ExecuteBool()
+		{
+			BooleanExpression* bExpr = dynamic_cast<BooleanExpression*>(assignToVar.get());
+			if (!bExpr) return;
+			Environment::boolVars[varToAssign] = bExpr->evaluate();
+		}
+
+
+		
 	};
 
 	class IfStament : public Statement
