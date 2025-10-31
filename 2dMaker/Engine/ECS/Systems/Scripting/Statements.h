@@ -103,7 +103,9 @@ namespace D2Maker
 		VariableString(std::string variableName) : variableName(variableName) {}
 		std::string evaluate()
 		{
-			return Environment::Retrieve<std::string>(variableName);
+			if(Environment::Exists(variableName,Type::STRING)) return Environment::Retrieve<std::string>(variableName);
+			return "";
+			
 		}
 	};
 
@@ -141,7 +143,7 @@ namespace D2Maker
 			case Operands::MULTIPLY:
 				return a * b;
 			case Operands::DIVIDE:
-				return a / b;
+				return (b != 0) ? a / b : 0;
 			}
 		}
 
@@ -331,7 +333,7 @@ namespace D2Maker
 	private:
 		std::unique_ptr<BooleanExpression> left;
 		std::unique_ptr<BooleanExpression> right;
-		bool valid = false;
+		bool valid = true;
 		LogicOperators op = LogicOperators::NUL;
 	public:
 		LogicExpression(std::unique_ptr<BooleanExpression> leftin, std::unique_ptr<BooleanExpression> rightin, std::string opstr)

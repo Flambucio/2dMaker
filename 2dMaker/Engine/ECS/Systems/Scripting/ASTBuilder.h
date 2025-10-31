@@ -42,6 +42,12 @@ namespace D2Maker
 	public:
 		inline static std::vector<std::unique_ptr<Statement>> ParseScript(std::vector<std::vector<std::string>> tokens,ScriptContext sc)
 		{
+			CheckIfDepthResult ifDR = CheckIfsDepth(tokens);
+			if (!ifDR.success)
+			{
+				CONSOLELOG(ifDR.message);
+				return {};
+			}
 			std::vector < std::unique_ptr<Statement>> statements;
 			for (size_t line = 0;line < tokens.size();line++)
 			{
@@ -60,10 +66,11 @@ namespace D2Maker
 				}
 				statements.push_back(std::move(currentStatementCasted));
 			}
+			return std::move(statements);
 		}
 	private:
 		
-		inline static CheckIfDepthResult CheckIfsDepth(const std::vector<std::vector<std::string>>& tokens,std::string& message)
+		inline static CheckIfDepthResult CheckIfsDepth(const std::vector<std::vector<std::string>>& tokens)
 		{
 			unsigned int ifDepth = 0;
 			for (int i=0; i < tokens.size();i++) 
@@ -94,11 +101,12 @@ namespace D2Maker
 			else if (tokens[line][i] == "IF") { i++;return ParseIfStatement(tokens, i, line, sc); }
 			else if (tokens[line][i] == "MOVE" || tokens[line][i] == "SET")
 			{
-				i++;
+				
 				PhysicsInstructionType PIT_ = tokens[line][i] == "MOVE" ? PIT::MOVE : PIT::SET;
+				i++;
 				return ParseSetMoveStatement(tokens, i, line, sc, PIT_);
 			}
-			else if (tokens[line][i] == "ASSIGN")  ParseAssigmentInstruction(tokens[i], i, line);
+			else if (tokens[line][i] == "ASSIGN")  return ParseAssigmentInstruction(tokens[i], i, line);
 			else return { nullptr,false,"Unknown Statement" };
 		}
 
@@ -203,7 +211,7 @@ namespace D2Maker
 		{
 			if (OutOfBounds(tokens, i, 1)) return { nullptr,false,"invalid collide condition" };
 			std::array<Entity, 2> collideEntities;
-			for (int j = 0;i < 2;j++) 
+			for (int j = 0;j < 2;j++) 
 			{
 				if (j==0 && tokens[i] == "this") collideEntities[j] = sc.e;
 				else
