@@ -12,6 +12,7 @@ namespace D2Maker
         STRING,
         INT,
         FLOAT,
+        NUMERIC,
         BOOL,
         NUL
     };

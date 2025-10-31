@@ -39,8 +39,30 @@ namespace D2Maker
 	
 	class ASTBuilder
 	{
+	public:
+		inline static std::vector<std::unique_ptr<Statement>> ParseScript(std::vector<std::vector<std::string>> tokens,ScriptContext sc)
+		{
+			std::vector < std::unique_ptr<Statement>> statements;
+			for (size_t line = 0;line < tokens.size();line++)
+			{
+				size_t i = 0;
+				ParseResult statement_ = ParseStatement(tokens,i,line,sc);
+				if (!statement_.success) 
+				{ 
+					CONSOLELOG(statement_.errorMessage); 
+					return {};
+				}
+				std::unique_ptr<Statement> currentStatementCasted(dynamic_cast<Statement*>(statement_.node.release()));
+				if (!currentStatementCasted)
+				{
+					CONSOLELOG("failed to interpret logic at line " + std::to_string(line));
+					return {};
+				}
+				statements.push_back(std::move(currentStatementCasted));
+			}
+		}
 	private:
-
+		
 		inline static CheckIfDepthResult CheckIfsDepth(const std::vector<std::vector<std::string>>& tokens,std::string& message)
 		{
 			unsigned int ifDepth = 0;
@@ -64,16 +86,19 @@ namespace D2Maker
 			}
 			return { true,"success" };
 		}
+
+
 		inline static ParseResult ParseStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t&line,ScriptContext sc)
 		{
-			if (tokens[line].size() == 0) return {nullptr,false,"Empty Script"};
-			else if (tokens[line][i] == "IF") { i++;return ParseIfStatement(tokens, i, line,sc); }
-			else if (tokens[line][i] == "MOVE" || tokens[line][i]=="SET") 
-			{ 
+			if (tokens[line].size() == 0) return { nullptr,false,"Empty Script" };
+			else if (tokens[line][i] == "IF") { i++;return ParseIfStatement(tokens, i, line, sc); }
+			else if (tokens[line][i] == "MOVE" || tokens[line][i] == "SET")
+			{
 				i++;
 				PhysicsInstructionType PIT_ = tokens[line][i] == "MOVE" ? PIT::MOVE : PIT::SET;
-				return ParseSetMoveStatement(tokens, i, line, sc,PIT_); 
+				return ParseSetMoveStatement(tokens, i, line, sc, PIT_);
 			}
+			else if (tokens[line][i] == "ASSIGN")  ParseAssigmentInstruction(tokens[i], i, line);
 			else return { nullptr,false,"Unknown Statement" };
 		}
 
@@ -108,7 +133,33 @@ namespace D2Maker
 		}
 
 		
+		inline static ParseResult ParseAssigmentInstruction(const std::vector<std::string>& tokens, size_t& i,size_t&line)
+		{
+			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid assigment instruction" };
+			std::string varStr = tokens[i];
+			i++;
+			ParseResult VTATV = ParseBinaryorValueExpression(tokens, i);
+			//valueToAssignToVar
+			VALIDITY_CHECK(VTATV);
+			std::unique_ptr<Expression> expr(dynamic_cast<Expression*>(VTATV.node.release()));
+			if (!expr) return { nullptr,false,"invalid expression in assigment instruction" };
+			Type returnValueExpressionType = DeduceType(VTATV.node);
+			if (returnValueExpressionType == Type::NUL) return { nullptr,false,"invalid expression type assigment instruction" };
+			Type varType = Environment::RetrieveType(varStr);
+			if (!(
+				(
+					(varType == Type::FLOAT || varType == Type::INT) && returnValueExpressionType == Type::NUMERIC
+				) || varType == returnValueExpressionType)
+			   )
+			{
+				return { nullptr,false,"types not matching in assigment instruction" };
+			}
 
+			return { std::make_unique<AssigmentInstruction>(varStr,std::move(expr),varType,line),true,"success"};
+			
+
+
+		}
 		
 
 		inline static ParseResult ParseSetMoveStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t& line, ScriptContext sc,PhysicsInstructionType PIT_)
@@ -432,10 +483,25 @@ namespace D2Maker
 			return i + toAccess >= v.size();
 		}
 
+		inline static Type DeduceType(std::unique_ptr<ASTNode>& ptr)
+		{
+			enum SCT { NUMERIC_, BOOL_,STRING_}; //"_" used to differentiate this from the enum class in Environment
+			std::array<bool, 3> successConvertingTo = {};
+			successConvertingTo[NUMERIC_] = dynamic_cast<NumericExpression*>(ptr.get())!=nullptr;
+			successConvertingTo[BOOL_] = dynamic_cast<BooleanExpression*>(ptr.get())!=nullptr;
+			successConvertingTo[STRING_] = dynamic_cast<StringExpression*>(ptr.get())!=nullptr;
+			if (successConvertingTo[NUMERIC_]) return Type::NUMERIC;
+			else if (successConvertingTo[BOOL_]) return Type::BOOL;
+			else if (successConvertingTo[STRING_]) return Type::STRING;
+			return Type::NUL;
+		}
+
 		inline static bool AreSameType(ASTNode* a, ASTNode* b) {
 			return (dynamic_cast<StringExpression*>(a) && dynamic_cast<StringExpression*>(b)) ||
 				(dynamic_cast<NumericExpression*>(a) && dynamic_cast<NumericExpression*>(b));
 		}
+
+
 	};
 
 	
