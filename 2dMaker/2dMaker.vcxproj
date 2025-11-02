@@ -150,6 +150,7 @@
     <ClCompile Include="Lib\stbvorbis\stb_vorbis.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Users\Flambucio\Downloads\json.hpp" />
     <ClInclude Include="Editor\API\APIExport.h" />
     <ClInclude Include="Editor\API\ApiUtils.h" />
     <ClInclude Include="Editor\API\Button.h" />
@@ -261,6 +262,7 @@
     <ClInclude Include="Lib\imgui\imstb_rectpack.h" />
     <ClInclude Include="Lib\imgui\imstb_textedit.h" />
     <ClInclude Include="Lib\imgui\imstb_truetype.h" />
+    <ClInclude Include="Lib\Json\json.hpp" />
     <ClInclude Include="Lib\openAL\include\AL\al.h" />
     <ClInclude Include="Lib\openAL\include\AL\alc.h" />
     <ClInclude Include="Lib\openAL\include\AL\alext.h" />

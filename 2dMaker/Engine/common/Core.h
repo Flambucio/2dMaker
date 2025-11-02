@@ -30,13 +30,18 @@
 //STB_IMAGE
 #include "../../Lib/stbimage/stb_image.h"
 #include "../../Lib/stbvorbis/stb_vorbis.h"
+//GLEW
 #define GLEW_STATIC
 #include "../../Lib/GLEW/include/GL/glew.h"
+//GLFW
 #include "../../Lib/glfw/include/GLFW/glfw3.h"
 
 //OpenAL
 #include "../../Lib/openAL/include/AL/al.h"
 #include "../../Lib/openAL/include/AL/alc.h"
+
+//JSON PARSER
+#include "../../Lib/Json/json.hpp"
 
 
 

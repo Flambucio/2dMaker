@@ -66,7 +66,7 @@ namespace D2Maker
 				}
 				statements.push_back(std::move(currentStatementCasted));
 			}
-			return std::move(statements);
+			return statements;
 		}
 	private:
 		

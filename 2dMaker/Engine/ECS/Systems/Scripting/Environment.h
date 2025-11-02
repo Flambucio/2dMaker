@@ -3,7 +3,7 @@
 #include "../../../Events/EventManager.h"
 #include "Tokens.h"
 #include "../Physics/ColliderFunctions.h"
-
+#define EXISTS_INTO_MAP(map,v)  map.find(v)!=map.end()
 namespace D2Maker
 {
     using Number = std::variant<int, float>;
@@ -17,20 +17,62 @@ namespace D2Maker
         NUL
     };
 
+    enum class VarLoadMode
+    {
+        TEMP, //temporary variables
+        DATA // variables that shoul be saved when apps closes
+    };
+
     class Environment
     {
+        
+
+        template<typename T>
+        using VarMap = std::unordered_map<std::string, T>;
+
+        using TypeRegistry = std::unordered_map<std::string, Type>;
+        using SaveRegistry = std::vector<std::string>;
+        using Json = nlohmann::json;
     private:
         template<typename T>
         static T RetrieveSpecific(std::unordered_map<std::string, T>& map, const std::string& var)
         {
             return map[var];
         }
+        static void LoadVarsFromJsonTemp(Json json)
+        {
+            for (auto& [key, value] : json.items())
+            {
+                if (ExistsGeneral(key)) continue;
+                if (value == "int") Set<int>(key, 0);
+                else if (value == "float") Set<float>(key,0.0f);
+                else if (value == "string") Set<std::string>(key,"");
+                else if (value == "bool") Set<bool>(key,false);
+                CONSOLELOG("[WARN]: variable " + key + " has invalid type");
+            }
+        }
+        static void LoadVarsFromJsonData(Json json)
+        {
+            for (auto& [key, value] : json.items())
+            {
+                if (ExistsGeneral(key)) continue;
+                if (!value.contains("type") && !value.contains("value")) continue;
+                const std::string type = value["type"];
+                if (type == "int" && value["value"].is_number_integer()) SetDataVar<int>(key, value["value"].get<int>());
+                else if(type=="float"&&value["value"].is_number_float()) SetDataVar<float>(key, value["value"].get<float>());
+                else if (type == "string" && value["value"].is_string()) SetDataVar<std::string>(key, value["value"].get<std::string>());
+                else if (type == "bool" && value["value"].is_boolean()) SetDataVar<bool>(key, value["value"].get<bool>());
+
+            }
+        }
+        
     public:
-        inline static std::unordered_map<std::string, std::string> stringVars = {};
-        inline static std::unordered_map<std::string, int> intVars = {};
-        inline static std::unordered_map<std::string, float> floatVars = {};
-        inline static std::unordered_map<std::string, bool> boolVars = {};
-        inline static std::unordered_map<std::string, Type> typeRegistry = {};
+        inline static VarMap<std::string> stringVars = {};
+        inline static VarMap<int> intVars = {};
+        inline static VarMap<float> floatVars = {};
+        inline static VarMap<bool> boolVars = {};
+        inline static SaveRegistry varsToSave = {};
+        inline static TypeRegistry typeRegistry = {};
 
 
         template<typename T>
@@ -60,6 +102,13 @@ namespace D2Maker
             {
                 throw std::runtime_error("Unsupported type for variable: " + var);
             }
+        }
+
+        template<typename T>
+        static void SetDataVar(const std::string& var, const T& value)
+        {
+            varsToSave.push_back(var);
+            Set<T>(var, value);
         }
 
         // Recupera una variabile (eccezione se non esiste)
@@ -115,7 +164,7 @@ namespace D2Maker
 
 
 
-        static bool Exists(const std::string& var, const Type& type)
+        inline static bool Exists(const std::string& var, const Type& type)
         {
             switch (type)
             {
@@ -132,8 +181,20 @@ namespace D2Maker
             }
         }
 
+        inline static bool ExistsGeneral(const std::string& var)
+        {
+            return 
+                EXISTS_INTO_MAP(stringVars, var) ||
+                EXISTS_INTO_MAP(intVars, var)    || 
+                EXISTS_INTO_MAP(floatVars, var)  ||
+                EXISTS_INTO_MAP(boolVars, var);
+        }
 
+        static void LoadVarsFromJson(Json data,VarLoadMode vlm)
+        {
+            (vlm == VarLoadMode::TEMP) ? LoadVarsFromJsonTemp(data) : LoadVarsFromJsonData(data);
+        }
 
-
+        
     };
 }
