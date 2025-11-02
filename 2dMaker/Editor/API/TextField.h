@@ -13,20 +13,20 @@ namespace D2Maker
 				char buffer[128] = "";
 				std::string text;
 			public:
-				TextField(std::string text)
+				inline TextField(std::string text)
 				{
 					this->text = text;
 				}
-				void Update()
+				inline void Update()
 				{
 					ImGui::Text(text.c_str());
 					ImGui::InputText(("##combo_"+text).c_str(), buffer, IM_ARRAYSIZE(buffer), ImGuiInputTextFlags_AllowTabInput);
 				}
-				std::string GetText() const
+				inline std::string GetText() const
 				{
 					return (std::string)(buffer);
 				}
-				void SetText(std::string str)
+				inline void SetText(std::string str)
 				{
 					std::size_t len = std::min(str.size(), sizeof(buffer) - 1);
 					std::memcpy(buffer, str.c_str(), len);

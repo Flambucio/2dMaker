@@ -13,20 +13,20 @@ namespace D2Maker
 				bool value;
 				std::string text;
 			public:
-				CheckBox(std::string text, bool value = false)
+				inline CheckBox(std::string text, bool value = false)
 				{
 					this->text = text;
 					this->value = value;
 				}
-				void Update()
+				inline void Update()
 				{
 					ImGui::Checkbox(text.c_str(), &value);
 				}
-				bool GetValue() const
+				inline bool GetValue() const
 				{
 					return value;
 				}
-				void SetValue(bool value)
+				inline void SetValue(bool value)
 				{
 					this->value = value;
 				}

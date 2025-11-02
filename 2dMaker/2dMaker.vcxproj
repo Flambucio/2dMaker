@@ -133,6 +133,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Editor\API\definitions.cpp" />
+    <ClCompile Include="Editor\Boot\Boot.cpp" />
+    <ClCompile Include="Editor\Boot\Windows\Create.cpp" />
+    <ClCompile Include="Editor\Boot\Windows\Select.cpp" />
     <ClCompile Include="Engine\Application\PreviewWindow.cpp" />
     <ClCompile Include="Engine\common\Deltatime.cpp" />
     <ClCompile Include="Engine\ECS\Components.cpp" />

@@ -1,4 +1,6 @@
 #pragma once
+#ifndef APIEXPORT
+#define APIEXPORT
 #include "dropdown.h"
 #include "Menu.h"
 #include "WindowGUI.h"
@@ -16,3 +18,4 @@ CONSOLELOG("Succesfully modified component: "+ c + "from entity: "+ std::to_stri
 #define CONSOLELOGCOMPONENTUNSUCCESFUL(x,y) std::string c = std::type_index(typeid(x)).name();\
 CONSOLELOG("Error adding/modifying component: "+ c + "to entity: "+ std::to_string(y) );\
 CONSOLELOG("Check dependencies or if the component already exists");
+#endif

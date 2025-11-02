@@ -14,32 +14,32 @@ namespace D2Maker
 				bool open = false;
 				
 			public:
-				PopUp(std::string id)
+				inline PopUp(std::string id)
 				{
 					this->id = id;
 				}
-				void Open()
+				inline void Open()
 				{
 					ImGui::OpenPopup(id.c_str());
 					open = true;
 				}
-				void Close()
+				inline void Close()
 				{
 					ImGui::CloseCurrentPopup();
 					open = false;
 				}
-				std::string GetId()
+				inline std::string GetId()
 				{
 					return id;
 				}
 
-				bool Begin()
+				inline bool Begin()
 				{
 					bool value = ImGui::BeginPopupModal(id.c_str(),
 						&open, ImGuiWindowFlags_AlwaysAutoResize);
 					return value;
 				}
-				void End()
+				inline void End()
 				{
 					ImGui::EndPopup();
 				}

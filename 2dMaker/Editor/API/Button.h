@@ -14,14 +14,14 @@ namespace D2Maker
 				int height;
 				std::string id;
 			public:
-				Button(int width,int height,std::string id)
+				inline Button(int width,int height,std::string id)
 				{
 					this->width = width;
 					this->height = height;
 					this->id = id;
 				}
 
-				bool Active()
+				inline bool Active()
 				{
 					return	ImGui::Button(id.c_str(), ImVec2(width, height));
 				}
