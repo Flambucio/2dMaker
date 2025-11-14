@@ -9,7 +9,7 @@ namespace D2Maker
 	public:
 
         static const std::unordered_map<std::string, D2Maker::Keys> keyMap;
-		static Keys InterpretKey(std::string key)
+		inline static Keys InterpretKey(std::string key)
 		{
             
 

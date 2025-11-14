@@ -18,12 +18,12 @@ namespace D2Maker
 		static std::unordered_set<Keys> justClicked;
 	public:
 
-		static std::unordered_map<Keys, bool>& GetConsumedKeys()
+		inline static std::unordered_map<Keys, bool>& GetConsumedKeys()
 		{
 			return consumedKeys;
 		}
 
-		static void PushEvent(const Keys& key,const EventType e)
+		inline static void PushEvent(const Keys& key,const EventType e)
 		{
 			if (e == HOLD)
 			{
@@ -36,17 +36,17 @@ namespace D2Maker
 			
 		}
 
-		static void ReleaseKey(Keys key)
+		inline static void ReleaseKey(Keys key)
 		{
 			pressedKeys.erase(key);
 		}
 
-		static bool IsKeyPressed(Keys key)
+		inline static bool IsKeyPressed(Keys key)
 		{
 			return pressedKeys.find(key) != pressedKeys.end();
 		}
 
-		static bool IsKeyPressedOnce(Keys key)
+		inline static bool IsKeyPressedOnce(Keys key)
 		{
 			return justClicked.find(key) != justClicked.end();
 		}

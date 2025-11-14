@@ -73,7 +73,7 @@ namespace D2Maker
 	public:
 		inline static std::vector<std::string> toRender = {};
 		inline static uint32_t count = 0;
-		static void Log(const std::string& logstr)
+		inline static void Log(const std::string& logstr)
 		{
 			ConsoleToRender::toRender.push_back((std::to_string(ConsoleToRender::count) + ". " + logstr));
 			ConsoleToRender::count++;

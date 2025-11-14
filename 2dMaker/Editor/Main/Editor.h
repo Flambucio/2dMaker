@@ -24,19 +24,18 @@ namespace D2Maker
 			Console console;
 		public:
 			bool runGameFlag = false;
-			Editor(GLFWwindow*& guiWindow) : guiWindow(guiWindow),sceneMenu(guiWindow),gameControls(runGameFlag),
+			inline Editor(GLFWwindow*& guiWindow) : guiWindow(guiWindow),sceneMenu(guiWindow),gameControls(runGameFlag),
 				componentsMenu(entityMenu.GetSelectedEntity(),entityMenu.GetEntityBuffer())
 			{
 				//componentsMenu.LoadStartingComponentsNames();
 			}
 
 
-			void Update()
+			inline void Update()
 			{
 				
 				glfwMakeContextCurrent(guiWindow);
 				GUIAPI::GUIWindow::StartFrame();
-
 				sceneMenu.Update();
 				entityMenu.Update();
 				gameControls.Update();
@@ -44,18 +43,16 @@ namespace D2Maker
 				assetMenu.Update();
 				optionsMenu.Update();
 				console.Update();
-
-
 				GUIAPI::GUIWindow::EndFrame(guiWindow);
 			}
 
-			void LoadStartingScenesNames()
+			inline void LoadStartingScenesNames()
 			{
 				sceneMenu.LoadSceneNames();
 				sceneMenu.scenesDropdown.SetCurrVal(SceneManager::defaultScene);
 			}
 
-			PreviewTextureWindow& GetPreviewWindowRef()
+			inline PreviewTextureWindow& GetPreviewWindowRef()
 			{
 				return assetMenu.GetPreviewWindowReference();
 			}

@@ -13,38 +13,10 @@ namespace D2Maker
 			GUIAPI::ButtonWithCallback<> confirm;
 			GUIAPI::PopUp popup;
 		public:
-			EntityDeletePopup(std::function<void()> deleteCallback) : popup("Delete"),deleteCallback(deleteCallback),
-				close(100, 30, "Close", [this]()
-					{
-						popup.Close();
-					}
-				),
-				confirm(100, 30, "Confirm", [this]()
-					{
-						if (this->deleteCallback)
-						{
-							this->deleteCallback();
-							this->popup.Close();
-						}
-						
-						
-					}
-				)
-			{ }
+			EntityDeletePopup(std::function<void()> deleteCallback);
+			void Update();
 
-			void Update()
-			{
-				if (popup.Begin())
-				{
-					ImGui::Text("Are you sure you want to delete this entity?");
-					close.Update();
-					ImGui::SameLine();
-					confirm.Update();
-					popup.End();
-				}
-			}
-
-			void Activate()
+			inline void Activate()
 			{
 				popup.Open();
 			}

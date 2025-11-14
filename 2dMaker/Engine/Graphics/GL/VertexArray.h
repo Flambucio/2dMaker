@@ -10,16 +10,16 @@ namespace D2Maker
 	private:
 		unsigned int rendererID;
 	public:
-		VertexArray()
+		inline VertexArray()
 		{
 			glGenVertexArrays(1, &rendererID);
 		}
-		~VertexArray()
+		inline ~VertexArray()
 		{
 			glDeleteVertexArrays(1, &rendererID);
 		}
 
-		void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout)
+		inline void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout)
 		{
 			Bind();
 			vb.Bind();
@@ -37,12 +37,12 @@ namespace D2Maker
 
 		}
 
-		void Bind() const
+		inline void Bind() const
 		{
 			glBindVertexArray(rendererID);
 		}
 
-		void Unbind() const
+		inline void Unbind() const
 		{
 			glBindVertexArray(0);
 		}

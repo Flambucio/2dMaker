@@ -22,11 +22,10 @@ namespace D2Maker
 		AnimationSystem ans;
 		RenderSystem rs;
 	public:
-		SystemManager(GLFWwindow* window) : rs(window)
+		inline SystemManager(GLFWwindow* window) : rs(window)
 		{
-
 		}
-		void UpdateSystems(EntityManager& em,bool runGameFlag)
+		inline void UpdateSystems(EntityManager& em,bool runGameFlag)
 		{
 			if (runGameFlag)
 			{
@@ -41,7 +40,7 @@ namespace D2Maker
 
 
 		}
-		AudioSystem& GetAudioSystem()
+		inline AudioSystem& GetAudioSystem()
 		{
 			return as;
 		}

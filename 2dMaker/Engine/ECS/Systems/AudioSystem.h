@@ -6,7 +6,7 @@ namespace D2Maker
 	class AudioSystem
 	{
 	public:
-		void InitSounds(EntityManager&em)
+		inline void InitSounds(EntityManager&em)
 		{
 			for (Entity entity : em.aliveEntities)
 			{
@@ -24,7 +24,7 @@ namespace D2Maker
 			}
 		}
 
-		void StopSounds(EntityManager&em)
+		inline void StopSounds(EntityManager&em)
 		{
 			for (Entity entity : em.aliveEntities)
 			{

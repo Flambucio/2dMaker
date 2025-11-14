@@ -35,12 +35,17 @@ namespace D2Maker
 
 	enum class PhysicsInstructionType {MOVE,SET};
 	typedef PhysicsInstructionType PIT; // exclusively for shorting length
-
+	using StatementPtr = std::unique_ptr<Statement>;
+	using AST = std::vector<StatementPtr>;
+	using Token = std::string;
+	using TokenLine = std::vector<Token>;
+	using TokenStream = std::vector<TokenLine>;
+	using TokenCollection = std::unordered_set<Token>;
 	
 	class ASTBuilder
 	{
 	public:
-		inline static std::vector<std::unique_ptr<Statement>> ParseScript(std::vector<std::vector<std::string>> tokens,ScriptContext sc)
+		inline static AST ParseScript(const TokenStream &tokens,ScriptContext sc)
 		{
 			CheckIfDepthResult ifDR = CheckIfsDepth(tokens);
 			if (!ifDR.success)
@@ -48,7 +53,7 @@ namespace D2Maker
 				CONSOLELOG(ifDR.message);
 				return {};
 			}
-			std::vector < std::unique_ptr<Statement>> statements;
+			AST statements;
 			for (size_t line = 0;line < tokens.size();line++)
 			{
 				size_t i = 0;
@@ -58,25 +63,26 @@ namespace D2Maker
 					CONSOLELOG(statement_.errorMessage); 
 					return {};
 				}
-				std::unique_ptr<Statement> currentStatementCasted(dynamic_cast<Statement*>(statement_.node.release()));
-				if (!currentStatementCasted)
+				bool currentStatementCastedCheck= (dynamic_cast<Statement*>(statement_.node.get())!=nullptr);
+				if (!currentStatementCastedCheck)
 				{
 					CONSOLELOG("failed to interpret logic at line " + std::to_string(line));
 					return {};
 				}
+				StatementPtr currentStatementCasted(dynamic_cast<Statement*>(statement_.node.release()));
 				statements.push_back(std::move(currentStatementCasted));
 			}
 			return statements;
 		}
 	private:
 		
-		inline static CheckIfDepthResult CheckIfsDepth(const std::vector<std::vector<std::string>>& tokens)
+		inline static CheckIfDepthResult CheckIfsDepth(const TokenStream& tokens)
 		{
 			unsigned int ifDepth = 0;
 			for (int i=0; i < tokens.size();i++) 
 			{
 				if (tokens[i].size() == 0) continue;
-				const std::string& word = tokens[i][0];
+				const Token& word = tokens[i][0];
 
 				if (word == "IF") ifDepth++;
 				else if (word == "ENDIF")
@@ -95,7 +101,7 @@ namespace D2Maker
 		}
 
 
-		inline static ParseResult ParseStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t&line,ScriptContext sc)
+		inline static ParseResult ParseStatement(const TokenStream& tokens, size_t& i, size_t&line,ScriptContext sc)
 		{
 			if (tokens[line].size() == 0) return { nullptr,false,"Empty Script" };
 			else if (tokens[line][i] == "IF") { i++;return ParseIfStatement(tokens, i, line, sc); }
@@ -110,7 +116,7 @@ namespace D2Maker
 			else return { nullptr,false,"Unknown Statement" };
 		}
 
-		inline static ParseResult ParseIfStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t& line,ScriptContext sc)
+		inline static ParseResult ParseIfStatement(const TokenStream& tokens, size_t& i, size_t& line,ScriptContext sc)
 		{
 			ParseResult condition = ParseCondition(tokens[line], i,sc);
 			VALIDITY_CHECK(condition);
@@ -122,12 +128,12 @@ namespace D2Maker
 			line++;
 			i = 0;
 			bool success = true;
-			std::vector<std::unique_ptr<Statement>> statements;
+			AST statements;
 			while (tokens[line][0] != "ENDIF")
 			{
 				ParseResult pr = ParseStatement(tokens, i, line, sc);
 				VALIDITY_CHECK(pr);
-				std::unique_ptr<Statement> statement(
+				StatementPtr statement(
 					dynamic_cast<Statement*>(pr.node.release())
 				);
 				if (statement == nullptr) return { nullptr,false,"invalid instruction inside if statement" };
@@ -141,7 +147,7 @@ namespace D2Maker
 		}
 
 		
-		inline static ParseResult ParseAssigmentInstruction(const std::vector<std::string>& tokens, size_t& i,size_t&line)
+		inline static ParseResult ParseAssigmentInstruction(const TokenLine& tokens, size_t& i,size_t&line)
 		{
 			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid assigment instruction" };
 			std::string varStr = tokens[i];
@@ -170,7 +176,7 @@ namespace D2Maker
 		}
 		
 
-		inline static ParseResult ParseSetMoveStatement(const std::vector<std::vector<std::string>>& tokens, size_t& i, size_t& line, ScriptContext sc,PhysicsInstructionType PIT_)
+		inline static ParseResult ParseSetMoveStatement(const TokenStream& tokens, size_t& i, size_t& line, ScriptContext sc,PhysicsInstructionType PIT_)
 		{
 			if (OutOfBounds(tokens[line], i, 0))
 			{
@@ -198,7 +204,7 @@ namespace D2Maker
 
 		}
 
-		inline static ParseResult ParseCondition(const std::vector<std::string>& tokens, size_t& i,ScriptContext& sc)
+		inline static ParseResult ParseCondition(const TokenLine& tokens, size_t& i,ScriptContext& sc)
 		{
 			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid condition" };
 			if (tokens[i] == "COLLIDE") { i++; return ParseCollideCondition(tokens, i,sc); }
@@ -207,7 +213,7 @@ namespace D2Maker
 			return ParseClassicCondition(tokens, i);
 		}
 
-		inline static ParseResult ParseCollideCondition(const std::vector<std::string>& tokens, size_t& i,ScriptContext& sc)
+		inline static ParseResult ParseCollideCondition(const TokenLine& tokens, size_t& i,ScriptContext& sc)
 		{
 			if (OutOfBounds(tokens, i, 1)) return { nullptr,false,"invalid collide condition" };
 			std::array<Entity, 2> collideEntities;
@@ -227,19 +233,19 @@ namespace D2Maker
 
 		}
 
-		inline static ParseResult ParseKeypressCondition(const std::vector<std::string>& tokens, size_t& i)
+		inline static ParseResult ParseKeypressCondition(const TokenLine& tokens, size_t& i)
 		{
-			typedef KeyConditionType KCT;
+			using KCT = KeyConditionType;
 			KeyConditionType kct = tokens[i] == "KEYPRESS" ? KCT::REGULAR : KCT::CLICK;
 			i++;
 			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid keycondition" };
-			std::string key = tokens[i];
+			Token key = tokens[i];
 			i++;
 			if (kct == KCT::REGULAR) return { std::make_unique<KeyPressCondition>(key),true,"success" };
 			else return { std::make_unique<KeyClickCondition>(key),true,"success" };
 		}
 
-		inline static ParseResult ParseTimerCondition(const std::vector<std::string>& tokens, size_t& i)
+		inline static ParseResult ParseTimerCondition(const TokenLine& tokens, size_t& i)
 		{
 			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid timer condition" };
 			double val = 0;
@@ -248,7 +254,7 @@ namespace D2Maker
 		}
 
 
-		inline static ParseResult ParseClassicCondition(const std::vector<std::string>& tokens, size_t& i)
+		inline static ParseResult ParseClassicCondition(const TokenLine& tokens, size_t& i)
 		{
 			if (!OutOfBounds(tokens, i, 1) && Environment::Exists(tokens[i + 1], Type::BOOL))
 			{
@@ -260,7 +266,7 @@ namespace D2Maker
 			{
 				return { nullptr,false,"Invalid Condition" };
 			}
-			static const std::unordered_set<std::string> relationalOperators = { ">","<","==","!=",">=","<=" };
+			static const TokenCollection relationalOperators = { ">","<","==","!=",">=","<=" };
 			bool logicExpression = false;
 			bool relationalExpression = false;
 			for (const auto& token : tokens) 
@@ -281,7 +287,7 @@ namespace D2Maker
 			return { nullptr,false,"invalid boolean expression" };
 		}
 
-		inline static ParseResult ParseLogicExpression(const std::vector<std::string>& tokens, size_t& i)
+		inline static ParseResult ParseLogicExpression(const TokenLine& tokens, size_t& i)
 		{
 			if (tokens[i] == "NOT")
 			{
@@ -293,7 +299,7 @@ namespace D2Maker
 
 		}
 
-		inline static ParseResult ParseRelationalExpressionOrBool(const std::vector<std::string>&tokens, size_t&i)
+		inline static ParseResult ParseRelationalExpressionOrBool(const TokenLine&tokens, size_t&i)
 		{
 			if (OutOfBounds(tokens,i,1)) 
 			{
@@ -309,7 +315,7 @@ namespace D2Maker
 			return ParseRelationalExpression(tokens, i);
 		}
 
-		inline static ParseResult ParseLogicExpressionBinary(const std::vector<std::string>& tokens, size_t& i)
+		inline static ParseResult ParseLogicExpressionBinary(const TokenLine& tokens, size_t& i)
 		{
 			ParseResult left=ParseRelationalExpressionOrBool(tokens,i);
 			VALIDITY_CHECK(left);
@@ -331,7 +337,7 @@ namespace D2Maker
 			
 		}
 
-		inline static ParseResult ParseLogicExpressionUnary(const std::vector<std::string>& tokens, size_t& i)
+		inline static ParseResult ParseLogicExpressionUnary(const TokenLine& tokens, size_t& i)
 		{
 			//not expressions
 			ParseResult rInside = ParseRelationalExpressionOrBool(tokens, i);
@@ -346,21 +352,21 @@ namespace D2Maker
 
 		
 
-		inline static ParseResult ParseRelationalExpression(const std::vector<std::string>&tokens,size_t&i)
+		inline static ParseResult ParseRelationalExpression(const TokenLine&tokens,size_t&i)
 		{
-			static const std::unordered_set<std::string> operators = { "==","!=",">","<",">=","<=" };
+			static const TokenCollection operators = { "==","!=",">","<",">=","<=" };
 			ParseResult left = ParseBinaryorValueExpression(tokens, i);
 			VALIDITY_CHECK(left);
 			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid relational expression" };
  			if (operators.find(tokens[i]) == operators.end()) return { nullptr,false,"invalid operator" };
-			std::string c = tokens[i];
+			Token c = tokens[i];
 			i++;
 			ParseResult right = ParseBinaryorValueExpression(tokens, i);
 			VALIDITY_CHECK(right);
 			return MakeRelationalExpression(left, right, c);
 		}
 
-		inline static ParseResult MakeRelationalExpression(ParseResult& left,ParseResult& right, std::string op)
+		inline static ParseResult MakeRelationalExpression(ParseResult& left,ParseResult& right, Token op)
 		{
 			RelationType rtype = RelationType::INVALID;
 			if (!AreSameType(left.node.get(),right.node.get())) return { nullptr,false,"different types in relational expression" };
@@ -368,9 +374,9 @@ namespace D2Maker
 			
 		}
 
-		inline static ParseResult ParseBinaryorValueExpression(const std::vector<std::string>& tokens, size_t& i)
+		inline static ParseResult ParseBinaryorValueExpression(const TokenLine& tokens, size_t& i)
 		{
-			static std::unordered_set<std::string> operators = { "+","-","*","/" };
+			static TokenCollection operators = { "+","-","*","/" };
 			int foundcount = 0;
 			for (int j = i;j < i+5 && j < tokens.size();j++)
 			{
@@ -386,9 +392,9 @@ namespace D2Maker
 			else return ParseValueExpression(tokens, i);
 		}
 
-		inline static ParseResult ParseBinaryExpression(const std::vector<std::string>& tokens, size_t& i)
+		inline static ParseResult ParseBinaryExpression(const TokenLine& tokens, size_t& i)
 		{
-			static std::unordered_set<std::string> operators = { "+","-","*","/" };
+			static TokenCollection operators = { "+","-","*","/" };
 			ParseResult resultLeft = ParseValueExpression(tokens, i);
 			VALIDITY_CHECK(resultLeft);
 			auto resultLeftptr = dynamic_cast<NumericExpression*> (resultLeft.node.get());
@@ -427,7 +433,7 @@ namespace D2Maker
 			
 		}
 
-		inline static ParseResult ParseValueExpression(const std::vector<std::string>& tokens, size_t& i)
+		inline static ParseResult ParseValueExpression(const TokenLine& tokens, size_t& i)
 		{
 			ParseResult result = { nullptr,false,"not executed" };
 			if (tokens[i] == "VAR")
@@ -486,7 +492,7 @@ namespace D2Maker
 			return result;
 		}
 
-		inline static bool OutOfBounds(const std::vector<std::string> &v, const size_t &i, const uint32_t &toAccess)
+		inline static bool OutOfBounds(const TokenLine &v, const size_t &i, const uint32_t &toAccess)
 		{
 			return i + toAccess >= v.size();
 		}

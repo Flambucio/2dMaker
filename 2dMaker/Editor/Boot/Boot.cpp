@@ -83,3 +83,23 @@ bool BootWindow::BootWindowShouldClose()
     }
     return false;
 }
+
+void BootWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
+    if (action == GLFW_PRESS)
+    {
+        EventManager::PushEvent(static_cast<Keys>(key), EventType::HOLD);
+
+        if (!EventManager::GetConsumedKeys()[static_cast<Keys>(key)])
+        {
+            EventManager::PushEvent(static_cast<Keys>(key), CLICK);
+            EventManager::GetConsumedKeys()[static_cast<Keys>(key)] = true;
+        }
+    }
+    else if (action == GLFW_RELEASE)
+    {
+        EventManager::GetConsumedKeys()[static_cast<Keys>(key)] = false;
+        EventManager::ReleaseKey(static_cast<Keys>(key));
+    }
+}

@@ -15,7 +15,7 @@ namespace D2Maker
 		int height;
 		int bpp;
 	public:
-		Texture(const std::string& filepath) : rendererID(0), filepath(filepath), localBuffer(nullptr), width(0), height(0),
+		inline Texture(const std::string& filepath) : rendererID(0), filepath(filepath), localBuffer(nullptr), width(0), height(0),
 			bpp(0)
 		{
 
@@ -38,32 +38,32 @@ namespace D2Maker
 				stbi_image_free(localBuffer);
 			}
 		}
-		~Texture()
+		inline ~Texture()
 		{
 			glDeleteTextures(1, &rendererID);
 		}
 
-		void Bind(unsigned int slot = 0) const
+		inline void Bind(unsigned int slot = 0) const
 		{
 			glActiveTexture(GL_TEXTURE0 + slot);
 			glBindTexture(GL_TEXTURE_2D, rendererID);
 		}
-		void Unbind() const
+		inline void Unbind() const
 		{
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
-		int GetWidth() const
+		inline int GetWidth() const
 		{
 			return width;
 		}
 
-		int GetHeight() const
+		inline int GetHeight() const
 		{
 			return height;
 		}
 
-		std::string GetPath() const
+		inline std::string GetPath() const
 		{
 			return filepath;
 		}

@@ -133,14 +133,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Editor\API\definitions.cpp" />
+    <ClCompile Include="Editor\API\DefinitionsAPI.cpp" />
     <ClCompile Include="Editor\Boot\Boot.cpp" />
     <ClCompile Include="Editor\Boot\Windows\Create.cpp" />
     <ClCompile Include="Editor\Boot\Windows\Select.cpp" />
+    <ClCompile Include="Editor\Main\Windows\AssetMenu\AssetMenu.cpp" />
+    <ClCompile Include="Editor\Main\Windows\AssetMenu\Audios\AudioMenuGeneral.cpp" />
+    <ClCompile Include="Editor\Main\Windows\AssetMenu\Textures\TexturesMenuGeneral.cpp" />
+    <ClCompile Include="Editor\Main\Windows\ComponentsMenu\ComponentCreation\ComponentCreation.cpp" />
+    <ClCompile Include="Editor\Main\Windows\ComponentsMenu\ComponentMenuGeneral.cpp" />
+    <ClCompile Include="Editor\Main\Windows\ComponentsMenu\ComponentMenus\ComponentMenus.cpp" />
+    <ClCompile Include="Editor\Main\Windows\EntityMenu\EntityMenuGeneral.cpp" />
+    <ClCompile Include="Editor\Main\Windows\Options\Options.cpp" />
+    <ClCompile Include="Editor\Main\Windows\SceneMenu\SceneMenu.cpp" />
     <ClCompile Include="Engine\Application\PreviewWindow.cpp" />
+    <ClCompile Include="Engine\Application\Scenes.cpp" />
+    <ClCompile Include="Engine\Application\Window.cpp" />
+    <ClCompile Include="Engine\Audio\Audio.cpp" />
     <ClCompile Include="Engine\common\Deltatime.cpp" />
-    <ClCompile Include="Engine\ECS\Components.cpp" />
+    <ClCompile Include="Engine\ECS\Entity.cpp" />
     <ClCompile Include="Engine\ECS\Systems\Physics\ColliderFunctions.cpp" />
+    <ClCompile Include="Engine\ECS\Systems\Physics\Physics.cpp" />
+    <ClCompile Include="Engine\ECS\Systems\Render\Render.cpp" />
+    <ClCompile Include="Engine\ECS\Systems\Scripting\Environment.cpp" />
+    <ClCompile Include="Engine\Filesystem\Filesystem.cpp" />
+    <ClCompile Include="Engine\Graphics\GL\Shaders.cpp" />
     <ClCompile Include="Engine\main.cpp" />
     <ClCompile Include="Engine\StaticDef.cpp" />
     <ClCompile Include="Lib\imgui\backends\imgui_impl_glfw.cpp" />

@@ -13,88 +13,19 @@ namespace D2Maker
 		static std::string currentScene;
 		static std::unordered_map<std::string, std::unique_ptr<Scene>> scenes;
 		static std::string defaultScene;
-		static void InitManager(GLFWwindow * windowIn)
+		inline static void InitManager(GLFWwindow * windowIn)
 		{
 			window = windowIn;
 		}
-		static void SelectScene(const std::string& name)
-		{
-			TRACE("EXISTS CURRENT:"+ Exists(currentScene))
-			if (Exists(currentScene))
-			{
-				TRACE("stopping scene");
-				scenes[currentScene]->StopScene();
-			}
-			if (!Exists(name))
-			{
-				currentScene = "";
-				return;
-			}
-
-			currentScene = name;
-			scenes[currentScene]->InitScene();
-			
-		}
-
-		static bool Exists(const std::string& name)
+		inline static bool Exists(const std::string& name)
 		{
 			return scenes.find(name) != scenes.end();
 		}
-
-		static bool AddScene(const std::string& name)
-		{
-			if (Exists(name) || name=="")
-			{
-				WARN("scene already exists");
-				return false;
-			}
-
-			scenes[name] = std::make_unique<Scene>(window);
-			for (auto& element : scenes) 
-			{
-				TRACE(element.first);
-			}
-			return true;
-
-		}
-
-		static void RemoveScene(const std::string& name)
-		{
-			if (!Exists(name))
-			{
-				WARN("scene does not exist");
-			}
-			if (currentScene == name)
-			{
-				currentScene = "";
-			}
-			Scene* currentScenePtr = GetScene(name);
-			currentScenePtr->em.aliveEntities.clear();
-			currentScenePtr->em.GetMap().clear();
-			scenes.erase(name);
-
-		}
-
-		static void UpdateCurrentScene(GLFWwindow* window,bool runGameFlag)
-		{
-			if (currentScene != "")
-			{
-				if (window)
-				{
-					scenes[currentScene]->sm.UpdateSystems(scenes[currentScene]->em,runGameFlag);
-				}
-			}
-		}
-
-		static Scene* GetScene(const std::string& name)
-		{
-			if (!Exists(name))
-			{
-				return nullptr;
-			}
-				
-			return scenes[name].get();
-		}
+		static void SelectScene(const std::string& name);
+		static bool AddScene(const std::string& name);
+		static void RemoveScene(const std::string& name);
+		static void UpdateCurrentScene(GLFWwindow* window, bool runGameFlag);
+		static Scene* GetScene(const std::string& name);
 
 		
 

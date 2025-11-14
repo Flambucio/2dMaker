@@ -22,42 +22,16 @@ namespace D2Maker
 			std::unique_ptr<OpenComponentMenuEventUI> &EventPtr;
 		public:
 			bool createEvent;
-			ComponentCreation(Entity& selectedEntity, std::function<void()> updateComponents,std::unique_ptr<OpenComponentMenuEventUI>& EventPtr) : selectedEntity(selectedEntity),
-				popup("Add Component"),
-				EventPtr(EventPtr),
-				dropdown(componentsStrArr, 0, "Select Component"),
-				updateComponents(updateComponents),
-				closeBtn(100, 30, "Close", [this](void)
-					{
-						popup.Close();
-					}
-				),
-				selectBtn(100, 30, "Select", [this](void)
-					{
-						this->EventPtr = std::make_unique<OpenComponentMenuEventUI>(dropdown.GetCurrVal(), false);
-					}
-				)
-			{}
+			ComponentCreation(Entity& selectedEntity, std::function<void()> updateComponents,
+				std::unique_ptr<OpenComponentMenuEventUI>& EventPtr);
+			void Update();
 
-			void Update()
-			{
-				
-				if (popup.Begin())
-				{
-					dropdown.Update();
-					closeBtn.Update();
-					ImGui::SameLine();
-					selectBtn.Update();
-					popup.End();
-				}
-			}
-
-			void Activate()
+			inline void Activate()
 			{
 				popup.Open();
 			}
 
-			void CloseCallback()
+			inline void CloseCallback()
 			{
 				popup.Close();
 				if (this->updateComponents) 

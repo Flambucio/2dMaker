@@ -8,7 +8,7 @@ namespace D2Maker
 		unsigned int count;
 		unsigned char normalized;
 
-		static unsigned int GetSizeOfType(unsigned int type)
+		inline static unsigned int GetSizeOfType(unsigned int type)
 		{
 			switch (type)
 			{
@@ -25,10 +25,7 @@ namespace D2Maker
 		std::vector<VertexBufferElement> elements;
 		unsigned int stride = 0;
 	public:
-		VertexBufferLayout()
-		{
-
-		}
+		VertexBufferLayout() = default;
 
 		template<typename T>
 		void Push(unsigned int count)
@@ -57,8 +54,8 @@ namespace D2Maker
 			stride += VertexBufferElement::GetSizeOfType(GL_UNSIGNED_BYTE) * count;
 		}
 
-		unsigned int GetStride() const { return stride; };
-		std::vector<VertexBufferElement> GetElements() const { return elements; };
+		inline unsigned int GetStride() const { return stride; };
+		inline std::vector<VertexBufferElement> GetElements() const { return elements; };
 
 	};
 }

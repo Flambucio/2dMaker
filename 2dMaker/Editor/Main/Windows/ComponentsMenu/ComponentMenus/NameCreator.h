@@ -1,4 +1,6 @@
 #pragma once
+//this will stay right here since it will be deprecated so no .cpp file
+//however the functions are now set to inline 
 #include "../../../../API/APIExport.h"
 namespace D2Maker
 {

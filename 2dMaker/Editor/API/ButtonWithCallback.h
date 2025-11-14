@@ -1,19 +1,22 @@
 #pragma once
 #include "Button.h"
+#define CALLBACKFUNCTION std::function<void(Args...)>
 namespace D2Maker
 {
 	namespace GUI
 	{
 		namespace GUIAPI
 		{
+			//template<typename... Args>
+			//using CallbackFunction = std::function<void(Args...)>;
 			template<typename... Args>
 			class ButtonWithCallback
 			{
-				std::function<void(Args...)> callBack;
+				CALLBACKFUNCTION callBack;
 				Button button;
 			public:
 				inline ButtonWithCallback(int width,int height,std::string id,
-					std::function<void(Args...)> callBack) : button(width,height,id)
+					CALLBACKFUNCTION callBack) : button(width,height,id)
 				{
 					this->callBack = callBack;
 				}
@@ -35,3 +38,4 @@ namespace D2Maker
 		}
 	}
 }
+#undef CALLBACKFUNCTION

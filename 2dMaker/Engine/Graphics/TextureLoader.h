@@ -10,12 +10,12 @@ namespace D2Maker
 		static std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
 
 	public:
-		static bool Exists(const std::string& name)
+		inline static bool Exists(const std::string& name)
 		{
 			return textures.find(name) != textures.end();
 		}
 
-		static void LoadTexture(const std::string& name, const std::string& path)
+		inline static void LoadTexture(const std::string& name, const std::string& path)
 		{
 			if (Exists(name))
 			{
@@ -25,7 +25,7 @@ namespace D2Maker
 			textures[name] = std::make_unique<Texture>(path);
 		}
 
-		static void RemoveTexture(const std::string& name)
+		inline static void RemoveTexture(const std::string& name)
 		{
 			if (!Exists(name))
 			{
@@ -35,7 +35,7 @@ namespace D2Maker
 			textures.erase(name);
 		}
 
-		static void RenameTexture(const std::string& oldName, const std::string& newName)
+		inline static void RenameTexture(const std::string& oldName, const std::string& newName)
 		{
 			if (!Exists(oldName))
 			{
@@ -47,7 +47,7 @@ namespace D2Maker
 			LoadTexture(newName, path);
 		}
 
-		static Texture* GetTexture(const std::string& name)
+		inline static Texture* GetTexture(const std::string& name)
 		{
 			auto it = textures.find(name);
 			if (it != textures.end())
@@ -55,7 +55,7 @@ namespace D2Maker
 			return nullptr;
 		}
 
-		static void BindTexture(const std::string& name)
+		inline static void BindTexture(const std::string& name)
 		{
 			Texture* tex = GetTexture(name);
 			if (tex)
@@ -68,7 +68,7 @@ namespace D2Maker
 			}
 		}
 
-		static std::unordered_map<std::string, std::unique_ptr<Texture>>& GetMap()
+		inline static std::unordered_map<std::string, std::unique_ptr<Texture>>& GetMap()
 		{
 			return textures;
 		}

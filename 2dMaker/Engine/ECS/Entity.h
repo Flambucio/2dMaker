@@ -21,129 +21,52 @@ namespace D2Maker
 	using Entity = uint32_t;
 	class EntityManager
 	{
+		using EntityRegistry = std::unordered_set<Entity>;
+		using EntityComponentSystemData = std::unordered_map<Entity, std::unordered_map<std::type_index, std::unique_ptr<Component>>>;
+		using Entity_NameRegistry = std::unordered_map<std::string, Entity>;
+		using NameRegistry = std::unordered_set<std::string>;
+		using EntityName = std::string;
 	private:
-		std::unordered_map<Entity, std::unordered_map<std::type_index, std::unique_ptr<Component>>> entities;
+
+		EntityComponentSystemData entities;
 		std::queue<int, std::deque<int>> availableIDs;
 		
-		std::unordered_set<Entity> runtimeEntities;
-		std::unordered_set<Entity> virtualEntities;
+		EntityRegistry runtimeEntities;
+		EntityRegistry virtualEntities;
 		Entity nextID = 0;
 		
 	public:
-		static const std::unordered_set<std::string> componentsTypesStr;
-		std::unordered_set<Entity> aliveEntities;
-		std::unordered_map<std::string, Entity> entityNames;
+		static const NameRegistry componentsTypesStr;
+		EntityRegistry aliveEntities;
+		Entity_NameRegistry entityNames;
 		Entity cameraEntity = 0;
 
-		bool nameAvailable(const std::string &name) const
+		inline bool nameAvailable(const EntityName &name) const
 		{
 			return (!(name == "")) && entityNames.find(name) == entityNames.end();
 		}
 
-		Entity createEntity(std::string name, EntityType type = EntityType::NORMAL)
-		{
-			
-			Entity id;
-			if (!availableIDs.empty())
-			{
-				id = availableIDs.front();
-				availableIDs.pop();
-			}
-			else
-			{
-				id = nextID;
-				nextID++;
-			}
-			aliveEntities.insert(id);
-			if (type == EntityType::VIRTUAL)
-			{
-				virtualEntities.insert(id);
-			}
-			entityNames[name] = id;
-			return id;
-		}
-
-		
-		
-		void destroyEntityFromID(Entity entityID)
-		{
-			for (auto it = entityNames.begin(); it != entityNames.end(); ++it)
-			{
-				if (it->second == entityID)
-				{
-					entityNames.erase(it);
-					break;
-				}
-			}
-			entities.erase(entityID);
-			
-			if (isRuntimeEntity(entityID))
-			{
-				runtimeEntities.erase(entityID);
-			}
-			else if (isVirtualEntity(entityID))
-			{
-				virtualEntities.erase(entityID);
-			}
-			availableIDs.push(entityID);
-			aliveEntities.erase(entityID);
-		}
-
-		void destroyEntity(std::string name)
-		{
-			auto it = entityNames.find(name);
-			if (it == entityNames.end()) return;
-			Entity entity = it->second;
-			entities.erase(entity);
-			entityNames.erase(name);
-			if (isRuntimeEntity(entity))
-			{
-				runtimeEntities.erase(entity);
-			}
-			else if (isVirtualEntity(entity))
-			{
-				virtualEntities.erase(entity);
-			}
-		}
-
-		bool renameEntity(const std::string& oldName,const std::string& newName)
-		{
-			auto it = entityNames.find(oldName);
-			if (it == entityNames.end())
-			{
-				WARN("Entity with name:" + oldName + " does not exist");
-				return false;
-			}
-			if (!nameAvailable(newName))
-			{
-				WARN("Entity name:" + newName + " is already taken or invalid.");
-				return false;
-			}
-
-			Entity entityID = it->second;
-			entityNames.erase(it);
-			entityNames[newName] = entityID;
-			return true;
-
-		}
-
-		bool isAlive(Entity entityID) const
+		Entity createEntity(EntityName name, EntityType type = EntityType::NORMAL);
+		void destroyEntityFromID(Entity entityID);
+		void destroyEntity(EntityName name);
+		bool renameEntity(const EntityName& oldName, const EntityName& newName);
+		inline bool isAlive(Entity entityID) const
 		{
 			return aliveEntities.find(entityID) != aliveEntities.end();
 		}
 
-		bool isAlive(std::string name) const 
+		inline bool isAlive(EntityName name) const 
 		{
 			if (entityNames.find(name) != entityNames.end()) return true;
 			return false;
 		}
 
-		bool isRuntimeEntity(Entity entityID) const
+		inline bool isRuntimeEntity(Entity entityID) const
 		{
 			return runtimeEntities.find(entityID) != runtimeEntities.end();
 		}
 
-		bool isVirtualEntity(Entity entityID) const
+		inline bool isVirtualEntity(Entity entityID) const
 		{
 			return virtualEntities.find(entityID) != virtualEntities.end();
 		}
@@ -243,7 +166,7 @@ namespace D2Maker
 
 		}
 
-		bool CheckCameraComponentExistence()
+		inline bool CheckCameraComponentExistence()
 		{
 			for (Entity entity : aliveEntities)
 			{
@@ -401,7 +324,7 @@ namespace D2Maker
 			return entities[entity].find(std::type_index(typeid(T))) != entities[entity].end();
 		}
 
-		std::unordered_map<Entity, std::unordered_map<std::type_index, std::unique_ptr<Component>>>& GetMap()
+		inline EntityComponentSystemData& GetMap()
 		{
 			return entities;
 		}

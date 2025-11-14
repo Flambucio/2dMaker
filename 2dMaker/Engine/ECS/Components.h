@@ -6,7 +6,7 @@
 #include "../Audio/AudioLoader.h"
 namespace D2Maker
 {
-	class Statement;
+	//class Statement;
 
 	struct Component
 	{
@@ -24,7 +24,7 @@ namespace D2Maker
 		float rotationDegrees;
 		float defaultX;
 		float defaultY;
-		Transform(float x, float y, float width, float height, float rotationDegrees)
+		inline Transform(float x, float y, float width, float height, float rotationDegrees)
 		{
 			this->x				  = x;
 			this->y				  = y;
@@ -34,7 +34,7 @@ namespace D2Maker
 			this->defaultX		  = x;
 			this->defaultY		  = y;
 		}
-		void ResetPos()
+		inline void ResetPos()
 		{
 			TRACE("resetting pos...");
 			x = defaultX;
@@ -50,7 +50,7 @@ namespace D2Maker
 		float bounciness;
 		float maxDy;
 		float dyAccumulator;
-		RigidBody(float mass, float bounciness,float maxDy)
+		inline RigidBody(float mass, float bounciness,float maxDy)
 		{
 			this->mass			 = mass;
 			this->bounciness	 = bounciness;
@@ -75,7 +75,7 @@ namespace D2Maker
 		float defaultDx;
 		float defaultDy;
 		float defaultDtheta;
-		Velocity(float dx,float dy,float dtheta)
+		inline Velocity(float dx,float dy,float dtheta)
 		{
 			this->defaultDx		= dx;
 			this->defaultDy		= dy;
@@ -93,7 +93,7 @@ namespace D2Maker
 		int orderInLayer;
 		std::string name;
 		bool exists;
-		TextureComponent(const std::string& name,int orderInLayer) : orderInLayer(orderInLayer) , name(name)
+		inline TextureComponent(const std::string& name,int orderInLayer) : orderInLayer(orderInLayer) , name(name)
 		{ 
 			if (TextureLoader::Exists(this->name))
 			{
@@ -111,8 +111,8 @@ namespace D2Maker
 	public:
 		std::string filepath;
 		std::vector<std::vector<std::string>> parsedStr;
-		std::vector <std::unique_ptr<Statement>> statements;
-		Script(std::string filepath)
+		//std::vector <std::unique_ptr<Statement>> statements;
+		inline Script(std::string filepath)
 		{
 			this->filepath = filepath;
 			Parser::ParseString(filepath, parsedStr);
@@ -125,7 +125,7 @@ namespace D2Maker
 	{
 	public:
 		std::string name;
-		Name(std::string name)
+		inline Name(std::string name)
 		{
 			this->name = name;
 		}
@@ -136,7 +136,7 @@ namespace D2Maker
 	public:
 		std::string name;
 		bool exists;
-		AudioComponent(const std::string& name)
+		inline AudioComponent(const std::string& name)
 		{
 			this->name = name;
 			if (AudioLoader::Exists(this->name))
@@ -153,7 +153,7 @@ namespace D2Maker
 	{
 	public:
 		float accumulator = 0;
-		void ResetAcc()
+		inline void ResetAcc()
 		{
 			accumulator = 0;
 		}
@@ -166,7 +166,7 @@ namespace D2Maker
 		bool enableY;
 		float x;
 		float y;
-		Camera(bool enableX, bool enableY,float x,float y)
+		inline Camera(bool enableX, bool enableY,float x,float y)
 		{
 			this->enableX = enableX;
 			this->enableY = enableY;
@@ -184,13 +184,13 @@ namespace D2Maker
 		float index=0;
 		int orderInLayer;
 		int currentTextureIndex = -1;
-		Animation(std::vector<std::string> names,float timing,int orderInLayer)
+		inline Animation(std::vector<std::string> names,float timing,int orderInLayer)
 		{
 			this->texNames	   = names;
 			this->timing	   = timing;
 			this->orderInLayer = orderInLayer;
 		}
-		void ResetIndexTimes()
+		inline void ResetIndexTimes()
 		{
 			index = 0;
 			accumulator = 0;
@@ -202,7 +202,7 @@ namespace D2Maker
 	{
 		float velocity;
 		std::string entityToFollow;
-		Follow(float velocity,std::string entityToFollow)
+		inline Follow(float velocity,std::string entityToFollow)
 		{
 			this->velocity=velocity;
 			this->entityToFollow = entityToFollow;

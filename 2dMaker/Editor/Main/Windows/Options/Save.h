@@ -13,7 +13,7 @@ namespace D2Maker
 			GUIAPI::PopUp popup;
 
 		public:
-			SavePopup() :
+			inline SavePopup() :
 				closeBtn(100, 30, "Close", [this](void)
 					{
 						popup.Close();
@@ -22,7 +22,7 @@ namespace D2Maker
 				popup("Save") {
 			}
 
-			void Update()
+			inline void Update()
 			{
 				if (popup.Begin())
 				{
@@ -32,7 +32,7 @@ namespace D2Maker
 				}
 			}
 
-			void Activate()
+			inline void Activate()
 			{
 				popup.Open();
 			}

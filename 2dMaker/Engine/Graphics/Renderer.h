@@ -7,7 +7,7 @@ namespace D2Maker
 	class Renderer
 	{
 	public:
-		void Draw(const VertexArray& va, const IndexBuffer& ib, const Shaders& shader) const
+		inline void Draw(const VertexArray& va, const IndexBuffer& ib, const Shaders& shader) const
 		{
 			shader.Bind();
 			va.Bind();
@@ -16,7 +16,7 @@ namespace D2Maker
 
 		}
 
-		void Clear() const
+		inline void Clear() const
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}

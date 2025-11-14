@@ -9,43 +9,12 @@ namespace D2Maker
 		SystemManager sm;
 		Scene(GLFWwindow* window) : sm(window)
 		{}
-		void InitScene()
+		inline void InitScene()
 		{
 			AudioSystem & as= sm.GetAudioSystem();
 			as.InitSounds(em);
 			
 		}
-		void StopScene()
-		{
-
-			AudioSystem& as = sm.GetAudioSystem();
-			as.StopSounds(em);
-			for (Entity entity : em.aliveEntities)
-			{
-				if (em.hasComponent<Transform>(entity))
-				{
-					Transform* t = em.getComponent<Transform>(entity);
-					t->ResetPos();
-				}
-				if (em.hasComponent<Animation>(entity))
-				{
-					Animation* a = em.getComponent<Animation>(entity);
-					a->ResetIndexTimes();
-					if (em.hasComponent<TextureComponent>(entity))
-					{
-						em.RemoveComponent<TextureComponent>(entity);
-					}
-					em.addComponent<TextureComponent>(entity, a->texNames[a->index],
-						a->orderInLayer);
-				}
-				if (em.hasComponent<Timer>(entity))
-				{
-					Timer* timer = em.getComponent<Timer>(entity);
-					timer->ResetAcc();
-				}
-
-
-			}
-		}
+		void StopScene();
 	};
 }

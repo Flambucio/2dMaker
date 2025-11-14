@@ -39,33 +39,8 @@ namespace D2Maker
         {
             return map[var];
         }
-        static void LoadVarsFromJsonTemp(Json json)
-        {
-            for (auto& [key, value] : json.items())
-            {
-                if (ExistsGeneral(key)) continue;
-                if (value == "int") Set<int>(key, 0);
-                else if (value == "float") Set<float>(key,0.0f);
-                else if (value == "string") Set<std::string>(key,"");
-                else if (value == "bool") Set<bool>(key,false);
-                CONSOLELOG("[WARN]: variable " + key + " has invalid type");
-            }
-        }
-        static void LoadVarsFromJsonData(Json json)
-        {
-            for (auto& [key, value] : json.items())
-            {
-                if (ExistsGeneral(key)) continue;
-                if (!value.contains("type") && !value.contains("value")) continue;
-                const std::string type = value["type"];
-                if (type == "int" && value["value"].is_number_integer()) SetDataVar<int>(key, value["value"].get<int>());
-                else if(type=="float"&&value["value"].is_number_float()) SetDataVar<float>(key, value["value"].get<float>());
-                else if (type == "string" && value["value"].is_string()) SetDataVar<std::string>(key, value["value"].get<std::string>());
-                else if (type == "bool" && value["value"].is_boolean()) SetDataVar<bool>(key, value["value"].get<bool>());
-
-            }
-        }
-        
+        static void LoadVarsFromJsonTemp(Json json);
+        static void LoadVarsFromJsonData(Json json);
     public:
         inline static VarMap<std::string> stringVars = {};
         inline static VarMap<int> intVars = {};
@@ -146,40 +121,9 @@ namespace D2Maker
 
         }
 
-        static Number RetrieveNumber(const std::string& var)
-        {
-            if (intVars.find(var) != intVars.end()) return intVars[var];
-            if (floatVars.find(var) != floatVars.end()) return floatVars[var];
-            return 0.0f;
-        }
-
-        static Type RetrieveType(const std::string& var)
-        {
-            Type type = Type::NUL;
-            auto it = typeRegistry.find(var);
-            if (it == typeRegistry.end()) return Type::NUL;
-            type = typeRegistry[var];
-            return type;
-        }
-
-
-
-        inline static bool Exists(const std::string& var, const Type& type)
-        {
-            switch (type)
-            {
-            case Type::STRING:
-                return stringVars.find(var) != stringVars.end();
-            case Type::INT:
-                return intVars.find(var) != intVars.end();
-            case Type::FLOAT:
-                return floatVars.find(var) != floatVars.end();
-            case Type::BOOL:
-                return boolVars.find(var) != boolVars.end();
-            case Type::NUL:
-                return false;
-            }
-        }
+        static Number RetrieveNumber(const std::string& var);
+        static Type RetrieveType(const std::string& var);
+        static bool Exists(const std::string& var, const Type& type);
 
         inline static bool ExistsGeneral(const std::string& var)
         {
@@ -190,7 +134,7 @@ namespace D2Maker
                 EXISTS_INTO_MAP(boolVars, var);
         }
 
-        static void LoadVarsFromJson(Json data,VarLoadMode vlm)
+        inline static void LoadVarsFromJson(Json data,VarLoadMode vlm)
         {
             (vlm == VarLoadMode::TEMP) ? LoadVarsFromJsonTemp(data) : LoadVarsFromJsonData(data);
         }

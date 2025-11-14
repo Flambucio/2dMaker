@@ -116,77 +116,23 @@ namespace D2Maker
 			const std::array<std::string, 10> components = { "Transform" ,"Velocity","Audio","Script",
 			"Texture","Name","Animation","RigidBody","Camera","Follow"};
 		public:
-			ComponentInfo() : popup("Info"), closeBtn(200, 30, "Close", [this](void)
+			inline ComponentInfo() : popup("Info"), closeBtn(200, 30, "Close", [this](void)
 				{
 					popup.Close();
 				}
-			){ }
+			)
+			{ }
 
 
-			void GetInfo(std::string component, Entity selectedEntity)
-			{
+			void GetInfo(std::string component, Entity selectedEntity);
 
-				if (component == "Transform")
-				{
-					Get<Transform>(selectedEntity);
-				}
-				else if (component == "Velocity")
-				{
-					Get<Velocity>(selectedEntity);
-				}
-
-				else if (component == "Audio")
-				{
-					Get<AudioComponent>(selectedEntity);
-				}
-
-				else if (component == "Script")
-				{
-					Get<Script>(selectedEntity);
-				}
-
-				else if (component == "Texture")
-				{
-					Get<TextureComponent>(selectedEntity);
-				}
-
-				else if (component == "Name")
-				{
-					Get<Name>(selectedEntity);
-				}
-
-				else if (component == "Animation")
-				{
-					Get<Animation>(selectedEntity);
-				}
-
-				else if (component == "RigidBody")
-				{
-					Get<RigidBody>(selectedEntity);
-				}
-
-				else if (component == "Follow")
-				{
-					Get<Follow>(selectedEntity);
-				}
-
-				else if (component == "Camera")
-				{
-					Get<Camera>(selectedEntity);
-				}
-				else
-				{
-					Get<void>(selectedEntity);
-				}
-			}
-
-			void Activate(std::string component,Entity selectedEntity)
+			inline void Activate(std::string component,Entity selectedEntity)
 			{
 				GetInfo(component, selectedEntity);
 				popup.Open();
 			}
 
-			void Update()
+			inline void Update()
 			{
 				if (popup.Begin())
 				{

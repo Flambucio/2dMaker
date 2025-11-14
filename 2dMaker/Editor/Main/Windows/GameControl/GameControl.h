@@ -13,7 +13,7 @@ namespace D2Maker
 			GUIAPI::ButtonWithCallback<> pauseBtn;
 			bool& runGameFlag;
 		public:
-			GameControls(bool& runGameFlag) : runGameFlag(runGameFlag),
+			inline GameControls(bool& runGameFlag) : runGameFlag(runGameFlag),
 				runBtn(260, 30, "Run", [this](void)
 					{
 						this->runGameFlag = true;
@@ -33,7 +33,7 @@ namespace D2Maker
 			{ }
 
 
-			void Update()
+			inline void Update()
 			{
 				GUIAPI::GUIWindow::CreateFixedWindow(1000, 600, 280, 120, "GameControls");
 				runBtn.Update();

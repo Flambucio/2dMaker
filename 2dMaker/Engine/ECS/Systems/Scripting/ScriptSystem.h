@@ -7,7 +7,7 @@ namespace D2Maker
 	class ScriptSystem : public System
 	{
 	public:
-		void Update(EntityManager& em)
+		inline void Update(EntityManager& em)
 		{
 			for (Entity entity : em.aliveEntities)
 			{

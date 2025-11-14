@@ -31,101 +31,12 @@ namespace D2Maker
 
 
 		public:
-			ComponentDelete(Entity& selectedEntity, std::function<void()> updateComponents) :
-				selectedEntity(selectedEntity), updateComponents(updateComponents),
-				popup("Delete Component"),
-				closeBtn(100, 30,"Close", [this](void)
-					{
-						popup.Close();
-						selectedComponent = "";
-					}
-				),
-				confirmBtn(100, 30, "Confirm", [this](void)
-					{
-						StartDeletion(selectedComponent);
-					}
-				)
-			{ }
+			ComponentDelete(Entity& selectedEntity, std::function<void()> updateComponents);
 
-			void StartDeletion(std::string component)
-			{
-				if (component == "Transform")
-				{
-					DeleteComponent<Transform>();
-				}
-				else if (component == "Collider")
-				{
-					DeleteComponent<Collider>();
-				}
+			void StartDeletion(std::string component);
+			void Activate(std::string component);
 
-				else if (component == "Velocity")
-				{
-					DeleteComponent<Velocity>();
-				}
-
-				else if (component == "Timer")
-				{
-					DeleteComponent<Timer>();
-				}
-
-				else if (component == "Audio")
-				{
-					DeleteComponent<AudioComponent>();
-				}
-
-				else if (component == "Script")
-				{
-					DeleteComponent<Script>();
-				}
-
-				else if (component == "Texture")
-				{
-					DeleteComponent<TextureComponent>();
-				}
-
-				else if (component == "Name")
-				{
-					DeleteComponent<Name>();
-				}
-
-				else if (component == "Animation")
-				{
-					DeleteComponent<Animation>();
-				}
-
-				else if (component == "Rigidbody")
-				{
-					DeleteComponent<RigidBody>();
-				}
-
-				else if (component == "Follow")
-				{
-					DeleteComponent<Follow>();
-				}
-
-				else if (component == "Camera")
-				{
-					DeleteComponent<Camera>();
-				}
-			}
-
-			void Activate(std::string component)
-			{
-				selectedComponent = component;
-				popup.Open();
-			}
-
-			void Update()
-			{
-				if (popup.Begin())
-				{
-					ImGui::Text("Are you sure you want to delete this component?");
-					closeBtn.Update();
-					ImGui::SameLine();
-					confirmBtn.Update();;
-					popup.End();
-				}
-			}
+			void Update();
 
 
 

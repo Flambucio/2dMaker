@@ -13,7 +13,7 @@ namespace D2Maker
 		
 			 std::string component;
 			 bool componentExists;
-			 OpenComponentMenuEventUI(std::string component,bool componentExists) :
+			 inline OpenComponentMenuEventUI(std::string component,bool componentExists) :
 				 component(component), componentExists(componentExists) { }
 		};
 	}

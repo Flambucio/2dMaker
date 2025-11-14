@@ -14,41 +14,10 @@ namespace D2Maker
 			std::function<void()> deleteAudio;
 
 		public:
-			AudioDelete(std::function<void()> deleteAudio) : deleteAudio(deleteAudio),
-				confirmBtn(143, 30, "Confirm", [this](void)
-					{
-						if (this->deleteAudio)
-						{
-							this->deleteAudio();
-							popup.Close();
-						}
+			AudioDelete(std::function<void()> deleteAudio);
+			void Update();
 
-					}
-				),
-				closeBtn(143, 30, "Close", [this](void)
-					{
-						popup.Close();
-					}
-				),
-				popup("Delete Audio")
-			{
-			}
-
-			void Update()
-			{
-				if (popup.Begin())
-				{
-					ImGui::Text("audios are not meant to be deleted");
-					ImGui::Text("removing audios already used by entities");
-					ImGui::Text("can lead to crashes/undefined behaviour");
-					closeBtn.Update();
-					ImGui::SameLine();
-					confirmBtn.Update();
-					popup.End();
-				}
-			}
-
-			void Activate()
+			inline void Activate()
 			{
 				popup.Open();
 			}
