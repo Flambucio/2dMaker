@@ -1,0 +1,15 @@
+$exclude = @("Config", "Debug", "lib", "x64")
+
+# Estensioni da includere
+$extensions = @("*.cpp", "*.h", "*.hpp")
+
+Get-ChildItem -Recurse -Include $extensions |
+Where-Object {
+    $path = $_.FullName.ToLower()
+    -not ($exclude | ForEach-Object { $path -like "*\$_\*" })
+} |
+Get-Content |
+Measure-Object -Line
+
+echo "Esecuzione completata"
+pause

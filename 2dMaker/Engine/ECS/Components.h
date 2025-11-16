@@ -4,6 +4,7 @@
 #include "../Graphics/TextureLoader.h"
 #include "Systems/Scripting/Parser.h"
 #include "../Audio/AudioLoader.h"
+#include "Systems/Scripting/StatementAbstract.h"
 namespace D2Maker
 {
 	//class Statement;
@@ -111,7 +112,7 @@ namespace D2Maker
 	public:
 		std::string filepath;
 		std::vector<std::vector<std::string>> parsedStr;
-		//std::vector <std::unique_ptr<Statement>> statements;
+		std::vector <std::unique_ptr<Statement>> statements;
 		inline Script(std::string filepath)
 		{
 			this->filepath = filepath;

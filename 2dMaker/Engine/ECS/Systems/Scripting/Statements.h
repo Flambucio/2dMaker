@@ -1,5 +1,7 @@
 #pragma once
 #include "Environment.h"
+#include "StatementAbstract.h"
+
 
 namespace D2Maker
 {
@@ -46,21 +48,6 @@ namespace D2Maker
 		EntityManager& em;
 		Entity e;
 	};
-
-	class ASTNode
-	{
-	public:
-		virtual ~ASTNode() = default;
-	};
-
-	class Statement : public ASTNode
-	{
-	public:
-		uint32_t line = 0;
-		Statement(uint32_t line) : line(line) {}
-		virtual void Execute() {};
-	};
-
 
 	class Expression : public ASTNode
 	{
@@ -654,8 +641,8 @@ namespace D2Maker
 		std::vector<std::unique_ptr<Statement>> instructions;
 	public:
 		IfStament(std::unique_ptr<Condition> condition, 
-			std::vector<std::unique_ptr<Statement>> instructions,uint32_t line) :
-			condition(std::move(condition)),instructions(std::move(instructions)), Statement(line){ }
+			std::vector<std::unique_ptr<Statement>> instructions,uint32_t line) : Statement(line),
+			condition(std::move(condition)),instructions(std::move(instructions)) { }
 		void Execute()
 		{
 			if (condition->evaluate())

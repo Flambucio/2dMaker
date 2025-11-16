@@ -45,6 +45,11 @@ namespace D2Maker
 	class ASTBuilder
 	{
 	public:
+		inline static void ParseScriptSystems(EntityManager& em)
+		{
+
+		}
+	
 		inline static AST ParseScript(const TokenStream &tokens,ScriptContext sc)
 		{
 			CheckIfDepthResult ifDR = CheckIfsDepth(tokens);

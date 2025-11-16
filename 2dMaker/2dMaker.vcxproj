@@ -252,6 +252,7 @@
     <ClInclude Include="Engine\ECS\Systems\Scripting\ScriptSystem.h">
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
+    <ClInclude Include="Engine\ECS\Systems\Scripting\StatementAbstract.h" />
     <ClInclude Include="Engine\ECS\Systems\Scripting\Statements.h" />
     <ClInclude Include="Engine\ECS\Systems\Scripting\Tokens.h" />
     <ClInclude Include="Engine\ECS\Systems\Sysbase.h" />
