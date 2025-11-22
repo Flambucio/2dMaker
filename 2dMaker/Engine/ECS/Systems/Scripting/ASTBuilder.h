@@ -47,7 +47,14 @@ namespace D2Maker
 	public:
 		inline static void ParseScriptSystems(EntityManager& em)
 		{
-
+			for (auto& e : em.aliveEntities)
+			{
+				if (!em.hasComponent<Script>(e)) continue;
+				Script* s = em.getComponent<Script>(e);
+				
+				s->statements = ParseScript(s->parsedStr, { em,e });
+				CONSOLELOG("size statements after parsing= "+std::to_string(s->statements.size()));
+			}
 		}
 	
 		inline static AST ParseScript(const TokenStream &tokens,ScriptContext sc)
@@ -59,8 +66,9 @@ namespace D2Maker
 				return {};
 			}
 			AST statements;
-			for (size_t line = 0;line < tokens.size();line++)
+			for (size_t line = 0;line < tokens.size()-1;line++)
 			{
+				CONSOLELOG("iteration line " + std::to_string(line));
 				size_t i = 0;
 				ParseResult statement_ = ParseStatement(tokens,i,line,sc);
 				if (!statement_.success) 
@@ -77,7 +85,9 @@ namespace D2Maker
 				StatementPtr currentStatementCasted(dynamic_cast<Statement*>(statement_.node.release()));
 				statements.push_back(std::move(currentStatementCasted));
 			}
-			return statements;
+			CONSOLELOG("about to return");
+			CONSOLELOG("size statements after parsing (inside function)= " + std::to_string(statements.size()));
+			return std::move(statements);
 		}
 	private:
 		
@@ -192,10 +202,12 @@ namespace D2Maker
 			else if (tokens[line][i] == "Y") ct = CoordType::Y;
 			else if (tokens[line][i] == "THETA") ct = CoordType::THETA;
 			else return { nullptr,false,"invalid coordinate in move/set statement" };
+			i++;
 			ParseResult value = ParseBinaryorValueExpression(tokens[line], i);
 			VALIDITY_CHECK(value);
 			auto valuePtr = dynamic_cast<NumericExpression*>(value.node.get());
 			if (!valuePtr) return { nullptr,false,"invalid value in move/set statement" };
+			CONSOLELOG("valid value in move/set statement");
 			std::unique_ptr<NumericExpression> valueCasted (dynamic_cast<NumericExpression*>(value.node.release()));
 			bool relative = false;
 			if (!OutOfBounds(tokens[line], i, 0))
@@ -204,8 +216,10 @@ namespace D2Maker
 				else return { nullptr,false,"invalid end in move/set statement" };
 			}
 
-			if (PIT_ == PIT::MOVE) return { std::make_unique<MoveStatement>(line + 1,sc.em,sc.e,ct,std::move(valueCasted),relative) };
-			else return { std::make_unique<SetStatement>(line + 1,sc.em,sc.e,ct,std::move(valueCasted),relative) };
+			CONSOLELOG("gestito relativo/non relativo");
+
+			if (PIT_ == PIT::MOVE) return { std::make_unique<MoveStatement>(line + 1,sc.em,sc.e,ct,std::move(valueCasted),relative),true,"success"};
+			else return { std::make_unique<SetStatement>(line + 1,sc.em,sc.e,ct,std::move(valueCasted),relative),true,"success"};
 
 		}
 

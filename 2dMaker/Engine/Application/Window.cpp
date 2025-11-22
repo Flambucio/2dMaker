@@ -1,6 +1,12 @@
 #include "Window.h"
 using namespace D2Maker;
-
+//TODO:
+//Implement Correct Config
+//Variable management
+//ComponentTraits
+//Batch Rendering
+//Physics Engine Fix
+//Animation Controller
 void Window::Initialize()
 {
     // 1. GLFW INIT
@@ -170,11 +176,15 @@ void Window::RunWindow()
         traceAssStr += element.first + "|" + element.second->GetFilePath() + "\n";
     }
     TRACE(traceAssStr)
-        FileSys::LoadScenes();
+       
+    FileSys::LoadScenes();
     editor.LoadStartingScenesNames();
     TRACE("defaultscene" + SceneManager::defaultScene);
     SceneManager::SelectScene(SceneManager::defaultScene);
-
+    for (auto& scene : SceneManager::scenes)
+    {
+        ASTBuilder::ParseScriptSystems(scene.second->em);
+    }
     if (GameOptions::fullScreen)
     {
         ToggleFullscreen();

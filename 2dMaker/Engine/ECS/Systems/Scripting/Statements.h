@@ -475,7 +475,7 @@ namespace D2Maker
 			return false;
 		}
 	};
-
+#define EVALUATE_NUMBER NumericExpression::NumberToFloat(expr->evaluate())
 	class Instruction : public Statement
 	{
 	public:
@@ -498,23 +498,45 @@ namespace D2Maker
 
 		void Execute()
 		{
+			//CONSOLELOG("executing move instruction");
+			//CONSOLELOG("MoveStatement EM ptr = " + std::to_string((uint64_t)&em));
 			if (!em.hasComponent<Velocity>(e)) return;
 			Velocity* v = em.getComponent<Velocity>(e);
 			float default_ = 0;
 			float& ref=default_;
-			switch (c)
+			if (relative)
 			{
-			case CoordType::X:
-				ref = v->dx;
-				break;
-			case CoordType::Y:
-				ref = (float)v->dy;
-				break;
-			case CoordType::THETA:
-				ref = (float)v->dtheta;
-				break;
+				switch (c)
+				{
+				case CoordType::X:
+					v->dx+= EVALUATE_NUMBER;
+					break;
+				case CoordType::Y:
+					v->dy+=EVALUATE_NUMBER;
+					break;
+				case CoordType::THETA:
+					v->dtheta+=EVALUATE_NUMBER;
+					break;
 
+				}
 			}
+			else
+			{
+				switch (c)
+				{
+				case CoordType::X:
+					v->dx = EVALUATE_NUMBER;
+					break;
+				case CoordType::Y:
+					v->dy = EVALUATE_NUMBER;
+					break;
+				case CoordType::THETA:
+					v->dtheta = EVALUATE_NUMBER;
+					break;
+
+				}
+			}
+
 			if (relative) ref += NumericExpression::NumberToFloat(expr->evaluate());
 			else ref= NumericExpression::NumberToFloat(expr->evaluate());
 		}

@@ -1,8 +1,5 @@
 #pragma once
-#include "../Sysbase.h"
-#include "../../../Events/EventManager.h"
-#include "Tokens.h"
-#include "../Physics/ColliderFunctions.h"
+#include "ASTBuilder.h"
 
 
 namespace D2Maker
@@ -45,6 +42,9 @@ namespace D2Maker
 	private:
 		static std::function<void(const std::string&)> sceneChangeCallback;
 	public:
+
+
+
 		static void InterpretTokens(std::vector<std::vector<std::string>> tokens,Entity entity,EntityManager&em)
 		{
 			//TRACE("outside for");

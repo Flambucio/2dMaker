@@ -17,8 +17,15 @@ namespace D2Maker
 					continue;
 				}
 
+				//CONSOLELOG("ScriptSystem EM ptr = " + std::to_string((uint64_t)&em));
 				Script * script = em.getComponent<Script>(entity);
-				Interpreter::InterpretTokens(script->parsedStr, entity, em);
+				CONSOLELOG("Executing script for entity " + std::to_string(entity));
+				CONSOLELOG("Statements count: " + std::to_string(script->statements.size()));
+				//Interpreter::InterpretTokens(script->parsedStr, entity, em);
+				for (auto& statement : script->statements)
+				{
+					statement->Execute();
+				}
 				
 					
 
