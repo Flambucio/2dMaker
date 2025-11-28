@@ -562,7 +562,7 @@ void FileSys::LoadProjectJsons()
 	std::vector <std::vector<std::string>> stream = {};
 	Parser::ParseString(basePath + "init.txt", stream);
 	PRINT_2D_ARRAY_STR(stream);
-	TRACE("size arr:" + stream.size());
+	TRACE("size arr:" + std::to_string(stream.size()));
 	Environment::InitializeTempVariables(stream);
 	
 }

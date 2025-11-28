@@ -16,7 +16,7 @@ void Environment::LoadVarsFromJsonTemp(Json json)
 }
 void Environment::InitializeTempVariables(TokenStream tokens)
 {
-    for (int i = 0;i < tokens.size() - 2;i++)
+    for (int i = 0;i < tokens.size() - 1;i++)
     {
         if (tokens[i].size() != 2) continue;
         if (ExistsGeneral(tokens[i][0]))

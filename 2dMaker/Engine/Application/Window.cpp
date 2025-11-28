@@ -166,7 +166,7 @@ GLFWwindow* Window::ConstructPreviewWindow()
 void Window::RunWindow()
 {
     FileSys::LoadAssets();
-    //FileSys::LoadProjectJsons();
+    FileSys::LoadProjectJsons();
     std::string traceAssStr = "";
     for (const auto& element : TextureLoader::GetMap())
     {
