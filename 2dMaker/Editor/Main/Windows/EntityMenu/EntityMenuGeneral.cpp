@@ -40,7 +40,9 @@ void EntityCreatePopup::Update()
 	}
 }
 
-EntityDeletePopup::EntityDeletePopup(std::function<void()> deleteCallback) : popup("Delete"), deleteCallback(deleteCallback),
+EntityDeletePopup::EntityDeletePopup(std::function<void()> deleteCallback,
+	std::function<void()> updateCallback) :
+	popup("Delete"), deleteCallback(deleteCallback), updateCallback(updateCallback),
 close(100, 30, "Close", [this]()
 	{
 		popup.Close();
@@ -51,6 +53,7 @@ confirm(100, 30, "Confirm", [this]()
 		if (this->deleteCallback)
 		{
 			this->deleteCallback();
+			if (this->updateCallback) this->updateCallback();
 			this->popup.Close();
 		}
 
@@ -104,7 +107,8 @@ void EntityModifyPopup::Update()
 }
 
 
-EntityMenu::EntityMenu() : entityList({}, 0, 385, 20), eDelPopup([this]() {this->DeleteCallback();}),
+EntityMenu::EntityMenu() : entityList({}, 0, 385, 20), eDelPopup([this](void) {this->DeleteCallback();}
+, [this](void) {this->UpdateBuffers();}),
 createBtn(120, 50, "Create", [this](void)
 	{
 		if (SceneManager::currentScene != "")
@@ -121,10 +125,8 @@ deleteBtn(120, 50, "Delete", [this](void)
 		{
 			this->eDelPopup.Activate();
 		}
-		entityList.UpdateValues({});
-		nEntitiesBuffer = 0;
-		selectedEntity = 0;
-		entitiesBuffer.clear();
+		TRACE("updating values");
+		//entityList.UpdateValues({});
 
 	}
 ),

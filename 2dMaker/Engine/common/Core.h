@@ -141,6 +141,19 @@ namespace D2Maker
         return true;
     }
 
+    inline bool IsInt(std::string&s)
+    {
+        int t;
+        return ConvertStringToNum<int>(s, t);
+        
+    }
+
+    inline bool IsFloat(std::string& s)
+    {
+        float t;
+        return ConvertStringToNum<float>(s, t);
+    }
+
 
     namespace GameOptions
     {

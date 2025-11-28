@@ -6,6 +6,7 @@ namespace D2Maker
 	class FileSys
 	{
 	public:
+		using Json = nlohmann::json;
 		static std::string currentProject;
 		static std::unordered_set<std::string> projectNames;
 		
@@ -25,5 +26,9 @@ namespace D2Maker
 		static void SaveAudios();
 		static void LoadConfigs();
 		static void SaveConfigs();
+		static void LoadProjectJsons();
+		static void SaveProjectJsons();
+		static Json LoadJson(std::string &name);
+		static void SaveJson(Json json,std::string &name);
 	};
 }

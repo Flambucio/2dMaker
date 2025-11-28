@@ -6,6 +6,9 @@
 #define EXISTS_INTO_MAP(map,v)  map.find(v)!=map.end()
 namespace D2Maker
 {
+    using Token = std::string;
+    using TokenLine = std::vector<Token>;
+    using TokenStream = std::vector<TokenLine>;
     using Number = std::variant<int, float>;
     enum class Type
     {
@@ -124,7 +127,8 @@ namespace D2Maker
         static Number RetrieveNumber(const std::string& var);
         static Type RetrieveType(const std::string& var);
         static bool Exists(const std::string& var, const Type& type);
-
+        static void InitializeTempVariables(TokenStream tokens);
+        static Json WriteDataToJson();
         inline static bool ExistsGeneral(const std::string& var)
         {
             return 

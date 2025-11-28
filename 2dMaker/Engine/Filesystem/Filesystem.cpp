@@ -251,6 +251,7 @@ void FileSys::Save()
 	out.close();
 	SaveAssets();
 	SaveConfigs();
+	SaveProjectJsons();
 
 
 
@@ -523,4 +524,65 @@ void FileSys::SaveConfigs()
 		out << "FULLSCREEN;\n";
 	out << "END;";
 	out.close();
+}
+
+using Json = FileSys::Json;
+
+Json FileSys::LoadJson(std::string &name)
+{
+	std::ifstream file(name);
+	if (!file.is_open()) 
+	{
+		CONSOLELOG("Error opening json file: " + name);
+		return Json::parse("{}");
+	}
+	return Json::parse(file);
+}
+
+void FileSys::SaveJson(Json json,std::string &name)
+{
+	std::ofstream ofs(name);
+	if (!ofs.is_open()) return;
+	ofs << json.dump(4);
+}
+
+void FileSys::LoadProjectJsons()
+{
+	std::string basePath = "Projects/" + currentProject +'/';
+	//temp vars
+	std::string varsPath = basePath + "tempVariables.json";
+	Json vars = LoadJson(varsPath);
+	Environment::LoadVarsFromJson(vars, VarLoadMode::TEMP);
+	//data vars
+	varsPath = basePath + "dataVariables.json";
+	vars = LoadJson(varsPath);
+	Environment::LoadVarsFromJson(vars, VarLoadMode::DATA);
+	//init temp vars
+	if (!fs::exists(basePath + "init.txt") || !fs::is_regular_file(basePath + "init.txt")) return;
+	std::vector <std::vector<std::string>> stream = {};
+	Parser::ParseString(basePath + "init.txt", stream);
+	PRINT_2D_ARRAY_STR(stream);
+	TRACE("size arr:" + stream.size());
+	Environment::InitializeTempVariables(stream);
+	
+}
+
+void FileSys::SaveProjectJsons()
+{
+	
+	std::string basePath = "Projects/" + currentProject + '/';
+	if (!fs::exists(basePath + "tempVariables.json") || !fs::is_regular_file(basePath + "tempVariables.json"))
+	{
+		std::string fileTVarsPath = basePath + "tempVariables.json";
+		SaveJson(Json::parse("{}"), fileTVarsPath);
+	}
+	if (!fs::exists(basePath + "init.txt") || !fs::is_regular_file(basePath + "init.txt")) 
+	{
+		std::ofstream initFile(basePath + "init.txt");
+		if (!initFile.is_open()) return;
+		initFile << "";
+	}
+	Json json = Environment::WriteDataToJson();
+	std::string dataVarsPath = basePath + "dataVariables.json";
+	SaveJson(json, dataVarsPath);
 }

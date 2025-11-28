@@ -9,11 +9,12 @@ namespace D2Maker
 		{
 		private:
 			std::function<void()> deleteCallback;
+			std::function<void()> updateCallback;
 			GUIAPI::ButtonWithCallback<> close;
 			GUIAPI::ButtonWithCallback<> confirm;
 			GUIAPI::PopUp popup;
 		public:
-			EntityDeletePopup(std::function<void()> deleteCallback);
+			EntityDeletePopup(std::function<void()> deleteCallback,std::function<void()> updateCallback);
 			void Update();
 
 			inline void Activate()

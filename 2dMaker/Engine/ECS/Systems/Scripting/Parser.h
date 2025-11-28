@@ -72,6 +72,7 @@ namespace D2Maker
                 parsedStr = TokenizeString(content);
 
             }
+            
         }
 
     };

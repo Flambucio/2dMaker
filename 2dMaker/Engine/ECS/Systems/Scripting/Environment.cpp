@@ -14,12 +14,58 @@ void Environment::LoadVarsFromJsonTemp(Json json)
         CONSOLELOG("[WARN]: variable " + key + " has invalid type");
     }
 }
+void Environment::InitializeTempVariables(TokenStream tokens)
+{
+    for (int i = 0;i < tokens.size() - 2;i++)
+    {
+        if (tokens[i].size() != 2) continue;
+        if (ExistsGeneral(tokens[i][0]))
+        {
+            Token var = tokens[i][0];
+            Token value = tokens[i][1];
+            Type varT = RetrieveType(var);
+            Type valueT = Type::NUL;
+            if (IsInt(value)) valueT = Type::INT;
+            else if (IsFloat(value)) valueT = Type::FLOAT;
+            else if (value == "true" || value == "false") valueT = Type::BOOL;
+            else valueT = Type::STRING;
+
+            if (varT != valueT) continue;
+            int n = 0;
+            float f = 0;
+            bool b = false;
+            switch (varT)
+            {
+                
+                case Type::INT: 
+                    
+                    ConvertStringToNum<int>(value, n);
+                    SetDataVar<int>(var,n);
+                    break;
+                case Type::FLOAT:
+                   
+                    ConvertStringToNum<float>(std::string(value), f);
+                    SetDataVar<float>(var, f);
+                    break;
+                case Type::BOOL:
+                   b = value == "true" ? true : false;
+                    SetDataVar<bool>(var, b);
+                    break;
+                case Type::STRING:
+                    SetDataVar<std::string>(var, value);
+                    break;
+            }
+
+
+        }
+    }
+}
 void Environment::LoadVarsFromJsonData(Json json)
 {
     for (auto& [key, value] : json.items())
     {
         if (ExistsGeneral(key)) continue;
-        if (!value.contains("type") && !value.contains("value")) continue;
+        if (!value.contains("type") || !value.contains("value")) continue;
         const std::string type = value["type"];
         if (type == "int" && value["value"].is_number_integer()) SetDataVar<int>(key, value["value"].get<int>());
         else if (type == "float" && value["value"].is_number_float()) SetDataVar<float>(key, value["value"].get<float>());
@@ -27,6 +73,57 @@ void Environment::LoadVarsFromJsonData(Json json)
         else if (type == "bool" && value["value"].is_boolean()) SetDataVar<bool>(key, value["value"].get<bool>());
 
     }
+}
+
+Environment::Json Environment::WriteDataToJson()
+{
+    Json json = Json::object();
+
+    for (const auto& var : varsToSave)
+    {
+        
+        if (typeRegistry.find(var) == typeRegistry.end());
+            continue;
+
+        Type t = typeRegistry[var];
+        Json entry = Json::object();
+
+        switch (t) 
+        {
+        case Type::INT:
+            if (intVars.find(var) != intVars.end())
+            {
+                entry["type"] = "int";
+                entry["value"] = intVars[var];
+            }
+            break;
+        case Type::FLOAT:
+            if (floatVars.find(var) != floatVars.end()) 
+            {
+                entry["type"] = "float";
+                entry["value"] = floatVars[var];
+            }
+            break;
+        case Type::BOOL:
+            if (boolVars.find(var) != boolVars.end())
+            {
+                entry["type"] = "bool";
+                entry["value"] = boolVars[var];
+            }
+            break;
+        case Type::STRING:
+            if (stringVars.find(var) != stringVars.end())
+            {
+                entry["type"] = "string";
+                entry["value"] = stringVars[var];
+            }
+            break;
+        }
+
+        if (!entry.empty()) json[var] = entry;
+    }
+
+    return json;
 }
 
 
