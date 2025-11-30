@@ -6,12 +6,13 @@ void Environment::LoadVarsFromJsonTemp(Json json)
 {
     for (auto& [key, value] : json.items())
     {
-        if (ExistsGeneral(key)) continue;
+        if (ExistsGeneral(key) || !value.is_string()) continue;
         if (value == "int") Set<int>(key, 0);
         else if (value == "float") Set<float>(key, 0.0f);
         else if (value == "string") Set<std::string>(key, "");
         else if (value == "bool") Set<bool>(key, false);
-        CONSOLELOG("[WARN]: variable " + key + " has invalid type");
+        else CONSOLELOG("[WARN]: variable " + key + " has invalid type");
+        
     }
 }
 void Environment::InitializeTempVariables(TokenStream tokens)
@@ -40,19 +41,19 @@ void Environment::InitializeTempVariables(TokenStream tokens)
                 case Type::INT: 
                     
                     ConvertStringToNum<int>(value, n);
-                    SetDataVar<int>(var,n);
+                    Set<int>(var,n);
                     break;
                 case Type::FLOAT:
                    
                     ConvertStringToNum<float>(std::string(value), f);
-                    SetDataVar<float>(var, f);
+                    Set<float>(var, f);
                     break;
                 case Type::BOOL:
-                   b = value == "true" ? true : false;
-                    SetDataVar<bool>(var, b);
+                    b = value == "true" ? true : false;
+                    Set<bool>(var, b);
                     break;
                 case Type::STRING:
-                    SetDataVar<std::string>(var, value);
+                    Set<std::string>(var, value);
                     break;
             }
 
@@ -64,28 +65,60 @@ void Environment::LoadVarsFromJsonData(Json json)
 {
     for (auto& [key, value] : json.items())
     {
-        if (ExistsGeneral(key)) continue;
-        if (!value.contains("type") || !value.contains("value")) continue;
+        TRACE("SetDataVar called for: " + key);
+        if (ExistsGeneral(key))
+        {
+            CONSOLELOG(key + " already exists (data)");
+            continue;
+
+        }
+        
+        if (!value.contains("type") || !value.contains("value"))
+        {
+            CONSOLELOG(key + " doesnt contain the necessary data");
+            continue;
+        }
         const std::string type = value["type"];
         if (type == "int" && value["value"].is_number_integer()) SetDataVar<int>(key, value["value"].get<int>());
         else if (type == "float" && value["value"].is_number_float()) SetDataVar<float>(key, value["value"].get<float>());
         else if (type == "string" && value["value"].is_string()) SetDataVar<std::string>(key, value["value"].get<std::string>());
         else if (type == "bool" && value["value"].is_boolean()) SetDataVar<bool>(key, value["value"].get<bool>());
+        else CONSOLELOG("not matching types in " + key);
+
+        CONSOLELOG("parsing data var");
+        TRACE("parsing data var");
 
     }
+    std::string log="";
+    for (const std::string& var : varsToSave)
+    {
+        log += var + "|";
+    }
+    TRACE(log);
 }
 
 Environment::Json Environment::WriteDataToJson()
 {
     Json json = Json::object();
 
+    
+
     for (const auto& var : varsToSave)
     {
         
-        if (typeRegistry.find(var) == typeRegistry.end());
-            continue;
+        TRACE("Saving var: " + var);
+        /*
+        if (typeRegistry.find(var) == typeRegistry.end())
+            TRACE("typeRegistry MISSING for " + var);
 
-        Type t = typeRegistry[var];
+        if (intVars.find(var) == intVars.end() &&
+            floatVars.find(var) == floatVars.end() &&
+            boolVars.find(var) == boolVars.end() &&
+            stringVars.find(var) == stringVars.end())
+            TRACE("No map contains variable " + var);
+            */
+        Type t = RetrieveType(var);
+        if (Type::NUL == t) TRACE("invalid type during writing datavar");
         Json entry = Json::object();
 
         switch (t) 

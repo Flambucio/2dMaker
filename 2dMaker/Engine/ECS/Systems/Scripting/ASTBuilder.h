@@ -172,15 +172,21 @@ namespace D2Maker
 			VALIDITY_CHECK(VTATV);
 			std::unique_ptr<Expression> expr(dynamic_cast<Expression*>(VTATV.node.release()));
 			if (!expr) return { nullptr,false,"invalid expression in assigment instruction" };
-			Type returnValueExpressionType = DeduceType(VTATV.node);
+			Type returnValueExpressionType = DeduceType(expr);
 			if (returnValueExpressionType == Type::NUL) return { nullptr,false,"invalid expression type assigment instruction" };
 			Type varType = Environment::RetrieveType(varStr);
 			if (!(
 				(
-					(varType == Type::FLOAT || varType == Type::INT) && returnValueExpressionType == Type::NUMERIC
+					(varType == Type::FLOAT || varType == Type::INT || varType == Type::NUMERIC) && returnValueExpressionType == Type::NUMERIC
 				) || varType == returnValueExpressionType)
 			   )
 			{
+				if (varType == Type::FLOAT) CONSOLELOG("varType FLOAT");
+				else if (varType == Type::INT) CONSOLELOG("varType INT");
+				else if (varType == Type::NUMERIC) CONSOLELOG("varType NUMERIC");
+				if (returnValueExpressionType == Type::NUMERIC) CONSOLELOG("returnexpr NUMERIC");
+				else if (returnValueExpressionType == Type::INT) CONSOLELOG("returnexpr INT");
+				else if (returnValueExpressionType == Type::FLOAT) CONSOLELOG("returnexpr FLOAT");
 				return { nullptr,false,"types not matching in assigment instruction" };
 			}
 
@@ -516,7 +522,7 @@ namespace D2Maker
 			return i + toAccess >= v.size();
 		}
 
-		inline static Type DeduceType(std::unique_ptr<ASTNode>& ptr)
+		inline static Type DeduceType(std::unique_ptr<Expression>& ptr)
 		{
 			enum SCT { NUMERIC_, BOOL_,STRING_}; //"_" used to differentiate this from the enum class in Environment
 			std::array<bool, 3> successConvertingTo = {};

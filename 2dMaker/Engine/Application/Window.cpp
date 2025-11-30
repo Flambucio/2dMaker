@@ -7,6 +7,7 @@ using namespace D2Maker;
 //Batch Rendering
 //Physics Engine Fix
 //Animation Controller
+//FIX Texture Modifying component menu
 void Window::Initialize()
 {
     // 1. GLFW INIT
