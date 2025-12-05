@@ -127,7 +127,7 @@ namespace D2Maker
 				i++;
 				return ParseSetMoveStatement(tokens, i, line, sc, PIT_);
 			}
-			else if (tokens[line][i] == "ASSIGN")  return ParseAssigmentInstruction(tokens[i], i, line);
+			else if (tokens[line][i] == "ASSIGN")  return ParseAssigmentInstruction(tokens[line], i, line);
 			else return { nullptr,false,"Unknown Statement" };
 		}
 
@@ -164,6 +164,7 @@ namespace D2Maker
 		
 		inline static ParseResult ParseAssigmentInstruction(const TokenLine& tokens, size_t& i,size_t&line)
 		{
+			i++;
 			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid assigment instruction" };
 			std::string varStr = tokens[i];
 			i++;
@@ -184,9 +185,12 @@ namespace D2Maker
 				if (varType == Type::FLOAT) CONSOLELOG("varType FLOAT");
 				else if (varType == Type::INT) CONSOLELOG("varType INT");
 				else if (varType == Type::NUMERIC) CONSOLELOG("varType NUMERIC");
+				else if (varType == Type::NUL) CONSOLELOG("varType NUL");
 				if (returnValueExpressionType == Type::NUMERIC) CONSOLELOG("returnexpr NUMERIC");
 				else if (returnValueExpressionType == Type::INT) CONSOLELOG("returnexpr INT");
 				else if (returnValueExpressionType == Type::FLOAT) CONSOLELOG("returnexpr FLOAT");
+				else if (returnValueExpressionType == Type::NUL) CONSOLELOG("returnexpr NUL");
+				else if (returnValueExpressionType == Type::STRING) CONSOLELOG("returnexpr STR");
 				return { nullptr,false,"types not matching in assigment instruction" };
 			}
 
@@ -457,7 +461,6 @@ namespace D2Maker
 
 			
 		}
-
 		inline static ParseResult ParseValueExpression(const TokenLine& tokens, size_t& i)
 		{
 			ParseResult result = { nullptr,false,"not executed" };
@@ -490,10 +493,11 @@ namespace D2Maker
 			}
 			else
 			{
-				if (OutOfBounds(tokens, i, 1))
+				if (OutOfBounds(tokens, i, 0))
 				{
 					return { nullptr,false,"invalid value/variable" };
 				}
+				CONSOLELOG("CREATING VARIABLE FOR TOKEN: " + tokens[i]);
 				float f = 0;
 				if (tokens[i] == "true" || tokens[i] == "false")
 				{
@@ -526,6 +530,7 @@ namespace D2Maker
 		{
 			enum SCT { NUMERIC_, BOOL_,STRING_}; //"_" used to differentiate this from the enum class in Environment
 			std::array<bool, 3> successConvertingTo = {};
+			
 			successConvertingTo[NUMERIC_] = dynamic_cast<NumericExpression*>(ptr.get())!=nullptr;
 			successConvertingTo[BOOL_] = dynamic_cast<BooleanExpression*>(ptr.get())!=nullptr;
 			successConvertingTo[STRING_] = dynamic_cast<StringExpression*>(ptr.get())!=nullptr;

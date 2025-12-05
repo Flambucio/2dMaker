@@ -1,13 +1,16 @@
 #include "Window.h"
 using namespace D2Maker;
 //TODO:
+// handle projects folder not existing
 //Implement Correct Config
-//Variable management
+// TextureComponentMenu fix
+//Script after adding doesnt do anything before closing
 //ComponentTraits
 //Batch Rendering
 //Physics Engine Fix
 //Animation Controller
 //FIX Texture Modifying component menu
+//FIX texture not indexing at default in animation when stopping
 void Window::Initialize()
 {
     // 1. GLFW INIT

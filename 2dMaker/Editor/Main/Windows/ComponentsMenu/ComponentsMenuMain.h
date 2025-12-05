@@ -13,6 +13,7 @@ namespace D2Maker
 			
 			Entity& selectedEntity;
 			Entity selectedEntityBuffer=999;
+			std::string sceneNameBuffer = "";
 			std::unordered_map<std::string,Entity>& entitiesBuffer;
 			std::vector<std::string> componentNames = {};
 			GUIAPI::Menu componentList;

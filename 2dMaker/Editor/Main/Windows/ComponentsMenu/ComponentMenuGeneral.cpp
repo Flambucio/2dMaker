@@ -70,9 +70,10 @@ void ComponentsMenu::Update()
 
 void ComponentsMenu::BufferCheck()
 {
-	if (selectedEntity != selectedEntityBuffer)
+	if (selectedEntity != selectedEntityBuffer || sceneNameBuffer!= SceneManager::currentScene)
 		{
 			selectedEntityBuffer = selectedEntity;
+			sceneNameBuffer = SceneManager::currentScene;
 			UpdateBuffers();
 		}
 	}

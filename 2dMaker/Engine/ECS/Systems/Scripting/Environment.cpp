@@ -169,10 +169,22 @@ Number Environment::RetrieveNumber(const std::string& var)
 
 Type Environment::RetrieveType(const std::string& var)
 {
+    TRACE("RetrieveType called for '" + var + "'");
     Type type = Type::NUL;
+    for (auto& x : typeRegistry)
+    {
+        CONSOLELOG("TYPEREGISTRY:" + x.first);
+        std::string typeStr = "";
+        if (x.second == Type::NUL) typeStr = "NUL";
+        else typeStr = "REGULAR";
+        CONSOLELOG("TYPE: " + typeStr);
+        TRACE("TYPEREGISTRY:" + x.first);
+        TRACE("TYPE: " + typeStr);
+    }
     auto it = typeRegistry.find(var);
     if (it == typeRegistry.end()) return Type::NUL;
-    type = typeRegistry[var];
+
+    type = it->second;
     return type;
 }
 
