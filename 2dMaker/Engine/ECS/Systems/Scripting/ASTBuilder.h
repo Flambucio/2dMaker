@@ -128,7 +128,11 @@ namespace D2Maker
 				return ParseSetMoveStatement(tokens, i, line, sc, PIT_);
 			}
 			else if (tokens[line][i] == "ASSIGN")  return ParseAssigmentInstruction(tokens[line], i, line);
-			else return { nullptr,false,"Unknown Statement" };
+			else {
+				CONSOLELOG("dentro parseStatement tokens[line][i]= " + tokens[line][i]);
+				return { nullptr,false,"Unknown Statement" };
+			}
+			
 		}
 
 		inline static ParseResult ParseIfStatement(const TokenStream& tokens, size_t& i, size_t& line,ScriptContext sc)
@@ -139,13 +143,15 @@ namespace D2Maker
 			if (!OutOfBounds(tokens[line], i, 0)) return { nullptr,false,"invalid if statement" };
 			
 			//since instructions should begin in a new line it checks if there is extra logic
-			//this time we want to be OutOfBounds
+			//this time we want it to be OutOfBounds
 			line++;
 			i = 0;
 			bool success = true;
 			AST statements;
-			while (tokens[line][0] != "ENDIF")
+			while (!OutOfBounds(tokens[line],i,0) && tokens[line][0] != "ENDIF")
 			{
+				
+				CONSOLELOG("tokens[line][0]=" + tokens[line][0]);
 				ParseResult pr = ParseStatement(tokens, i, line, sc);
 				VALIDITY_CHECK(pr);
 				StatementPtr statement(
@@ -153,11 +159,13 @@ namespace D2Maker
 				);
 				if (statement == nullptr) return { nullptr,false,"invalid instruction inside if statement" };
 				statements.push_back(std::move(statement));
+				i = 0;
+				line++;
 
 			}
 
 
-			return { std::make_unique<IfStament>(std::move(cond),std::move(statements),line) };
+			return { std::make_unique<IfStament>(std::move(cond),std::move(statements),line),true,"success"};
 
 		}
 
@@ -238,6 +246,7 @@ namespace D2Maker
 			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid condition" };
 			if (tokens[i] == "COLLIDE") { i++; return ParseCollideCondition(tokens, i,sc); }
 			if (tokens[i] == "KEYPRESS" || tokens[i]=="KEYCLICK") { return ParseKeypressCondition(tokens, i); }
+			if (tokens[i] == "MOUSECLICK") { return ParseMouseClickCondition(tokens, i, sc); }
 			if (tokens[i] == "TIMER") { i++; return ParseTimerCondition(tokens, i); }
 			return ParseClassicCondition(tokens, i);
 		}
@@ -269,9 +278,20 @@ namespace D2Maker
 			i++;
 			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid keycondition" };
 			Token key = tokens[i];
+			if (Tokens::InterpretKey(key) == Keys::NUL) return { nullptr,false,"invalid key" };
 			i++;
 			if (kct == KCT::REGULAR) return { std::make_unique<KeyPressCondition>(key),true,"success" };
 			else return { std::make_unique<KeyClickCondition>(key),true,"success" };
+		}
+		
+		inline static ParseResult ParseMouseClickCondition(const TokenLine& tokens, size_t& i,ScriptContext &sc) {
+			i++;
+			if (OutOfBounds(tokens, i, 0)) return { nullptr,false,"invalid mouseclickcondition" };
+			Token keyStr = tokens[i];
+			Keys key = Tokens::InterpretKey(keyStr);
+			if (key != Keys::RIGHT && key != Keys::LEFT) return { nullptr,false,"invalid mouse click key" };
+			i++;
+			return { std::make_unique<MouseClickCondition>(sc.e,key,sc.em),true,"success"};
 		}
 
 		inline static ParseResult ParseTimerCondition(const TokenLine& tokens, size_t& i)
@@ -285,13 +305,14 @@ namespace D2Maker
 
 		inline static ParseResult ParseClassicCondition(const TokenLine& tokens, size_t& i)
 		{
+			
 			if (!OutOfBounds(tokens, i, 1) && Environment::Exists(tokens[i + 1], Type::BOOL))
 			{
 				return { std::make_unique<VariableBool>(tokens[i+1]),true,"success"};
 				//dont need to increment cause if the condition is complete the statement is complete and
 				//skips to next line
 			}
-			else if (tokens[i].size() < 3)
+			else if (OutOfBounds(tokens,i,3))
 			{
 				return { nullptr,false,"Invalid Condition" };
 			}
@@ -361,7 +382,7 @@ namespace D2Maker
 			VALIDITY_CHECK(right);
 			std::unique_ptr<BooleanExpression> rightBoolean(dynamic_cast<BooleanExpression*>(right.node.release()));
 			if (!rightBoolean) return { nullptr,false,"invalid value in logic expression" };
-			return { std::make_unique<LogicExpression>(std::move(leftBoolean),std::move(rightBoolean),op) };
+			return { std::make_unique<LogicExpression>(std::move(leftBoolean),std::move(rightBoolean),op),true,"success"};
 
 			
 		}
@@ -373,7 +394,7 @@ namespace D2Maker
 			VALIDITY_CHECK(rInside);
 			std::unique_ptr<BooleanExpression> rInsideCasted(dynamic_cast<BooleanExpression*>(rInside.node.release()));
 			if (!rInsideCasted) return { nullptr,false,"invalid value in logic expression" };
-			ParseResult r = { std::make_unique <LogicExpression>(std::move(rInsideCasted),nullptr,"NOT") };
+			ParseResult r = { std::make_unique <LogicExpression>(std::move(rInsideCasted),nullptr,"NOT"),true,"success"};
 			return r;
 		}
 
@@ -456,7 +477,7 @@ namespace D2Maker
 			);
 
 			return { std::make_unique<BinaryExpression>(std::move(leftNumeric),
-				std::move(rightNumeric),c) };
+				std::move(rightNumeric),c),true,"success"};
 			
 
 			

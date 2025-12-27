@@ -82,6 +82,7 @@ void Window::Initialize()
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetKeyCallback(window, KeyCallback);
+    glfwSetMouseButtonCallback(window, MouseButtonCallback);
     glfwSetFramebufferSizeCallback(guiWindow, framebuffer_size_callback);
     glfwSetKeyCallback(guiWindow, KeyCallback);
 
@@ -120,7 +121,7 @@ void Window::KeyCallback(GLFWwindow* window, int key, int scancode, int action, 
 
         if (!EventManager::GetConsumedKeys()[static_cast<Keys>(key)])
         {
-            EventManager::PushEvent(static_cast<Keys>(key), CLICK);
+            EventManager::PushEvent(static_cast<Keys>(key), EventType::CLICK);
             EventManager::GetConsumedKeys()[static_cast<Keys>(key)] = true;
         }
     }
@@ -128,6 +129,27 @@ void Window::KeyCallback(GLFWwindow* window, int key, int scancode, int action, 
     {
         EventManager::GetConsumedKeys()[static_cast<Keys>(key)] = false;
         EventManager::ReleaseKey(static_cast<Keys>(key));
+    }
+}
+
+void Window::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+    ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
+
+    if (action == GLFW_PRESS)
+    {
+        EventManager::PushEvent(static_cast<Keys>(button), EventType::HOLD);
+
+        if (!EventManager::GetConsumedKeys()[static_cast<Keys>(button)])
+        {
+            EventManager::PushEvent(static_cast<Keys>(button), EventType::CLICK);
+            EventManager::GetConsumedKeys()[static_cast<Keys>(button)] = true;
+        }
+    }
+    else if (action == GLFW_RELEASE)
+    {
+        EventManager::GetConsumedKeys()[static_cast<Keys>(button)] = false;
+        EventManager::ReleaseKey(static_cast<Keys>(button));
     }
 }
 

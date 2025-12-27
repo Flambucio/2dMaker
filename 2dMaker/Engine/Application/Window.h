@@ -22,7 +22,8 @@ namespace D2Maker
 
 
         static void Initialize();
-        static inline void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+        static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+        static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
         inline static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
         {
             glfwMakeContextCurrent(window);

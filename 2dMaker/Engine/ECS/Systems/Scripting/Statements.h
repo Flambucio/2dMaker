@@ -502,8 +502,6 @@ namespace D2Maker
 			//CONSOLELOG("MoveStatement EM ptr = " + std::to_string((uint64_t)&em));
 			if (!em.hasComponent<Velocity>(e)) return;
 			Velocity* v = em.getComponent<Velocity>(e);
-			float default_ = 0;
-			float& ref=default_;
 			if (relative)
 			{
 				switch (c)
@@ -536,9 +534,6 @@ namespace D2Maker
 
 				}
 			}
-
-			if (relative) ref += NumericExpression::NumberToFloat(expr->evaluate());
-			else ref= NumericExpression::NumberToFloat(expr->evaluate());
 		}
 
 		
@@ -565,23 +560,38 @@ namespace D2Maker
 		{
 			if (!em.hasComponent<Transform>(e)) return;
 			Transform* t = em.getComponent<Transform>(e);
-			float default_ = 0;
-			float& ref = default_;
-			switch (c)
+			if (relative)
 			{
-			case CoordType::X:
-				ref = t->x;
-				break;
-			case CoordType::Y:
-				ref = (float)t->y;
-				break;
-			case CoordType::THETA:
-				ref = (float)t->rotationDegrees;
-				break;
+				switch (c)
+				{
+				case CoordType::X:
+					t->x += EVALUATE_NUMBER;
+					break;
+				case CoordType::Y:
+					t->y += EVALUATE_NUMBER;
+					break;
+				case CoordType::THETA:
+					t->rotationDegrees += EVALUATE_NUMBER;
+					break;
 
+				}
 			}
-			if (relative) ref += NumericExpression::NumberToFloat(expr->evaluate());
-			else ref = NumericExpression::NumberToFloat(expr->evaluate());
+			else
+			{
+				switch (c)
+				{
+				case CoordType::X:
+					t->x = EVALUATE_NUMBER;
+					break;
+				case CoordType::Y:
+					t->y = EVALUATE_NUMBER;
+					break;
+				case CoordType::THETA:
+					t->rotationDegrees = EVALUATE_NUMBER;
+					break;
+
+				}
+			}
 		}
 	};
 

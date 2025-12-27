@@ -1,6 +1,8 @@
 #include "RenderingSystem.h"
 #include "CameraSystem.h"
 #include "Animation.h"
+#define PI_FLOAT 3.14159265f
+#define HALF_CIRCUMFERENCE_DEGREES_FLOAT 180.0f 
 using namespace D2Maker;
 
 void RenderSystem::PushToQueue(EntityManager& em)
@@ -20,7 +22,7 @@ void RenderSystem::PushToQueue(EntityManager& em)
 std::array<float, 16>  RenderSystem::GetVertices(Transform* t)
 {
     //TRACE("Virtual Width: " + std::to_string(GameOptions::virtualWidth));
-    float angle = t->rotationDegrees * (3.14159265f / 180.0f);
+    float angle = t->rotationDegrees * (PI_FLOAT / HALF_CIRCUMFERENCE_DEGREES_FLOAT);
     float s = sin(angle);
     float c = cos(angle);
 

@@ -4,7 +4,7 @@ namespace D2Maker
 {
 
 
-	static class Tokens
+	class Tokens
 	{
 	public:
 
