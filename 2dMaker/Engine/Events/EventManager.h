@@ -51,6 +51,9 @@ namespace D2Maker
 			return justClicked.find(key) != justClicked.end();
 		}
 
-
+		inline static void ClearJustClickedKeys() 
+		{
+			justClicked.clear();
+		}
 	};
 }

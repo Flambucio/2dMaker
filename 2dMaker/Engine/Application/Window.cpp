@@ -245,7 +245,7 @@ void Window::RunWindow()
         ImGui::SetCurrentContext(mainImGuiContext);
         editor.Update();
         editor.GetPreviewWindowRef().Update();
-
+        EventManager::ClearJustClickedKeys();
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
